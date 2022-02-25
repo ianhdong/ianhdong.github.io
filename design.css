@@ -1,23 +1,30 @@
+html, body {
+    padding: 0;
+    margin: 0;
+}
 .navbar {
-    display: flex;
-    justify-content: flex-end;
+    background-color: #003262;
+    width: 100%;
 }
 .nav {
     display: flex;
+    justify-content:flex-end;
     font-size: 30px;
     gap: 40px;
-    background-color: black;
-    width: 500px;
-    height: 340px;
-    position: absolute;
-    justify-content: center;
-    top: 0px;
-    right: 0px;
+    position: sticky;
+    padding-right: 2.5%;
+    padding-top: 1%;
+    padding-bottom: 1%;
 }
 .nav-button {
     font-family: Georgia, 'Times New Roman', Times, serif;
-    color: white;
 }
-a:hover {
+a { 
+    color: #FDB515;
+    text-decoration: none;
+} 
+
+
+a:hover, a:active{ 
     text-decoration: underline;
-  }
+}
