@@ -1,0 +1,23 @@
+.navbar {
+    display: flex;
+    justify-content: flex-end;
+}
+.nav {
+    display: flex;
+    font-size: 30px;
+    gap: 40px;
+    background-color: black;
+    width: 500px;
+    height: 340px;
+    position: absolute;
+    justify-content: center;
+    top: 0px;
+    right: 0px;
+}
+.nav-button {
+    font-family: Georgia, 'Times New Roman', Times, serif;
+    color: white;
+}
+a:hover {
+    text-decoration: underline;
+  }
