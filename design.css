@@ -1,17 +1,24 @@
 html, body {
     padding: 0;
     margin: 0;
+    background-image: url("UC Berkeley3 2560x1440 - Desktop.jpg");
+    background-attachment: fixed;
+    background-repeat: no-repeat;
+    background-size: 1500px;
 }
 .navbar {
     background-color: #003262;
     width: 100%;
+    overflow: hidden;
+    position: fixed;
+    top: 0;
 }
 .nav {
     display: flex;
     justify-content:flex-end;
     font-size: 30px;
     gap: 40px;
-    position: sticky;
+    top: 0;
     padding-right: 2.5%;
     padding-top: 1%;
     padding-bottom: 1%;
@@ -24,7 +31,57 @@ a {
     text-decoration: none;
 } 
 
+.projects {
+    display: flex;
+    justify-content: center;
+}
+
+.group {
+    display: flex;
+    justify-content:space-evenly;
+}
+
+.project {
+    font-family: 'Times New Roman', Times, serif;
+    background-color: white;
+    width: 200px;
+    height: 200px;
+}
+
 
 a:hover, a:active{ 
     text-decoration: underline;
+}
+
+#about {
+    margin-top: 275px;
+}
+.about-me {
+    display: flex;
+    flex-direction: column;
+    justify-content: center;
+    align-items: center;
+}
+
+.role {
+    font-family: 'Trebuchet MS', 'Lucida Sans Unicode', 'Lucida Grande', 'Lucida Sans', Arial, sans-serif;
+    font-size: 30px;
+    color: white;
+    text-align: center;
+}
+.name {
+    font-family:Georgia, 'Times New Roman', Times, serif;
+    font-size: 100px;
+    color: white;
+    text-align: center;
+}
+.description {
+    font-family: Georgia, 'Times New Roman', Times, serif;
+    font-size: 20px;
+    color: white;
+    text-align: center;
+}
+p {
+    margin-top: 20px;
+    margin-bottom: 20px;
 }
