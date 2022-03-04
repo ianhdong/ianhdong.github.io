@@ -103,6 +103,7 @@ p {
     width: 400px;
     border-color: black;
     padding: 10px;
+    text-align: center;
 }
 .contact-box {
     display: flex;
