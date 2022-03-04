@@ -34,18 +34,25 @@ a {
 .projects {
     display: flex;
     justify-content: center;
+    flex-direction: row;
+    gap: 10px;
 }
-
-.group {
-    display: flex;
-    justify-content:space-evenly;
-}
-
 .project {
+    display: flex;
+    flex-direction: column;
+    align-items: center;
     font-family: 'Times New Roman', Times, serif;
     background-color: white;
-    width: 200px;
-    height: 200px;
+    width: 400px;
+    border-color: black;
+    padding: 10px;
+}
+.title {
+    display: flex;
+}
+.project-about {
+    display: flex;
+    text-align: center;
 }
 
 
