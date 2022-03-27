@@ -468,6 +468,27 @@ section {
   border-left: 2px solid #0563bb;
   position: relative;
 }
+
+.center {
+  display: flex;
+  justify-content: center;
+}
+.pdf i {
+  font-size: 40px;
+  color: #0563bb;
+  width: 60px;
+  height: 60px;
+  background: #eef7ff;
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  border-radius: 50px;
+  transition: all 0.3s ease-in-out;
+}
+.resume .pdf i:hover {
+  background: #0563bb;
+  color: white;
+}
 .resume .resume-item h4 {
   line-height: 18px;
   font-size: 18px;
@@ -482,6 +503,12 @@ section {
   background: #f7f8f9;
   padding: 5px 15px;
   display: inline-block;
+  font-weight: 600;
+  margin-bottom: 10px;
+}
+.resume .resume-item h3 {
+  font-size: 18px;
+  padding: 5px 15px;
   font-weight: 600;
   margin-bottom: 10px;
 }
@@ -906,13 +933,18 @@ section {
   font-size: 14px;
   color: #728394;
 }
-.contact .info .email, .contact .info .phone {
+.contact .info .email, .contact .info .phone, .contact .info .github {
   margin-top: 40px;
 }
-.contact .info .email:hover i, .contact .info .address:hover i, .contact .info .phone:hover i {
+.contact .info .email:hover i, .contact .info .address:hover i, .contact .info .phone:hover i, .contact .info .github:hover i{
   background: #0563bb;
   color: #fff;
 }
+
+.link {
+  text-decoration: underline;
+}
+
 .contact .php-email-form {
   width: 100%;
   background: #fff;
