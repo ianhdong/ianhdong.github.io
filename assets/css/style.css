@@ -474,10 +474,10 @@ section {
   justify-content: center;
 }
 .pdf i {
-  font-size: 40px;
+  font-size: 30px;
   color: #0563bb;
-  width: 60px;
-  height: 60px;
+  width: 50px;
+  height: 50px;
   background: #eef7ff;
   display: flex;
   justify-content: center;
