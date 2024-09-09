@@ -1,0 +1,491 @@
+<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Strict//EN" "http://www.w3.org/TR/xhtml1/DTD/xhtml1-strict.dtd">
+<html xmlns="http://www.w3.org/1999/xhtml" xml:lang="en" lang="en">
+<script type="text/x-mathjax-config">
+    MathJax.Hub.Config({tex2jax: {inlineMath: [['$','$'], ['\\(','\\)']]}});
+  </script>
+<script type="text/javascript"
+  src="http://cdnjs.cloudflare.com/ajax/libs/mathjax/2.7.1/MathJax.js?config=TeX-AMS-MML_HTMLorMML">
+  </script>
+
+<head>
+  <style>
+    body {
+      padding: 100px;
+      width: 1000px;
+      margin: auto;
+      text-align: left;
+      font-weight: 300;
+      font-family: 'Open Sans', sans-serif;
+      color: #121212;
+    }
+
+    h1,
+    h2,
+    h3,
+    h4 {
+      font-family: 'Source Sans Pro', sans-serif;
+    }
+
+    .center {
+      display: flex;
+      justify-content: center;
+      align-items: center;
+      height: 100vh;
+      /* This centers the image vertically */
+    }
+
+    table {
+      width: 100%;
+
+    }
+
+    th,
+    td {
+      border: 3px solid black;
+      padding: 10px;
+      text-align: center;
+      vertical-align: middle;
+    }
+
+    th {
+      background-color: #f2f2f2;
+    }
+
+    hr {
+      border: 0;
+      height: 1px;
+      background-color: black;
+      margin: 20px 0;
+      /* Adjust margin as needed */
+    }
+
+    img {
+      max-width: 100%;
+      height: auto;
+      display: block;
+      margin: 0 auto;
+    }
+
+    figcaption {
+      margin-top: 5px;
+      /* Add some margin above captions */
+    }
+  </style>
+  <title>CS 184/284A Rasterizer</title>
+  <meta http-equiv="content-type" content="text/html; charset=utf-8" />
+  <link href="https://fonts.googleapis.com/css?family=Open+Sans|Source+Sans+Pro" rel="stylesheet">
+</head>
+
+
+<body>
+
+  <h1 align="middle">CS 184/284A: Computer Graphics and Imaging, Spring 2024</h1>
+  <h1 align="middle"><a href="https://cal-cs184-student.github.io/hw-webpages-sp24-ianhdong/hw1/index.html">Homework
+      1: Rasterizer</a></h1>
+  <h2 align="middle">Ian Dong</h2>
+
+  <div>
+
+    <h2 align="middle">Overview</h2>
+    <p>Give a high-level overview of what you implemented in this homework. Think about what you've built as a whole.
+      Share your thoughts on what interesting things you've learned from completing the homework.</p>
+
+    <h2 align="middle">Section I: Rasterization</h2>
+
+    <h3 align="middle">Part 1: Rasterizing Single-Color Triangles</h3>
+
+    <p>
+    <ul>
+      <li>
+        I first found the rectangular bounding box of the triangle by calculating the min and the max of the x and y
+        coordinates of the three vertices. Then, I iterated through each of these pixel locations and found their
+        centers. I defined a function that took in the sample point along with two vertices of the triangle and found
+        the dot product between the norm of the two vertices and the vector from the first vertex to the sample point. I
+        repeated this with all three pairs of the triangle vertices. These dot products will determine which side the
+        sample point lies on and it will be inside the triangle if all three dot products have the same sign or are all
+        zero. If this sample point is inside of the triangle, I filled the pixel with the function argument color.
+      </li>
+      <li>
+        My algorithm is no worse than one that checks every pixel in the bounding box of the triangle because it is
+        linear with respect to the number of pixels in this box as I used two nested for loops to iterate through the
+        <code>min</code> of x to the <code>max</code> of x and the <code>min</code> of y to the <code>max</code> of y
+        coordinates. Thus, my algorithm took into account every pixel in
+        the bounding
+        box of the triangle.
+      </li>
+      <li>
+        Here, I chose to center it around the long magenta shape because it has a little bit of jaggies.
+      </li>
+      <div align="middle">
+        <table>
+          <tr>
+            <td vertical-align="center">
+              <img src="./Images/Task1/sp24-rasterizer-task1-rasterizing-triangles.png" align="center" width="50%" />
+              <figcaption align="middle">Rasterizing Triangles</figcaption>
+            </td>
+          </tr>
+          <br>
+        </table>
+      </div>
+    </ul>
+
+    <ul>
+      <li>
+        <strong>Extra Credit</strong>: I had implemented a few different optimization methods. The first method was to
+        reduce repetitive
+        calculations by storing the six perpendicular vectors of the triangle as well as the base <code>x</code> and
+        <code>y</code> coordinates with step size outside of the <code>for</code> loop. I wanted to move calculations
+        that I was doing over and over that did not depend on the inner <code>for</code> loops outside of them. The
+        second method was to use
+        <code>#pragma omp parallel for</code> to parallelize the outer <code>for</code> loops. The third method was to
+        combine
+        the last two methods above. I used the C++ <code>clock()</code> library to time the execution of each method by
+        placing it before and after the <code>svg.draw()</code> in <code>DrawRend::redraw()</code> and subtracting the
+        two recorded times.
+        <table>
+          <thead>
+            <tr>
+              <th>Image</th>
+              <th>Method 1: No Optimization</th>
+              <th>Method 2: Reduce Repetitive Calculations Only</th>
+              <th>Method 3: Pragma Parallelization Only</th>
+              <th>Method 4: Methods 2 & 3 Combined</th>
+            </tr>
+          </thead>
+          <tbody>
+            <tr>
+              <td>Basic Test 3</td>
+              <td>32.172 ms</td>
+              <td>26.906 ms</td>
+              <td>31.964 ms</td>
+              <td>27.112 ms</td>
+            </tr>
+            <tr>
+              <td>Basic Test 7</td>
+              <td>64.232 ms</td>
+              <td>43.85 ms</td>
+              <td>63.857 ms</td>
+              <td>43.61 ms</td>
+            </tr>
+            <tr>
+              <td>Basic Test 8</td>
+              <td>15.193 ms</td>
+              <td>14.438 ms</td>
+              <td>14.468 ms</td>
+              <td>14.178 ms</td>
+            </tr>
+          </tbody>
+        </table>
+      </li>
+    </ul>
+    </p>
+    <!-- <div align="middle">
+      <table style="width=150%">
+        <tr>
+          <td>
+            <img src="Images/task1.png" align="middle" width="400px" />
+            <figcaption align="middle">Caption goes here.</figcaption>
+          </td>
+          <td>
+            <img src="images/image2.png" align="middle" width="400px" />
+            <figcaption align="middle">Caption goes here.</figcaption>
+          </td>
+        </tr>
+        <br>
+        <tr>
+          <td>
+            <img src="images/image3.png" align="middle" width="400px" />
+            <figcaption align="middle">Caption goes here.</figcaption>
+          </td>
+          <td>
+            <img src="images/image4.png" align="middle" width="400px" />
+            <figcaption align="middle">Caption goes here.</figcaption>
+          </td>
+        </tr>
+      </table>
+    </div> -->
+
+
+    <br><br>
+
+    <h3 align="middle">Part 2: Antialiasing Triangles</h3>
+    <p>
+    <ul>
+      <li>
+        I implemented supersampling by dividing each pixel into <code>sample_rate</code> number of subpixels. From
+        there, I
+        resized the <code>sample_buffer</code> to be <code>sample_rate</code> times larger than before so that I could
+        store each of the individual subpixels for each original pixel in the image and created a helper function to
+        figure out the index that each subpixel was supposed to be in the <code>sample_buffer</code>. I then iterated
+        through each of the subpixels, found the center of each subpixel, and used the same algorithm as in part 1 to
+        determine if the subpixel was inside of the triangle. If it was, I filled the subpixel with the color of the
+        triangle. In <code>resolve_to_framebuffer</code>, I averaged the colors of the subpixels to get the color of the
+        original pixel. Supersampling is very useful because it helps to improve the quality of the images by sampling
+        at a higher resolution and then downsampling to the original resolution. This will reduce aliasing and smooth
+        out any jaggies. A few modifications that I made to the original rasterizer pipeline was to change the
+        <code>sample_buffer</code> size and to calculate the new subpixels where each width and height became a multiple
+        of <code>sqrt(sample_rate)</code> away from the original pixel. I aslo had to change the
+        <code>resolve_to_framebuffer</code> to average the colors of the subpixels. These modifications helped antialias
+        my triangle because it helped smooth out the jaggies due to the blurring and connected subpixels together that
+        would have been otherwise disconnected.
+      </li>
+      <li>
+        Here, I have decided to zoom into the thin red part of the triangle to show the effects that supersampling has
+        on antialiasing our image. As I increase the <code>sample_rate</code>, there seems to be less gaps between the
+        different regions. The reason why there are missing gaps at lower <code>sample_rate</code>s is because the
+        triangle is so thin that only parts of the pixel lies within the triangle and because it is an "all-or-nothing"
+        policy each pixel has its own color and there is no blending between them. As the <code>sample_rate</code>
+        increases, I am able to sample at a higher frequency and on smaller subpixels and because they are so small and
+        close together they lie within the triangle and are able to blend together to create a smoother image. This in
+        turn allows the original pixel to have a more faded color based on the saturation and thus is able to reduce
+        some of the jaggies and smooth out the fragmentations.
+      </li>
+      <div align="middle">
+        <table>
+          <tr>
+            <td>
+              <img src="./Images/Task2/sp24-rasterizer-task2-sample1.png" align="middle">
+              <figcaption align="middle">Supersampling Rate of 1</figcaption>
+            </td>
+            <td>
+              <img src="./Images/Task2/sp24-rasterizer-task2-sample4.png" align="middle" />
+              <figcaption align="middle">Supersampling Rate of 4</figcaption>
+            </td>
+          </tr>
+          <br>
+          <tr>
+            <td>
+              <img src="./Images/Task2/sp24-rasterizer-task2-sample9.png" align="middle" />
+              <figcaption align="middle">Sampling Rate of 9</figcaption>
+            </td>
+            <td>
+              <img src="./Images/Task2/sp24-rasterizer-task2-sample16.png" align="middle" />
+              <figcaption align="middle">Sampling Rate of 16</figcaption>
+            </td>
+          </tr>
+        </table>
+      </div>
+    </ul>
+    </p>
+
+    <br><br>
+    <h3 align="middle">Part 3: Transforms</h3>
+    <p>
+    <ul>
+      <li>
+        Here, I have transformed our cubeman robot into a basketball player, fully equipped with a basketball and the
+        necessary gear to become the next great Michael Jordan. He is shown dribbling the basketball and calling a play
+        for his teammates.
+      </li>
+      <div align="middle">
+        <table>
+          <tr>
+            <td>
+              <img src="./Images/Task3/sp24-rasterizer-task3-basketball-cubeman.png" width="50%" />
+              <figcaption align="middle">Basketball Cubeman</figcaption>
+            </td>
+
+          </tr>
+          <br>
+        </table>
+      </div>
+    </ul>
+
+    </p>
+
+    <br>
+    <hr><br>
+
+    <h2 align="middle">Section II: Sampling</h2>
+
+    <h3 align="middle">Part 4: Barycentric Coordinates</h3>
+    <p>
+    <ul>
+      <li>
+        Barycentric coordinates essentially is a way to represent points within a geometric figure. In other words,
+        they tell us how much each vertex of the three
+        vertices
+        contributes to a
+        sample
+        point inside of the triangle, where these weights indicate how important each vertex is in determining the
+        location of the sample point. Any point inside of the triangle can be represented as a linear combination of the
+        three vertices, where the weights must sum to one. This constraint will ensure that the sample point will lie
+        within the triangle since each weight is essentially the proportion of the area of the triangle that the
+        corresponding vertex contributes to the overall area. Another way to think about this is that we are
+        distributing the area of the triangle to the three vertices based on the sample point's location. The closer the
+        sample point is to a vertex, the larger the weight of that vertex will be. The further the sample point is from
+        a vertex, the smaller the weight of that vertex will be. To illustrate how barycentric coordinates work, I
+        created an <code>svg</code> file with a triangle and each of the vertices is a different color: red, green or
+        blue.
+      </li>
+      <div align="middle">
+        <table>
+          <tr>
+            <td>
+              <img src="./Images/Task4/sp24-rasterizer-task4-triangle.png" width="50%" />
+              <figcaption align="middle">Smoothly Blended Triangle</figcaption>
+            </td>
+
+          </tr>
+          <br>
+        </table>
+      </div>
+
+    </ul>
+
+    <ul>
+      <li>
+        Here is <code>svg/basic/test7.svg</code> with default viewing parameters and sample rate 1.
+      </li>
+      <div align="middle">
+        <table>
+          <tr>
+            <td>
+              <img src="./Images/Task4/sp24-rasterizer-task4-circle.png" width="50%" />
+              <figcaption align="middle">Smoothly Blended Circle</figcaption>
+            </td>
+
+          </tr>
+          <br>
+        </table>
+      </div>
+    </ul>
+
+    </p>
+
+    <br><br>
+    <h3 align="middle">Part 5: "Pixel Sampling" for Texture Mapping</h3>
+    <p>
+    <ul>
+      <li>
+        Pixel sampling is a process to help determine which pixel within the texture image to sample from and use
+        based on the barycentric coordinates for the sample point in the original image; it is a translation from the
+        pixel (x, y) coordinates into the texels (u, v) coordinates. I implemented this algorithm by first calculating
+        the barycentric coordinates of the sample points before multiplying them by the width and the height of the
+        texture image so that they are in the range of the texture image. For the nearest neighbor pixel sampling
+        method, I used <code>round</code> to find the closest integer texel (u, v) coordinates. For the bilinear pixel
+        sampling method, I instead used <code>floor</code> and <code>ceil</code> to find the <i>four</i> closest integer
+        texel (u, v) coordinates and then used linear interpolation to weight the "true" texel based on these points.
+      </li>
+      <li>
+        Here, I have decided to use the <code>svg/texmap/test1.svg</code> file to highlight the differences between the
+        two pixel sampling methods.
+      </li>
+      <div align="middle">
+        <table>
+          <tr>
+            <td>
+              <img src="./Images/Task5/sp24-rasterizer-task5-nearest1.png" align="middle">
+              <figcaption align="middle">Nearest Pixel Sampling at Sampling Rate of 1</figcaption>
+            </td>
+            <td>
+              <img src="./Images/Task5/sp24-rasterizer-task5-bilinear1.png" align="middle" />
+              <figcaption align="middle">Bilinear Pixel Sampling at Sampling Rate of 1</figcaption>
+            </td>
+          </tr>
+          <br>
+          <tr>
+            <td>
+              <img src="./Images/Task5/sp24-rasterizer-task5-nearest16.png" align="middle" />
+              <figcaption align="middle">Nearest Pixel Sampling at Sampling Rate of 16</figcaption>
+            </td>
+            <td>
+              <img src="./Images/Task5/sp24-rasterizer-task5-bilinear16.png" align="middle" />
+              <figcaption align="middle">Bilinear Pixel Sampling at Sampling Rate of 16</figcaption>
+            </td>
+          </tr>
+        </table>
+      </div>
+      <li>
+        There is a large difference between nearest neighbor and bilinear
+        pixel sampling at a sample rate of 1. These examples highlight a large difference between the two pixel sampling
+        methods because the
+        bilinear pixel sampling method essentially is averaging the colors of four pixels and in some ways behaves like
+        a sampling rate of 4 so it allows for a much more realistic and smooth representation. There is a smoother
+        transition between the land and the lakes in the image, rather than sudden changes in the pixel colors. When it
+        is sampling at a rate of 16, there is already a lot of detail when using the nearest pixel sampling so the
+        difference between the two sampling methods is marginal at best and does not give much improvement.
+      </li>
+    </ul>
+    </p>
+
+    <br><br>
+    <h3 align="middle">Part 6: "Level Sampling" with Mipmaps for Texture Mapping</h3>
+    <p>
+    <ul>
+      <li>
+        Level sampling is a process which uses mipmaps of differing levels of detail where each subsequent layer is
+        sampled at
+        usually a factor of 4 times less than the previous layer. The different levels of detail are based on factors
+        such as the distance away from the camera or the size of the object being textured. If the distance is closer to
+        the camera, usually there will be a small jump in texture space so intuitively it is better to use a high
+        resolution image while if there is a large jump in texture space it is further away from the image so it is
+        better to use a low resolution image. I updated my <code>if</code> conditional to figure out the the barycentric
+        coordinates of <code>(sample_x + 1, sample_y)</code> and <code>(sample_x, sample_y + 1)</code> to calculate
+        $(\frac{du}{dx}, \frac{dv}{dx}) \text{ and } (\frac{du}{dy}, \frac{dv}{dy})$. To get the mipmap level, I passed
+        in the <code>SampleParams</code> struct which contained the <code>uv</code> barycentric coordinates and scaled
+        the difference vectors before finding the longest norm of these vectors. Finally, I used <code>log_2</code> to
+        calculate the mipmap level needed. When it was <code>L_ZERO</code>, I used a mipmap of zero. When it was
+        <code>L_NEAREST</code>, I rounded the float mipmap level to the closest integer mipmap level. When it was
+        <code>L_LINEAR</code>, I found the floor and the ceiling of the float mipmap level and used linear interpolation
+        to find the color.
+      </li>
+      <li>
+        Mipmapping essentially creates caches of varying levels of resolution and acts like a pre-processed lookup table
+        to quickly apply different textures onto the image. There are different tradeoffs in terms of performance,
+        memory, and antialiasing power between the three methods. It is usually faster in performance but will incur
+        higher memory overload to store each of the mipmap levels when compared to pixel sampling.
+      </li>
+      <li>
+        Here are the eight combinations of level and pixel sampling on the <code>img/chameleon.png</code>. I centered the pixel inspector on the eye of the chameleon to show the differences between all of the combinations.
+      </li>
+      <div align="middle">
+        <table>
+          <tr>
+            <td>
+              <img src="./Images/Task6/sp24-rasterizer-task6-level0-nearest.png" align="middle">
+              <figcaption align="middle">Level 0 & Nearest Pixel Sampling</figcaption>
+            </td>
+            <td>
+              <img src="./Images/Task6/sp24-rasterizer-task6-level0-bilinear.png" align="middle" />
+              <figcaption align="middle">Level 0 & Bilinear Pixel Sampling</figcaption>
+            </td>
+          </tr>
+          <br>
+          <tr>
+            <td>
+              <img src="./Images/Task6/sp24-rasterizer-task6-levelnearest-nearest.png" align="middle" />
+              <figcaption align="middle">Nearest Level & Nearest Pixel Sampling</figcaption>
+            </td>
+            <td>
+              <img src="./Images/Task6/sp24-rasterizer-task6-levelnearest-bilinear.png" align="middle" />
+              <figcaption align="middle">Nearest Level & Bilinear Pixel Sampling</figcaption>
+            </td>
+          </tr>
+          <br>
+          <br>
+          <tr>
+            <td>
+              <img src="./Images/Task6/sp24-rasterizer-task6-levelbilinear-nearest.png" align="middle" />
+              <figcaption align="middle">Bilinear Level & Nearest Pixel Sampling</figcaption>
+            </td>
+            <td>
+              <img src="./Images/Task6/sp24-rasterizer-task6-levelbilinear-bilinear.png" align="middle" />
+              <figcaption align="middle">Bilinear Level & Bilinear Pixel Sampling</figcaption>
+            </td>
+          </tr>
+        </table>
+      </div>
+    </ul>
+    </p>
+
+
+
+    <h2 align="middle">Section III: Art Competition</h2>
+    <p>If you are not participating in the optional art competition, don't worry about this section!</p>
+
+    <h3 align="middle">Part 7: Draw something interesting!</h3>
+
+</body>
+
+</html>

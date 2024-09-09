@@ -1,0 +1,1066 @@
+<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Strict//EN" "http://www.w3.org/TR/xhtml1/DTD/xhtml1-strict.dtd">
+<html xmlns="http://www.w3.org/1999/xhtml" xml:lang="en" lang="en">
+
+<head>
+	<script src="https://polyfill.io/v3/polyfill.min.js?features=es6"></script>
+	<script id="MathJax-script" async src="https://cdn.jsdelivr.net/npm/mathjax@3/es5/tex-mml-chtml.js"></script>
+	<style>
+		body {
+			padding: 100px;
+			width: 1000px;
+			margin: auto;
+			text-align: left;
+			font-weight: 300;
+			font-family: 'Open Sans', sans-serif;
+			color: #121212;
+			background-color: #f6ead7;
+			cursor: url(https://rsha256.github.io/cloth-clear-32.png), auto;
+		}
+
+		.bounding-box {
+			border: 2px solid #ccc;
+			padding: 20px;
+			border-radius: 10px;
+			box-shadow: 0 4px 8px rgba(0, 0, 0, 0.6);
+			/* Updated box-shadow */
+			max-width: 1000px;
+			margin: 0 auto;
+			background-color: #ffffff;
+		}
+
+		h1,
+		h2,
+		h3,
+		h4 {
+			font-family: 'Source Sans Pro', sans-serif;
+		}
+
+		.center {
+			display: flex;
+			justify-content: center;
+			align-items: center;
+			height: 100vh;
+			/* This centers the image vertically */
+		}
+
+		table {
+			width: 100%;
+
+		}
+
+		th,
+		td {
+			border: 3px solid black;
+			padding: 10px;
+			text-align: center;
+			vertical-align: middle;
+		}
+
+		th {
+			background-color: #f2f2f2;
+		}
+
+		hr {
+			border: 0;
+			height: 1px;
+			background-color: black;
+			margin: 20px 0;
+			/* Adjust margin as needed */
+		}
+
+		img {
+			max-width: 100%;
+			height: auto;
+			display: block;
+			margin: 0 auto;
+		}
+
+		figcaption {
+			margin-top: 5px;
+			/* Add some margin above captions */
+		}
+
+		.highlighter-rouge {
+			color: #b00505;
+			background-color: rgb(247, 222, 222);
+			border-radius: 4px;
+			padding: 3px;
+		}
+	</style>
+	<title>CS 184 Mesh Edit</title>
+	<meta http-equiv="content-type" content="text/html; charset=utf-8" />
+	<link href="https://fonts.googleapis.com/css?family=Open+Sans|Source+Sans+Pro" rel="stylesheet">
+
+	<script>
+		MathJax = {
+			tex: {
+				inlineMath: [['$', '$'], ['\\(', '\\)']]
+			}
+		};
+	</script>
+	<script id="MathJax-script" async src="https://cdn.jsdelivr.net/npm/mathjax@3/es5/tex-chtml.js">
+	</script>
+</head>
+
+<body>
+
+	<h1 align="middle">CS 184: Computer Graphics and Imaging, Spring 2024</h1>
+	<h1 align="middle"><a href="https://cal-cs184-student.github.io/hw-webpages-sp24-ianhdong/hw4/index.html">Homework
+			4: Cloth Simulation</a></h1>
+	<h2 align="middle">Ian Dong</h2>
+
+
+	<div class="bounding-box">
+		<h2 align="middle">Overview</h2>
+		<!-- <p> -->
+		In this homework, I explored the physics behind cloth simulation by implementing a mass-spring system to
+		represent the cloth. I used Verlet integration to compute each of the <code
+			class="highlighter-rouge">PointMass</code> objects' new position to simulate the cloth's movement. Then, I
+		implemented a way to detect cloth collision with outside objects as well as resolving self-collisions. Finally,
+		I added wind forces to the cloth to simulate the cloth's movement in the wind.
+		<!-- </p> -->
+		<br>
+	</div>
+
+	<br><br>
+
+	<h2 align="middle">Section I: Masses and Springs</h2>
+	<div class="bounding-box">
+		<h3>
+			Explain how you implemented the mass-spring system to represent the cloth.
+		</h3>
+		<p>
+			Because the cloth's springs needed to be in row major order, I first looped through the number of height
+			points as this represented each individual row before iterating through each of the width points to create
+			the required springs. I calculated the <code class="highlighter-rouge">x</code> position in order to fit
+			<code class="highlighter-rouge">num_width_points</code> within the cloth's width. Depending on whether the
+			cloth was horizontal or vertical, I made sure to set <code class="highlighter-rouge">y</code> to either be 1
+			or the correctly spaced out position fit the necessary number of width points and set <code
+				class="highlighter-rouge">z</code> to either the correctly spaced out position fit the necessary number
+			of width points or the random offset. Before inserting the <code class="highlighter-rouge">PointMass</code>,
+			I checked to see the object should be pinned or not. Finally, I iterated through the two-dimensional grid
+			positions and converted them into the <code class="highlighter-rouge">PointMass</code> one-dimensional
+			vector position and checked for boundary conditions before creating the <code
+				class="highlighter-rouge">STRUCTURAL</code>, <code class="highlighter-rouge">SHEARING</code>, and <code
+				class="highlighter-rouge">BENDING</code> springs as listed in the homework description.
+		</p>
+	</div>
+	<br>
+	<div class="bounding-box">
+		<h3>
+			<!-- <b> -->
+			Take some screenshots of <code class="highlighter-rouge">scene/pinned2.json</code> from a viewing angle
+			where you can clearly see the cloth wireframe to show the structure of your point masses and springs.
+			<!-- </b> -->
+		</h3>
+		Here are some screenshots of the cloth wireframe from <code class="highlighter-rouge">scene/pinned2.json</code>:
+
+		<div align="middle">
+			<table style="width:100%">
+				<tr align="center">
+					<td>
+						<img src="./Images/Task1/sp24-clothsim-task1-grid1.png" align="middle" width="400px" />
+						<figcaption><code class="highlighter-rouge">pinned2.json</code> close up view</figcaption>
+					</td>
+					<td>
+						<img src="./Images/Task1/sp24-clothsim-task1-grid2.png" align="middle" width="400px" />
+						<figcaption><code class="highlighter-rouge">pinned2.json</code> above view</figcaption>
+					</td>
+				</tr>
+			</table>
+		</div>
+	</div>
+	<br>
+	<div class="bounding-box">
+		<h3>
+			Show us what the wireframe looks like (1) without any shearing constraints, (2) with only shearing
+			constraints, and (3) with all constraints.
+		</h3>
+		<div align="middle">
+			<table style="width:100%">
+				<tr align="center">
+					<td>
+						<img src="./Images/Task1/sp24-clothsim-task1-no-shearing.png" align="middle" />
+						<figcaption><code class="highlighter-rouge">pinned2.json</code> shearing/bending constraints
+						</figcaption>
+					</td>
+					<td>
+						<img src="./Images/Task1/sp24-clothsim-task1-only-shearing.png" align="middle" />
+						<figcaption><code class="highlighter-rouge">pinned2.json</code> only shearing constraints
+						</figcaption>
+					</td>
+					<td>
+						<img src="./Images/Task1/sp24-clothsim-task1-all.png" align="middle" />
+						<figcaption><code class="highlighter-rouge">pinned2.json</code> all constraints</figcaption>
+					</td>
+				</tr>
+			</table>
+		</div>
+	</div>
+	<hr>
+	<br>
+	<h2 align="middle">Section II: Simulation via Numerical Integration</h2>
+	<div class="bounding-box">
+		<h3>
+			Explain how you implemented the numerical integration to simulate the cloth's movement.
+		</h3>
+		<p>
+			To simulate the cloth's movement, I first calculated the total force exerted on each of the <code
+				class="highlighter-rouge">PointMass</code> with the given <code
+				class="highlighter-rouge">external_accelerations</code> vector. Afterwards, I applied the spring
+			correction forces to each of the <code class="highlighter-rouge">PointMass</code> objects using the
+			following equation:
+			$$f_{\vec{a} \rightarrow \vec{b}} = k_s \frac{\vec{b} - \vec{a}}{\|\vec{b} - \vec{a} \|}(\|\vec{b} - \vec{a}
+			\| - l)$$
+			I made sure to check if a particular spring was enabled and disregarded it if it was not. With the total
+			force calculated, I implemented Verlet integration to compute the new location for each of the <code
+				class="highlighter-rouge">PointMass</code> objects using the following equation:
+			$$x_{t + dt} = x_t + (1 - d) \cdot (x_t x_{t - dt}) + a_t \cdot (dt)^2$$
+			where $a_t$ is the total force from before divided by the mass of the <code class="highlighter-rouge">PointMass</code>. $d$ represented the damping factor and was used to slow down the velocity of the cloth because in real life friction and air resistance are forces that oppose the velocity of the cloth. Finally, to ensure that the springs did not stretch more than 10% of their original rest length, I looped through each pair of springs and shifted them towards each other and checked for corner cases when they would be pinned and could not be adjusted.
+		</p>
+	</div>
+	<br>
+	<div class="bounding-box">
+		<h3>
+			Experiment with some the parameters in the simulation. To do so, pause the simulation at the start with
+			<code class="highlighter-rouge">P</code>,
+			modify the values of interest, and then resume by pressing <code class="highlighter-rouge">P</code> again.
+			You can also restart the simulation at any
+			time from the cloth's starting position by pressing <code class="highlighter-rouge">R</code>. Describe the
+			effects of changing the spring constant <code class="higlighter-rouge">ks</code>; how does the cloth behave
+			from start to rest with a very low <code class="higlighter-rouge">ks</code>? A high <code
+				class="highlighter-rouge">ks</code>?
+		</h3>
+		Here are the screenshots of the cloth from <code class="highlighter-rouge">scene/pinned2.json</code> with
+		different <code class="highlighter-rouge">ks</code> values:
+
+		<div align="middle">
+			<table style="width:100%">
+				<tr align="center">
+					<td>
+						<img src="./Images/Task2/sp24-clothsim-pinned2-ks-10.png" align="middle" />
+						<figcaption><code class="highlighter-rouge">pinned2.json</code> with <code
+								class="highlighter-rouge">ks</code> = 10
+						</figcaption>
+					</td>
+					<td>
+						<img src="./Images/Task2/sp24-clothsim-pinned2-ks-100.png" align="middle" />
+						<figcaption><code class="highlighter-rouge">pinned2.json</code> with <code
+								class="highlighter-rouge">ks</code> = 100
+						</figcaption>
+					</td>
+				</tr>
+				<tr>
+					<td>
+						<img src="./Images/Task2/sp24-clothsim-pinned2-ks-5000.png" align="middle" />
+						<figcaption><code class="highlighter-rouge">pinned2.json</code> with <code
+								class="highlighter-rouge">ks</code> = 5000
+						</figcaption>
+					</td>
+					<td>
+						<img src="./Images/Task2/sp24-clothsim-pinned2-ks-10000.png" align="middle" />
+						<figcaption><code class="highlighter-rouge">pinned2.json</code> with <code
+								class="highlighter-rouge">ks</code> = 10000
+						</figcaption>
+					</td>
+				</tr>
+			</table>
+		</div>
+		<br>
+		At a low <code class="highlighter-rouge">ks</code>, the cloth is much more elastic and less rigid and thus
+		throughout the simulation the fabric would stretch easier. As I increased the <code
+			class="highlighter-rouge">ks</code>, the cloth became stiffer and stiffer and less likely to stretch as
+		much. The cloth would also be more likely to rest in a more rigid position as the spring forces would oppose
+		gravity more. There were also fewer wrinkles as the cloth would be less likely to fold.
+	</div>
+	<br>
+	<div class="bounding-box">
+		<h3>
+			What about for <code class="highlighter-rouge">density</code>?
+		</h3>
+		Here are the screenshots of the cloth from <code class="highlighter-rouge">scene/pinned2.json</code> with
+		different <code class="highlighter-rouge">density</code> values:
+
+		<div align="middle">
+			<table style="width:100%">
+				<tr align="center">
+					<td>
+						<img src="./Images/Task2/sp24-clothsim-pinned2-density-15.png" align="middle" />
+						<figcaption><code class="highlighter-rouge">pinned2.json</code> with <code
+								class="highlighter-rouge">density</code> = 15
+						</figcaption>
+					</td>
+					<td>
+						<img src="./Images/Task2/sp24-clothsim-pinned2-density-100.png" align="middle" />
+						<figcaption><code class="highlighter-rouge">pinned2.json</code> with <code
+								class="highlighter-rouge">density</code> = 100
+						</figcaption>
+					</td>
+				</tr>
+				<tr align="center">
+					<td>
+						<img src="./Images/Task2/sp24-clothsim-pinned2-density-1000.png" align="middle" />
+						<figcaption><code class="highlighter-rouge">pinned2.json</code> with <code
+								class="highlighter-rouge">density</code> = 1000
+						</figcaption>
+					</td>
+					<td>
+						<img src="./Images/Task2/sp24-clothsim-pinned2-density-10000.png" align="middle" />
+						<figcaption><code class="highlighter-rouge">pinned2.json</code> with <code
+								class="highlighter-rouge">density</code> = 10000
+						</figcaption>
+					</td>
+				</tr>
+			</table>
+		</div>
+		<br>
+		At a low <code class="highlighter-rouge">density</code>, the cloth acted very similarly to a high <code
+			class="highlighter-rouge">ks</code> value as the cloth was less likely to stretch. The
+		top of the cloth had fewer deformations and wrinkles. Because the volume of the cloth never changed, a lower
+		<code class="highlighter-rouge">density</code> meant that the mass was smaller and so the force of gravity was
+		less likely to deform the cloth. As I increased the <code class="highlighter-rouge">density</code>, the cloth
+		was more likely to stretch and deform as the mass was larger and the force of gravity was higher and could
+		oppose the spring forces more.
+	</div>
+	<br>
+	<div class="bounding-box">
+		<h3>
+			What about for <code class="highlighter-rouge">damping</code>?
+		</h3>
+		Here are some <code class="highlighter-rouge">gifs</code> that illustrate the effects of the <code
+			class="highlighter-rouge">damping</code> parameter on the cloth from <code
+			class="highlighter-rouge">scene/pinned2.json</code>. To view them, please
+		visit <a
+			href="https://cal-cs184-student.github.io/hw-webpages-sp24-ianhdong/hw4/">https://cal-cs184-student.github.io/hw-webpages-sp24-ianhdong/hw4/</a>.
+
+		<div align="middle">
+			<table style="width:100%">
+				<tr align="center">
+					<td>
+						<img src="./Images/Task2/sp24-clothsim-pinned2-damping-0.gif" align="middle" />
+						<figcaption><code class="highlighter-rouge">pinned2.json</code> with <code
+								class="highlighter-rouge">damping</code> = 0
+						</figcaption>
+					</td>
+					<td>
+						<img src="./Images/Task2/sp24-clothsim-pinned2-damping-25.gif" align="middle" />
+						<figcaption><code class="highlighter-rouge">pinned2.json</code> with <code
+								class="highlighter-rouge">damping</code> = 25
+						</figcaption>
+					</td>
+				</tr>
+				<tr>
+					<td>
+						<img src="./Images/Task2/sp24-clothsim-pinned2-damping-50.gif" align="middle" />
+						<figcaption><code class="highlighter-rouge">pinned2.json</code> with <code
+								class="highlighter-rouge">damping</code> = 50
+						</figcaption>
+					</td>
+					<td>
+						<img src="./Images/Task2/sp24-clothsim-pinned2-damping-99.gif" align="middle" />
+						<figcaption><code class="highlighter-rouge">pinned2.json</code> with <code
+								class="highlighter-rouge">damping</code> = 99
+						</figcaption>
+					</td>
+				</tr>
+			</table>
+		</div>
+		<br>
+		Damping is a force that opposes the velocity of the cloth and slows it down. When there was no damping, the
+		cloth would oscillate wildly and did not come to rest. As I increased the damping, the cloth would come to rest
+		and the oscillations would dramatically decrease.
+	</div>
+	<br>
+	<div class="bounding-box">
+		<h3>
+			Show us a screenshot of your shaded cloth from <code class="highlighter-rouge">scene/pinned4.json </code> in
+			its final resting state! If you choose
+			to use different parameters than the default ones, please list them.
+		</h3>
+		Here are the screenshots of the shaded cloth from <code class="highlighter-rouge">scene/pinned4.json</code> in
+		its final resting state for both the wireframe and shaded versions:
+		<div align="middle">
+			<table style="width:100%">
+				<tr align="center">
+					<td>
+						<img src="./Images/Task2/sp24-clothsim-pinned4-wireframe.png" align="middle" />
+						<figcaption><code class="highlighter-rouge">pinned4.json</code> wireframe
+						</figcaption>
+					</td>
+					<td>
+						<img src="./Images/Task2/sp24-clothsim-pinned4-normals.png" align="middle" />
+						<figcaption><code class="highlighter-rouge">pinned4.json</code> normals
+						</figcaption>
+					</td>
+				</tr>
+			</table>
+		</div>
+	</div>
+	<hr>
+	<br>
+	<h2 align="middle">Section III: Handling Collisions with Other Objects</h2>
+	<div class="bounding-box">
+		<h3>
+			<!-- <b> -->
+			Explain how you handled collisions with the sphere and the plane.
+			<!-- </b> -->
+		</h3>
+		<p>
+			In this portion of the homework, I implemented a way to detect cloth collision with outside objects as well.
+			To handle collisions with a sphere, I modified <code class="highlighter-rouge">Sphere::collide</code> and
+			calculated the distance between the sphere's center and the given point mass to see whether it had already
+			intersected within the sphere. If it had, I calculated the penetration depth and moved the point mass out of
+			the sphere along the trajectory had it not collided, lying on the sphere's surface tangent. To handle
+			collisions with a plane, I modified <code class="highlighter-rouge">Plane::collide</code> and calculated to
+			see whether the two positions at the time steps were at opposite side of the plane If it was, I calculated
+			the penetration depth and moved the point mass out of the plane along the trajectory had it not collided,
+			lying on the plane's surface tangent. Finally, for both, we applied the friction and scaled down the
+			correction vector.
+		</p>
+	</div>
+	<br>
+	<div class="bounding-box">
+		<h3>
+			Show us screenshots of your shaded cloth from scene/sphere.json in its final resting state on the sphere
+			using the default <code class="highlighter-rouge">ks</code> = 5000 as well as with 500 and 50000. Describe
+			the differences in the results.
+		</h3>
+		Here are the screenshots of the shaded cloth from <code class="highlighter-rouge">scene/sphere.json</code> with
+		different <code class="highlighter-rouge">ks</code> values in its final resting state on the sphere:
+
+		<div align="middle">
+			<table style="width:100%">
+				<tr align="center">
+					<td>
+						<img src="./Images/Task3/sp24-clothsim-sphere-ks-500.png" align="middle" />
+						<figcaption><code class="highlighter-rouge">sphere.json</code> with <code
+								class="highlighter-rouge">ks</code> = 500
+						</figcaption>
+					</td>
+					<td>
+						<img src="./Images/Task3/sp24-clothsim-sphere-ks-5000.png" align="middle" />
+						<figcaption><code class="highlighter-rouge">sphere.json</code> with <code
+								class="highlighter-rouge">ks</code> = 5000
+						</figcaption>
+					</td>
+					<td>
+						<img src="./Images/Task3/sp24-clothsim-sphere-ks-50000.png" align="middle" />
+						<figcaption><code class="highlighter-rouge">sphere.json</code> with <code
+								class="highlighter-rouge">ks</code> = 50000
+						</figcaption>
+					</td>
+				</tr>
+			</table>
+		</div>
+		<br>
+		<code class="highlighter-rouge">ks</code> represents the stiffness of the spring. As the value of <code
+			class="highlighter-rouge">ks</code> increases, the cloth becomes more rigid and less likely to fully rest on
+		top of the sphere. As shown above, the leftmost image depicts the cloth almost fully resting on top of the
+		sphere and because the springs' corrective forces are weak more points on the sphere fall due to gravity.
+		However, the rightmost image depicts a more dramatic scene where the cloth is much more rigid and less likely to
+		fully rest on top of the sphere as the strong spring forces work to oppose gravity.
+	</div>
+	<br>
+	<div class="bounding-box">
+		<h3>
+			Show us a screenshot of your shaded cloth lying peacefully at rest on the plane. If you haven't by now, feel
+			free to express your colorful creativity with the cloth! (You will need to complete the shaders portion
+			first to show custom colors.)
+		</h3>
+		<p>
+			Here is a screenshot of the shaded cloth lying peacefully at rest on the plane:
+
+		<div align="middle">
+			<table style="width:100%">
+				<tr align="center">
+					<td>
+						<img src="./Images/Task3/sp24-clothsim-plane-collision-at-rest.png" align="middle" />
+						<figcaption> Cloth at rest on the plane
+						</figcaption>
+					</td>
+				</tr>
+			</table>
+		</div>
+		</p>
+	</div>
+	<hr>
+	<br>
+	<h2 align="middle">Section IV: Handling Self-Collisions</h2>
+	<div class="bounding-box">
+		<h3>
+			Explain how you handled self-collisions.
+		</h3>
+		<p>
+			In this portion of the homework, I sped up checking whether two <code
+				class="highlighter-rouge">PointMass</code>es were within <code
+				class="highlighter-rouge">2 * this->thickness</code> by building bounding boxes for each of the <code
+				class="highlighter-rouge">PointMass</code>es and focusing only one spatial locality. For each point, I
+			hashed their location based on the bounding box it was in and stored it into a hash table. To check for
+			collision for a given point, I would the corrective vector to move it away from all of the other points
+			within that hash bucket and averaged it.
+		</p>
+	</div>
+	<br>
+	<div class="bounding-box">
+		<h3>
+			Show us at least 3 screenshots that document how your cloth falls and folds on itself, starting with an
+			early, initial self-collision and ending with the cloth at a more restful state (even if it is still
+			slightly bouncy on the ground).
+		</h3>
+		<p>
+			Here are the screenshots that document how the cloth falls and collides with itself.
+		</p>
+		<div align="middle">
+			<table style="width:100%">
+				<tr align="center">
+					<td>
+						<img src="./Images/Task4/sp24-clothsim-self-collision-1.png" align="middle" />
+						<figcaption>Cloth dropping</figcaption>
+					</td>
+					<td>
+						<img src="./Images/Task4/sp24-clothsim-self-collision-2.png" align="middle" />
+						<figcaption>Initial self-collisions</figcaption>
+					</td>
+				</tr>
+				<tr align="center">
+					<td>
+						<img src="./Images/Task4/sp24-clothsim-self-collision-3.png" align="middle" />
+						<figcaption>More self-collisions</figcaption>
+					</td>
+					<td>
+						<img src="./Images/Task4/sp24-clothsim-self-collision-4.png" align="middle" />
+						<figcaption>Additional self-collisions</figcaption>
+					</td>
+				</tr>
+				<tr align="center">
+					<td>
+						<img src="./Images/Task4/sp24-clothsim-self-collision-5.png" align="middle" />
+						<figcaption>Falling onto ground</figcaption>
+					</td>
+					<td>
+						<img src="./Images/Task4/sp24-clothsim-self-collision-6.png" align="middle" />
+						<figcaption>Restful state</figcaption>
+					</td>
+				</tr>
+			</table>
+		</div>
+	</div>
+	<br>
+	<div class="bounding-box">
+		<h3>
+			Vary the <code class="highlighter-rouge">density</code> as well as <code class="highlighter-rouge">ks</code>
+			and describe with words and screenshots how they affect the behavior of the cloth as it falls on itself.
+		</h3>
+		<p>
+			Here are the screenshots that document how the cloth falls and collides with itself with two different <code
+				class="highlighter-rouge">densities</code>.
+		</p>
+
+		<div align="middle">
+			<table style="width:100%">
+				<tr align="center">
+					<td>
+						<img src="./Images/Task4/sp24-clothsim-self-collision-density-1-1.png" align="middle" />
+						<figcaption>Self-collision 1 for cloth with <code class="highlighter-rouge">density</code> = 1
+						</figcaption>
+					</td>
+					<td>
+						<img src="./Images/Task4/sp24-clothsim-self-collision-density-1-2.png" align="middle" />
+						<figcaption>Self-collision 2 for cloth with <code class="highlighter-rouge">density</code> = 1
+						</figcaption>
+					</td>
+				</tr>
+				<tr align="center">
+					<td>
+						<img src="./Images/Task4/sp24-clothsim-self-collision-density-1-3.png" align="middle" />
+						<figcaption>Self-collision 3 for cloth with <code class="highlighter-rouge">density</code> = 1
+						</figcaption>
+					</td>
+					<td>
+						<img src="./Images/Task4/sp24-clothsim-self-collision-density-1-4.png" align="middle" />
+						<figcaption>Self-collision 4 for cloth with <code class="highlighter-rouge">density</code> = 1
+						</figcaption>
+					</td>
+				</tr>
+			</table>
+		</div>
+		<br>
+		<div align="middle">
+			<table style="width:100%">
+				<tr align="center">
+					<td>
+						<img src="./Images/Task4/sp24-clothsim-self-collision-density-100-1.png" align="middle" />
+						<figcaption>Self-collision 1 for cloth with <code class="highlighter-rouge">density</code> = 100
+						</figcaption>
+					</td>
+					<td>
+						<img src="./Images/Task4/sp24-clothsim-self-collision-density-100-2.png" align="middle" />
+						<figcaption>Self-collision 2 for cloth with <code class="highlighter-rouge">density</code> = 100
+						</figcaption>
+					</td>
+				</tr>
+				<tr align="center">
+					<td>
+						<img src="./Images/Task4/sp24-clothsim-self-collision-density-100-3.png" align="middle" />
+						<figcaption>Self-collision 3 for cloth with <code class="highlighter-rouge">density</code> = 100
+						</figcaption>
+					</td>
+					<td>
+						<img src="./Images/Task4/sp24-clothsim-self-collision-density-100-4.png" align="middle" />
+						<figcaption>Self-collision 4 for cloth with <code class="highlighter-rouge">density</code> = 100
+						</figcaption>
+					</td>
+				</tr>
+			</table>
+		</div>
+		<br>
+		When the density was low, there were a lot fewer and larger wrinkles that had formed over the cloth. As I
+		increased the density, the cloth folded into itself more often and the wrinkles became much smaller in size and
+		the cloth was going to collide with itself more often since it was denser.
+		<br>
+		<p>
+			Here are the screenshots that document how the cloth falls and collides with itself with two different <code
+				class="highlighter-rouge">ks</code> values.
+		</p>
+		<div align="middle">
+			<table style="width:100%">
+				<tr align="center">
+					<td>
+						<img src="./Images/Task4/sp24-clothsim-self-collision-ks-1000-1.png" align="middle" />
+						<figcaption>Self-collision 1 for cloth with <code class="highlighter-rouge">ks</code> = 1000
+						</figcaption>
+					</td>
+					<td>
+						<img src="./Images/Task4/sp24-clothsim-self-collision-ks-1000-2.png" align="middle" />
+						<figcaption>Self-collision 2 for cloth with <code class="highlighter-rouge">ks</code> = 1000
+						</figcaption>
+					</td>
+				</tr>
+				<tr align="center">
+					<td>
+						<img src="./Images/Task4/sp24-clothsim-self-collision-ks-1000-3.png" align="middle" />
+						<figcaption>Self-collision 3 for cloth with <code class="highlighter-rouge">ks</code> = 1000
+						</figcaption>
+					</td>
+					<td>
+						<img src="./Images/Task4/sp24-clothsim-self-collision-ks-1000-4.png" align="middle" />
+						<figcaption>Self-collision 4 for cloth with <code class="highlighter-rouge">ks</code> = 1000
+						</figcaption>
+					</td>
+				</tr>
+			</table>
+		</div>
+		<br>
+		<div align="middle">
+			<table style="width:100%">
+				<tr align="center">
+					<td>
+						<img src="./Images/Task4/sp24-clothsim-self-collision-ks-100000-1.png" align="middle" />
+						<figcaption>Self-collision 1 for cloth with <code class="highlighter-rouge">ks</code> = 100000
+						</figcaption>
+					</td>
+					<td>
+						<img src="./Images/Task4/sp24-clothsim-self-collision-ks-100000-2.png" align="middle" />
+						<figcaption>Self-collision 2 for cloth with <code class="highlighter-rouge">ks</code> = 100000
+						</figcaption>
+					</td>
+				</tr>
+				<tr align="center">
+					<td>
+						<img src="./Images/Task4/sp24-clothsim-self-collision-ks-100000-3.png" align="middle" />
+						<figcaption>Self-collision 3 for cloth with <code class="highlighter-rouge">ks</code> = 100000
+						</figcaption>
+					</td>
+					<td>
+						<img src="./Images/Task4/sp24-clothsim-self-collision-ks-100000-4.png" align="middle" />
+						<figcaption>Self-collision 4 for cloth with <code class="highlighter-rouge">ks</code> = 100000
+						</figcaption>
+					</td>
+				</tr>
+			</table>
+		</div>
+		<br>
+		When the <code class="highlighter-rouge">ks</code> value was low, the cloth was much more likely to collide
+		because each of the springs were less stiff and much more elastic. There were more erratic movements and many
+		small wrinkles throughout the cloth. As I increased the <code class="highlighter-rouge">ks</code> value, the
+		cloth was less likely to collide as it was now much more rigid in structure and could not undergo as much
+		positional change as before.
+	</div>
+	<hr>
+	<br>
+	<h2 align="middle">Section V: Shaders</h2>
+	<div class="bounding-box">
+		<h3>
+			Explain in your own words what is a shader program and how vertex and fragment shaders work together to
+			create lighting and material effects.
+		</h3>
+		<p>
+			A shader program is used to determine how the pixels of an object get rendered, particularly in terms of
+			lighting, color, and texture. A vertex shader will operate on each of the object's vertices and primarily
+			helps manipulate the positions if needed. For example, it will convert between local space coordinates into
+			view space coordinates. They help create animations and the geometric representation
+			within a scene. Once each of the vertices have been processed, the fragment shader will then operate on each
+			of the individual pixels and help determine their color through lighting calculations and material sampling
+			as well as
+			shading intensities. Both shaders together help create the final image that is displayed on the screen.
+		</p>
+	</div>
+	<br>
+	<div class="bounding-box">
+		<h3>
+			Explain the Blinn-Phong shading model in your own words. Show a screenshot of your Blinn-Phong shader
+			outputting only the ambient component, a screen shot only outputting the diffuse component, a screen shot
+			only outputting the specular component, and one using the entire Blinn-Phong model.
+		</h3>
+		The Blinn-Phong shading model is a shading model that is used to simulate the way that light interacts with and
+		object. It consists of 3 different components: ambient, diffuse, and specular. The ambient component is the
+		constant color that is present on the object regardless of the surface's orientation or the light's position.
+		The diffuse component is the color that is reflected uniformly off of the object's surface and gives the object
+		a matte appearance. The intensity of the diffuse component is dependent on the angle between the light source
+		and the surface normal. Finally, the specular component is the shiny highlights reflected off of the glossy
+		surface. it is dependent on the angle between the light source, the surface normal, and the camera and uses a
+		halfway vector between the light direction and viewer direction. The Blinn-Phong model is the sum of all three
+		components and is used to create a
+		more realistic lighting effect.
+		<br>
+		<br>
+		Here are the screenshots of the Blinn-Phong shader outputting the ambient, diffuse, specular, and the entire
+		Blinn-Phong model:
+
+		<div align="middle">
+			<table style="width:100%">
+				<tr align="center">
+					<td>
+						<img src="./Images/Task5/sp24-clothsim-blend-ambient.png" align="middle" />
+						<figcaption>Ambient component</figcaption>
+					</td>
+					<td>
+						<img src="./Images/Task5/sp24-clothsim-blend-lambertian-diffuse.png" align="middle" />
+						<figcaption>Diffuse component</figcaption>
+					</td>
+				</tr>
+				<tr align="center">
+					<td>
+						<img src="./Images/Task5/sp24-clothsim-blend-specular.png" align="middle" />
+						<figcaption>Specular component</figcaption>
+					</td>
+					<td>
+						<img src="./Images/Task5/sp24-clothsim-blend-all.png" align="middle" />
+						<figcaption>Entire Blinn-Phong model</figcaption>
+					</td>
+				</tr>
+			</table>
+		</div>
+	</div>
+	<br>
+	<div class="bounding-box">
+		<h3>
+			Show a screenshot of your texture mapping shader using your own custom texture by modifying the textures in
+			<code class="highlighter-rouge"> /textures/</code>.
+		</h3>
+		Here is a screenshot of the texture mapping shader using my own custom texture:
+
+		<div align="middle">
+			<table style="width:100%">
+				<tr align="center">
+					<td>
+						<img src="./Images/Task5/sp24-clothsim-wolf-fur.png" align="middle" width="400px" />
+						<figcaption>Wolf Fur Texture</figcaption>
+					</td>
+					<td>
+						<img src="./Images/Task5/sp24-clothsim-wolf-fur-texture-mapping.png" align="middle"
+							width="400px" />
+						<figcaption>Wolf Fur Texture Mapping</figcaption>
+					</td>
+				</tr>
+			</table>
+		</div>
+	</div>
+	<br>
+	<div class="bounding-box">
+		<h3>
+			Show a screenshot of bump mapping on the cloth and on the sphere. Show a screenshot of displacement mapping
+			on the sphere. Use the same texture for both renders. You can either provide your own texture or use one of
+			the ones in the textures directory, BUT choose one that's not the default <code
+				class="highlighter-rouge">texture_2.png</code>. Compare the two approaches and resulting renders in your
+			own words. Compare how your the two shaders react to the sphere by changing the sphere mesh's coarseness by
+			using <code class="highlighter-rouge">-o 16 -a 16</code> and then <code
+				class="highlighter-rouge">-o 128 -a 128</code>.
+		</h3>
+		Here are the screenshots of bump mapping on the sphere and on the cloth as well as displacement mapping on the
+		sphere.
+
+		<div align="middle">
+			<table style="width:100%">
+				<tr align="center">
+					<td>
+						<img src="./Images/Task5/sp24-clothsim-bump-mapping-sphere.png" align="middle" />
+						<figcaption>Bump mapping on the sphere</figcaption>
+					</td>
+					<td>
+						<img src="./Images/Task5/sp24-clothsim-bump-mapping-cloth.png" align="middle" />
+						<figcaption>Bump mapping on the cloth</figcaption>
+					</td>
+				</tr>
+				<tr align="center">
+					<td>
+						<img src="./Images/Task5/sp24-clothsim-displacement-mapping-sphere.png" align="middle" />
+						<figcaption>Displacement mapping on the sphere
+						</figcaption>
+					</td>
+				</tr>
+			</table>
+		</div>
+		<br>
+		Both bump mapping and displacement mapping are techniques used to achieve a more realistic texture surface
+		detailing such as adding grooves or wrinkles. Bump mapping, however, achieves this effect by simulating the
+		appearance and altering the way that light interacts with the surface of the object. Darker areas help represent
+		dents while light areas simulate protrusions. On the other hand, displacement mapping that actually changes the
+		geometry of the object as in the <code class="highlighter-rouge">vert</code> file we needed to shift the vertex
+		positions. It will carry information about the height of the surface.
+		<br>
+		<br>
+		Here are the screenshots of the sphere with different coarseness values:
+
+		<div align="middle">
+			<table style="width:100%">
+				<tr align="center">
+					<td>
+						<img src="./Images/Task5/sp24-clothsim-bump-mapping-sphere-coarse-16.png" align="middle" />
+						<figcaption>Bump mapping on the sphere with <code class="highlighter-rouge">-o 16 -a 16</code>
+						</figcaption>
+					</td>
+					<td>
+						<img src="./Images/Task5/sp24-clothsim-bump-mapping-sphere-coarse-128.png" align="middle" />
+						<figcaption>Bump mapping on the sphere with <code class="highlighter-rouge">-o 128 -a 128</code>
+						</figcaption>
+					</td>
+				</tr>
+				<tr align="center">
+					<td>
+						<img src="./Images/Task5/sp24-clothsim-displacement-mapping-sphere-coarse-16.png"
+							align="middle" />
+						<figcaption>Displacement mapping on the sphere with <code
+								class="highlighter-rouge">-o 16 -a 16</code>
+						</figcaption>
+					</td>
+					<td>
+						<img src="./Images/Task5/sp24-clothsim-displacement-mapping-sphere-coarse-128.png"
+							align="middle" />
+						<figcaption>Displacement mapping on the sphere with <code
+								class="highlighter-rouge">-o 128 -a 128</code>
+						</figcaption>
+					</td>
+				</tr>
+			</table>
+		</div>
+		<br>
+		For the bump mapping, the sphere with a coarseness of 16 had a much smoother surface and the grooves were not as
+		pronounced. When it increased to 128, there were much more dents near the top of the sphere and sharp
+		differences under the lighting. For the displacement mapping, the sphere with a coarseness of 16 had a much
+		smoother surface as well when I had zoomed in and the protrusions did not seem so prominent because there are
+		fewer vertices. As I increased to 128, there were edges and detailed grooves that were much more pronounced.
+	</div>
+	<br>
+	<div class="bounding-box">
+		<h3>
+			Show a screenshot of your mirror shader on the cloth and on the sphere.
+		</h3>
+		Here are the screenshots of the mirror shader on the cloth and on the sphere:
+
+		<div align="middle">
+			<table style="width:100%">
+				<tr align="center">
+					<td>
+						<img src="./Images/Task5/sp24-clothsim-mirror-cloth.png" align="middle" />
+						<figcaption>Mirror shader on the cloth</figcaption>
+					</td>
+					<td>
+						<img src="./Images/Task5/sp24-clothsim-mirror-sphere.png" align="middle" />
+						<figcaption>Mirror shader on the sphere</figcaption>
+					</td>
+				</tr>
+			</table>
+		</div>
+	</div>
+	<br>
+	<div class="bounding-box">
+		<h3>
+			Extra Credit: Explain what you did in your custom shader, if you made one.
+		</h3>
+		<p>
+			I decided to build 4 different kind of shaders: a cel shader, a fog shader, a shadow shader, and a
+			transparent shader. For the latter three shaders, I added a plane to the sphere cloth simulation to show the
+			effects more clearly.
+		<ul>
+			<li>
+				I wanted to create similar shading to what I have seen in old cartoons. For this shader, I used the
+				Lambertian diffuse shading and quantized it into different
+				levels by floor modding it to the closest multiple of 0.25 before using this as the shading level for
+				the color intensity. In the images shown below, there
+				are distinct levels and noticeable jumps between the shading.
+			</li>
+			<li>
+				For the second shader, I decided to simulate a fog effect. Pixels farther away would have lower
+				visibility so I found the distance between the camera and the pixel and scaled it down to calculate the
+				visibility score. Then, I mixed the pixel color with the fog factor and scaled
+				the new fog color by the lighting calculated similarly in the Lambertian diffuse shading. In the images
+				shown below, farther pixels from the camera seem to blend in more with the background color and a foggy
+				effect surrounds the bottom of the sphere.
+			</li>
+			<li>
+				I modified my fog shader to create a shadow shader, specifically I changed the alpha variable to
+				indicate how opaque the shadow should be. In the images shown below, the shadow is casted on the plane
+				and the sphere.
+			</li>
+			<li>
+				Finally, I built a transparent shader by modifying my Blinn-Phong shader and changed the opacity of each
+				pixel. By decreasing the alpha value of the output color, I was able to create a transparent effect. In
+				the images shown below, the sphere is transparent and the cloth behind it is visible through it.
+			</li>
+		</ul>
+		</p>
+		<div align="middle">
+			<table style="width:100%">
+				<tr align="center">
+					<td>
+						<img src="./Images/Task5/sp24-clothsim-cel-shader-sphere.png" align="middle" />
+						<figcaption>Cel Shader: Sphere</figcaption>
+					</td>
+					<td>
+						<img src="./Images/Task5/sp24-clothsim-cel-shader-cloth.png" align="middle" />
+						<figcaption>Cel Shader: Cloth</figcaption>
+					</td>
+				</tr>
+
+				<tr align="center">
+					<td>
+						<img src="./Images/Task5/sp24-clothsim-fog-shader-sphere.png" align="middle" />
+						<figcaption>Fog Shader: Sphere on Plane</figcaption>
+					</td>
+					<td>
+						<img src="./Images/Task5/sp24-clothsim-fog-shader-cloth.png" align="middle" />
+						<figcaption>Fog Shader: Cloth on Plane</figcaption>
+					</td>
+				</tr>
+
+				<tr align="center">
+					<td>
+						<img src="./Images/Task5/sp24-clothsim-shadow-shader-sphere.png" align="middle" />
+						<figcaption>Shadow Shader: Sphere on Plane</figcaption>
+					</td>
+					<td>
+						<img src="./Images/Task5/sp24-clothsim-shadow-shader-cloth.png" align="middle" />
+						<figcaption>Shadow Shader: Cloth on Plane</figcaption>
+					</td>
+				</tr>
+
+				<tr align="center">
+					<td>
+						<img src="./Images/Task5/sp24-clothsim-transparent-shader-sphere.png" align="middle" />
+						<figcaption>Transparent Shader: Sphere on Plane</figcaption>
+					</td>
+					<td>
+						<img src="./Images/Task5/sp24-clothsim-transparent-shader-cloth.png" align="middle" />
+						<figcaption>Transparent Shader: Cloth on Plane</figcaption>
+					</td>
+				</tr>
+			</table>
+		</div>
+	</div>
+	<hr>
+	<br>
+	<h2 align="center">Section VI: Extra Credit</h2>
+	<div class="bounding-box">
+		<h3>
+			For this homework, try adding some additional technical features to further improve your cloth simulation!
+		</h3>
+		<p>
+			I decided to simulate wind forces acting upon the cloth and used Perlin noise to generate smooth continuous
+			directional vectors procedurally to represent a coherent flow pattern. First, I researched how to implement
+			Perlin noise
+			through helper C++ libraries as well as the background theory behind it. With the help of this <a
+				href="https://en.wikipedia.org/wiki/Perlin_noise">Wikipedia article</a>, I built my own Perlin noise
+			generator and later I imported in this <a href="https://github.com/daniilsjb/perlin-noise">GitHub
+				repository</a> for further use.
+
+			The final formula for the wind force was <code class="highlighter-rouge">Vector3D(-1, -2, -3)</code> \(\cdot
+			e^{-\text{perlin} \cdot \text{delta_t}}\). Finally, I applied this to every single <code
+				class="highlighter-rouge">PointMass</code> at every time step. Here are a few
+			screenshots of wind acting upon the cloth where the wind acts more strongly towards the bottom. To view the
+			<code class="highlighter-rouge">gif</code>, please
+			visit <a
+				href="https://cal-cs184-student.github.io/hw-webpages-sp24-ianhdong/hw4/">https://cal-cs184-student.github.io/hw-webpages-sp24-ianhdong/hw4/</a>.
+		</p>
+
+		<div align="middle">
+			<table style="width:100%">
+				<tr align="center">
+					<td>
+						<img src="./Images/ExtraCredit/sp24-clothsim-wind-1.png" align="middle" />
+						<figcaption>Wind Simulation Image 1</figcaption>
+					</td>
+					<td>
+						<img src="./Images/ExtraCredit/sp24-clothsim-wind-2.png" align="middle" />
+						<figcaption>Wind Simulation Image 2</figcaption>
+					</td>
+				</tr>
+				<tr align="center">
+					<td>
+						<img src="./Images/ExtraCredit/sp24-clothsim-wind-3.png" align="middle" />
+						<figcaption>Wind Simulation Image 3</figcaption>
+					</td>
+					<td>
+						<img src="./Images/ExtraCredit/sp24-clothsim-wind-4.png" align="middle" />
+						<figcaption>Wind Simulation Image 4</figcaption>
+					</td>
+				</tr>
+			</table>
+		</div>
+		<br>
+
+		<div align="middle">
+			<table style="width:100%">
+				<tr align="center">
+					<td>
+						<img src="./Images/ExtraCredit/wind-simulation.gif" align="middle" />
+						<figcaption>Wind Simulation Gif</figcaption>
+					</td>
+
+				</tr>
+			</table>
+		</div>
+	</div>
+	<hr>
+	<br>
+	<h2 align="center">Credits</h2>
+	<div class="bounding-box">
+		<h3>Here were the resources that I used to help me complete this homework. Special thanks for giving me the
+			starting points and allowing me to build off of them.</h3>
+
+		<ul>
+			<li>
+				Cel Shading Tutorial: <a
+					href="https://www.youtube.com/watch?v=h15kTY3aWaY">https://www.youtube.com/watch?v=h15kTY3aWaY</a>
+			</li>
+			<li>
+				Fog Shading Tutorial: <a
+					href="https://www.youtube.com/watch?v=oQksg57qsRA">https://www.youtube.com/watch?v=oQksg57qsRA</a>
+			</li>
+			<li>
+				Theory Behind Perlin Noise: <a
+					href="https://rtouti.github.io/graphics/perlin-noise-algorithm">https://rtouti.github.io/graphics/perlin-noise-algorithm</a>
+			</li>
+			<li>
+				Perlin Noise Pseudocode: <a
+					href="https://en.wikipedia.org/wiki/Perlin_noise">https://en.wikipedia.org/wiki/Perlin_noise</a>
+			</li>
+			<li>
+				Perlin Noise Generator: <a
+					href="https://github.com/daniilsjb/perlin-noise">https://github.com/daniilsjb/perlin-noise</a>
+			</li>
+		</ul>
+	</div>
+</body>
+
+</html>

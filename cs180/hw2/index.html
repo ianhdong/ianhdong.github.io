@@ -1,0 +1,1043 @@
+<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Strict//EN" "http://www.w3.org/TR/xhtml1/DTD/xhtml1-strict.dtd">
+<html xmlns="http://www.w3.org/1999/xhtml" xml:lang="en" lang="en">
+
+<head>
+	<script src="https://polyfill.io/v3/polyfill.min.js?features=es6"></script>
+	<script id="MathJax-script" async src="https://cdn.jsdelivr.net/npm/mathjax@3/es5/tex-mml-chtml.js"></script>
+	<style>
+		body {
+			padding: 100px;
+			width: 1000px;
+			margin: auto;
+			text-align: left;
+			font-weight: 300;
+			font-family: 'Open Sans', sans-serif;
+			color: #121212;
+			background-color: #f6ead7;
+		}
+
+		.bounding-box {
+			border: 2px solid #ccc;
+			padding: 20px;
+			border-radius: 10px;
+			box-shadow: 0 4px 8px rgba(0, 0, 0, 0.6);
+			/* Updated box-shadow */
+			max-width: 1000px;
+			margin: 0 auto;
+			background-color: #ffffff;
+		}
+
+		h1,
+		h2,
+		h3,
+		h4 {
+			font-family: 'Source Sans Pro', sans-serif;
+		}
+
+		.center {
+			display: flex;
+			justify-content: center;
+			align-items: center;
+			height: 100vh;
+			/* This centers the image vertically */
+		}
+
+		table {
+			width: 100%;
+
+		}
+
+		th,
+		td {
+			border: 3px solid black;
+			padding: 10px;
+			text-align: center;
+			vertical-align: middle;
+		}
+
+		th {
+			background-color: #f2f2f2;
+		}
+
+		hr {
+			border: 0;
+			height: 1px;
+			background-color: black;
+			margin: 20px 0;
+			/* Adjust margin as needed */
+		}
+
+		img {
+			max-width: 100%;
+			height: auto;
+			display: block;
+			margin: 0 auto;
+		}
+
+		figcaption {
+			margin-top: 5px;
+			/* Add some margin above captions */
+		}
+
+		.highlighter-rouge {
+			color: #b00505;
+			background-color: rgb(247, 222, 222);
+			border-radius: 4px;
+			padding: 3px;
+		}
+	</style>
+	<title>CS 184 Mesh Edit</title>
+	<meta http-equiv="content-type" content="text/html; charset=utf-8" />
+	<link href="https://fonts.googleapis.com/css?family=Open+Sans|Source+Sans+Pro" rel="stylesheet">
+
+	<script>
+		MathJax = {
+			tex: {
+				inlineMath: [['$', '$'], ['\\(', '\\)']]
+			}
+		};
+	</script>
+	<script id="MathJax-script" async src="https://cdn.jsdelivr.net/npm/mathjax@3/es5/tex-chtml.js">
+	</script>
+
+</head>
+
+
+<body>
+
+	<h1 align="middle">CS 184: Computer Graphics and Imaging, Spring 2024</h1>
+	<h1 align="middle"><a href="https://cal-cs184-student.github.io/hw-webpages-sp24-ianhdong/hw2/index.html">Homework
+			2: Mesh Edit</a></h1>
+	<h2 align="middle">Ian Dong</h2>
+
+
+	<div class="bounding-box">
+		<h2 align="middle">Overview</h2>
+		<!-- <p> -->
+		In this homework, I explored the world of mesh editing through building Bezier curves and surfaces using the
+		de Casteljau algorithm and implementing various mesh operations such as area-weighted vertex normals, edge
+		flip, edge split, and loop subdivision.
+		<!-- </p> -->
+		<br>
+	</div>
+
+	<h2 align="middle">Section I: Bezier Curves and Surfaces</h2>
+
+	<h3 align="middle">Part 1: Bezier Curves with 1D de Casteljau Subdivision</h3>
+
+	<div class="bounding-box">
+		<b>
+			Briefly explain de Casteljau's algorithm and how you implemented it in order to evaluate Bezier curves.
+		</b>
+		<p>
+		<ul>
+			<li>
+				de Casteljau's Algorithm takes in a set of control points and a parameter <code
+					class="highlighter-rouge">t</code>, a
+				proportion
+				of length along the line and evaluates a
+				Bezier curve by recursively interpolating between each pair of control points. It can repeat this
+				process until the criterion has been met or that the final interpolated point has been calculated.
+				By
+				adjusting this parameter <code class="highlighter-rouge">t</code>, it can find all the points along the
+				curve. I implemented
+				this
+				algorithm by looping through each point and its adjacent point, \(p_i\) and \(p_{i+1}\), and
+				computing the interpolated point \(p_i^{'} = \text{lerp}(p_i, p_{i + 1}, t) = (1 - t) p_i + t p_{i +
+				1}\). After each iteration, there will be one fewer control point than the previous iteration. This
+				process can be repeated until there is only one point left, which would be the final evaluated point.
+			</li>
+		</ul>
+		</p>
+	</div>
+
+	<br>
+
+	<div class="bounding-box">
+		<b>
+			Take a look at the provided <code class="highlighter-rouge">.bzc</code> files and create your own Bezier
+			curve with 6 control
+			points of your choosing. Use this Bezier curve for your screenshots below.
+		</b>
+		<p>
+		<ul>
+
+			<li>
+				Here is a Bezier curve with 6 control points of my choosing:
+				<div align="middle">
+					<table>
+						<tr>
+							<td vertical-align="center">
+								<img src="./Images/Task1/sp24-bezier-task1-curve.png" align="center" width="50%" />
+								<figcaption align="middle">Bezier Curve</figcaption>
+							</td>
+						</tr>
+						<br>
+					</table>
+				</div>
+			</li>
+		</ul>
+		</p>
+	</div>
+	<br>
+	<div class="bounding-box">
+		Show screenshots of each step / level of the evaluation from the original control points down to the final
+		evaluated point. Press <kbd>E</kbd> to step through. Toggle <kbd>C</kbd> to show the completed Bezier curve
+		as well.
+		<p>
+		<ul>
+			<li>
+				Here are the screenshots of each step of the evaluation from the original control points down to the
+				final evaluated point as well as the completed Bezier curve:
+				<div align="middle">
+					<table>
+						<tr>
+							<td vertical-align="center">
+								<img src="./Images/Task1/sp24-bezier-task1-curve.png" align="center" />
+								<figcaption align="middle">Step 0</figcaption>
+							</td>
+							<td vertical-align="center">
+								<img src="./Images/Task1/sp24-bezier-task1-step1.png" align="center" />
+								<figcaption align="middle">Step 1</figcaption>
+							</td>
+						</tr>
+						<tr>
+							<td vertical-align="center">
+								<img src="./Images/Task1/sp24-bezier-task1-step2.png" align="center" />
+								<figcaption align="middle">Step 2</figcaption>
+							</td>
+							<td vertical-align="center">
+								<img src="./Images/Task1/sp24-bezier-task1-step3.png" align="center" />
+								<figcaption align="middle">Step 3</figcaption>
+							</td>
+						</tr>
+						<tr>
+							<td vertical-align="center">
+								<img src="./Images/Task1/sp24-bezier-task1-step4.png" align="center" />
+								<figcaption align="middle">Step 4</figcaption>
+							</td>
+							<td vertical-align="center">
+								<img src="./Images/Task1/sp24-bezier-task1-step5.png" align="center" />
+								<figcaption align="middle">Step 5</figcaption>
+							</td>
+						</tr>
+						<br>
+					</table>
+					<table>
+						<tr>
+							<td vertical-align="center">
+								<img src="./Images/Task1/sp24-bezier-task1-completed.png" align="center" />
+								<figcaption align="middle">Completed Bezier Curve</figcaption>
+							</td>
+						</tr>
+					</table>
+				</div>
+			</li>
+			</p>
+	</div>
+	<br>
+	<div class="bounding-box">
+		Show a screenshot of a slightly different Bezier curve by moving the original control points around and
+		modifying the parameter \(t\) via mouse scrolling.
+		<p>
+		<ul>
+			<li>
+				I had shifted \(t\) to a higher value which meant that the curve was more towards the right. I also
+				moved the control points around to create a different curve. Here is a screenshot of a slightly
+				different Bezier curve by moving the original control points around
+				and modifying the parameter \(t\) via mouse scrolling:
+				<div align="middle">
+					<table>
+						<tr>
+							<td vertical-align="center">
+								<img src="./Images/Task1/sp24-bezier-task1-completed.png" align="center" />
+								<figcaption align="middle">Original Completed Bezier Curve</figcaption>
+							</td>
+							<td vertical-align="center">
+								<img src="./Images/Task1/sp24-bezier-task1-modified.png" align="center" />
+								<figcaption align="middle">Modified Completed Bezier Curve</figcaption>
+							</td>
+						</tr>
+						<br>
+					</table>
+				</div>
+			</li>
+		</ul>
+		</p>
+	</div>
+	<br>
+
+
+	<h3 align="middle">Part 2: Bezier Surfaces with Separable 1D de Casteljau</h3>
+	<div class="bounding-box">
+		Briefly explain how de Casteljau algorithm extends to Bezier surfaces and how you implemented it in order to
+		evaluate Bezier surfaces.
+		<p>
+		<ul>
+			<li>
+				A 3D Bezier surface is an \(n \times n\) grid of control points where there are \(n\) parallel
+				Bezier
+				curves in \(u\). The separable 1D de Casteljau's algorithm can evaluate the surface position
+				corresponding to \(u, v\) along an axis \(x\) and an orthogonal axis \(y\). This algorithm extends
+				by
+				first finding the final interpolated point \(u\) at each of these \(n\) Bezier curves. Each of these
+				points combined will help make up a new set of \(n\) control points for the "moving" Bezier curve.
+				Finally, the 1D de
+				Casteljau's algorithm can evaluate \(v\) on this final curve. I implemented this algorithm by
+				first evaluating the \(n\) parallel Bezier curves in \(u\) and storing them into a new
+				<code class="highlighter-rouge">vector</code>. The resulting \(n\) points became my next set of control
+				pointers for another
+				Bezier curve in \(v\). This process repeats until the final point is
+				evaluated.
+			</li>
+		</ul>
+		</p>
+	</div>
+	<br>
+	<div class="bounding-box">
+		Show a screenshot of <code class="highlighter-rouge">bez/teapot.bez</code> (not <code
+			class="highlighter-rouge">dae</code>) evaluated by your implementation.
+		<p>
+		<ul>
+			<li>
+				Here is a screenshot of <code class="highlighter-rouge">bez/teapot.bez</code> evaluated by my
+				implementation of the Bezier
+				surface:
+				<div align="middle">
+					<table>
+						<tr>
+							<td vertical-align="center">
+								<img src="./Images/Task2/sp24-bezier-task2-teapot.png" align="center" />
+								<figcaption align="middle">Bezier Surface of a Teapot</figcaption>
+							</td>
+						</tr>
+						<br>
+					</table>
+				</div>
+			</li>
+		</ul>
+		</p>
+	</div>
+
+	<br>
+	<hr><br>
+
+
+	<h2 align="middle">Section II: Triangle Meshes and Half-Edge Data Structure</h2>
+
+	<h3 align="middle">Part 3: Area-Weighted Vertex Normals</h3>
+	<div class="bounding-box">
+		Briefly explain how you implemented the area-weighted vertex normals.
+		<p>
+		<ul>
+			<li>
+				I implemented the area-weighted vertex normals by making a constant iterator of the half-edge data
+				structure to traverse over all of the
+				neighboring triangles and weighting each one by its area. I defined a <code
+					class="highlighter-rouge">find_area</code>
+				function
+				that used the cross product formula of the vertices to find the area of the triangle.
+				Here are the
+				formal steps I took to
+				implement the area-weighted vertex normals:
+				<ol>
+					<li>
+						I initialized an empty <code class="highlighter-rouge">Vertex3D vertex</code> to keep track of
+						the weighted vertex.
+					</li>
+					<li>
+						I found the starting half-edge and used a <code class="highlighter-rouge">do-while</code> loop
+						to traverse through all
+						the
+						triangles and stopping once we reached the original initial half-edge.
+					</li>
+					<li>
+						For each triangle, I calculated the area of the triangle using the cross product formula.
+						This
+						function found all three vertices of the triangle by using the <code
+							class="highlighter-rouge">next</code> and
+						<code class="highlighter-rogue">vertex</code> methods. I then found the difference vectors and
+						took the cross product
+						before normalizing the result and dividing by 2 because the area of a triangle is half the
+						area
+						of the parallelogram formed by the vectors.
+					</li>
+					<li>
+						I used this calculated area to weight the normal of the triangle and added it to the
+						weighted
+						vertex from earlier.
+					</li>
+					<li>
+						I called on the <code class="highlighter-rouge">twin().next()</code> to find the next half-edge
+						and face.
+					</li>
+					<li>
+						Finally, once all of the half-edges have been traversed, I normalized the weighted vertex by
+						calling <code class="highlighter-rouge">unit()</code> on it.
+					</li>
+				</ol>
+			</li>
+		</ul>
+		</p>
+	</div>
+	<br>
+	<div class="bounding-box">
+		Show screenshots of <code class="highlighter-rouge">dae/teapot.dae</code> (not <code>.bez</code>) comparing
+		teapot shading with and
+		without vertex normals. Use <kbd>Q</kbd> to toggle default flat shading and Phong shading.
+		<ul>
+			<li>
+				Here are some screenshots of <code class="highlighter-rouge">dae/teapot.dae</code> shading with and
+				without vertex normals:
+				<div align="middle">
+					<table>
+						<tr>
+							<td vertical-align="center">
+								<img src="./Images/Task3/sp24-bezier-task3-default.png" align="center" />
+								<figcaption align="middle">Mesh without Vertex Normals</figcaption>
+							</td>
+							<td vertical-align="center">
+								<img src="./Images/Task3/sp24-bezier-task3-phong.png" align="center" />
+								<figcaption align="middle">Mesh with Phong Shading</figcaption>
+							</td>
+						</tr>
+						<tr>
+							<td vertical-align="center">
+								<img src="./Images/Task3/sp24-bezier-task3-no-mesh-default.png" align="center" />
+								<figcaption align="middle">No Mesh without Vertex Normals</figcaption>
+							</td>
+							<td vertical-align="center">
+								<img src="./Images/Task3/sp24-bezier-task3-no-mesh-phong.png" align="center" />
+								<figcaption align="middle">No Mesh with Phong Shading</figcaption>
+							</td>
+						</tr>
+						<br>
+					</table>
+				</div>
+			</li>
+		</ul>
+		</p>
+	</div>
+
+	<br>
+
+	<h3 align="middle">Part 4: Edge Flip</h3>
+
+	<div class="bounding-box">
+		Briefly explain how you implemented the edge flip operation and describe any interesting implementation /
+		debugging tricks you have used.
+		<p>
+		<ul>
+			<li>
+				I first started by creating a diagram of each of the half-edges, edges, vertices and faces before
+				and
+				after the flip to ensure that the pointers would be correct. Here is the diagram shown below:
+				<div align="middle">
+					<table>
+						<tr>
+							<td vertical-align="center">
+								<img src="./Images/Task4/sp24-bezier-task4-flip-diagram.jpg" align="center"
+									width="75%" />
+								<figcaption align="middle">Before and After Flip Diagram</figcaption>
+							</td>
+						</tr>
+						<br>
+					</table>
+				</div>
+			</li>
+			<li>
+				Here are the formal steps I took to implement the edge flip operation:
+				<ol>
+					<li>
+						First, I checked if <code class="highlighter-rouge">e0->isBoundary()</code> was <code
+							class="highlighter-rouge">true</code> to make sure to
+						never
+						flip a boundary edge and simply returned if it was.
+					</li>
+					<li>
+						Then, I defined the inner and outer half-edges of the two triangles using the
+						<code class="highlighter-rouge">twin()</code> and <code class="highlighter-rouge">next()</code>
+						methods. Each of these half-edges corresponded
+						to
+						the 10 half-edges, <code class="highlighter-rouge">h0 ... h9</code>, as shown in the diagram
+						above.
+					</li>
+					<li>
+						Next, I defined the vertices of the two triangles using the <code
+							class="highlighter-rouge">vertex()</code> method on
+						the
+						appropriate half-edge. Each of these vertices corresponded to the 4 vertices,
+						<code class="highlighter-rouge">v0 ... v3</code>, as shown in the diagram above.
+					</li>
+					<li>
+						Afterwards, I defined the edges and faces of the two triangles using the <code
+							class="highlighter-rouge">edge()</code>
+						and
+						<code class="highlighter-rouge">face()</code> methods on the appropriate half-edge. Each of
+						these edges and faces
+						corresponded to the 5 edges, <code class="highlighter-rouge">e0 ... e4</code>, and 2 faces,
+						<code class="highlighter-rouge">f0, f1</code>, as
+						shown
+						in
+						the diagram above.
+					</li>
+					<li>
+						Then, I updated each of the 10 half-edge pointers using the <code
+							class="highlighter-rouge">setNeighbors()</code>
+						method
+						according to the diagram above.
+					</li>
+					<li>
+						Finally, I reassigned the half-edge pointers for each of the 4 vertices, 5 edges, and 2
+						faces
+						according to the diagram above and returned the newly updated <code
+							class="highlighter-rouge">e0</code>.
+					</li>
+				</ol>
+				Some tricks I used was to follow my diagram very closely and checking which pointers I was passing
+				into
+				my functions as well as using the additional debugging utilities provided in the spec.
+			</li>
+		</ul>
+		</p>
+	</div>
+	<br>
+
+	<p>
+	<div class="bounding-box">
+		Show screenshots of the teapot before and after some edge flips.
+		<ul>
+			<li>
+				Here are some screenshots of <code>dae/teapot.dae</code> before and after some edge flips.
+				<div align="middle">
+					<table>
+						<tr>
+							<td vertical-align="center">
+								<img src="./Images/Task4/sp24-bezier-task4-before-flip.png" align="center" />
+								<figcaption align="middle">Before Edge Flips</figcaption>
+							</td>
+							<td vertical-align="center">
+								<img src="./Images/Task4/sp24-bezier-task4-after-flip.png" align="center" />
+								<figcaption align="middle">After Edge Flips</figcaption>
+							</td>
+						</tr>
+						<br>
+					</table>
+				</div>
+			</li>
+		</ul>
+		</p>
+	</div>
+
+	<br>
+
+	<div class="bounding-box">
+		Write about your eventful debugging journey, if you have experienced one.
+		<p>
+		<ul>
+			<li>
+				In the process of implementing the edge flip operation, I ran into some issues where the mesh would
+				look
+				a bit distorted and that edges would disappear after the flip. I realized that in my diagram of the
+				half-edge data structure, I had not taken into account the half-edge pointers for the edges on the
+				outside of the current mesh element. As a result, I went back to my implementation and made sure to
+				redraw the half-edge data structure to include the outer edges and vertices and correctly updated
+				the
+				pointers. Afterwards, the mesh looked much better after each of the edge flips.
+			</li>
+			<li>
+				Here is the incorrect half-edge flip:
+			</li>
+			<div align="middle">
+				<table>
+					<tr>
+						<td vertical-align="center">
+							<img src="./Images/Task4/sp24-bezier-task4-incorrect.png" align="center" />
+							<figcaption align="middle">Incorrect Edge Flip: Edge Disappearance</figcaption>
+						</td>
+					</tr>
+					<br>
+				</table>
+		</ul>
+		</p>
+		<br>
+	</div>
+	<br>
+	<h3 align="middle">Part 5: Edge Split</h3>
+	<div class="bounding-box">
+		Briefly explain how you implemented the edge split operation and describe any interesting implementation
+		/
+		debugging tricks you have used.
+		<p>
+		<ul>
+			<li>
+				I first started by creating a diagram of each of the half-edges, edges, vertices and faces before
+				and
+				after the flip to ensure that the pointers would be correct. I color coded with red being the new
+				half-edges, edges, vertices, and faces created and black being the older counterparts. Here is the
+				diagram shown below:
+				<div align="middle">
+					<table>
+						<tr>
+							<td vertical-align="center">
+								<img src="./Images/Task5/sp24-bezier-task5-split-diagram.jpg" align="center" />
+								<figcaption align="middle">Before and After Split Diagram</figcaption>
+							</td>
+						</tr>
+						<br>
+					</table>
+				</div>
+			</li>
+			<li>
+				Here are the formal steps I took to implement the edge split operation.
+				<ol>
+					<li>
+						First, I checked if <code class="highlighter-rouge">e0->isBoundary()</code> was <code
+							class="highlighter-rouge">true</code> to make sure to not
+						split a boundary edge and simply returned if it was.
+					</li>
+					<li>
+						Then, I defined the inner and outer half-edges of the two triangles using the
+						<code class="highlighter-rouge">twin()</code> and <code class="highlighter-rouge">next()</code>
+						methods. Each of these half-edges corresponded
+						to
+						the 10 half-edges, <code class="highlighter-rouge">h0 ... h9</code>, as shown in the diagram
+						above.
+					</li>
+					<li>
+						Next, I defined the vertices of the two triangles using the <code
+							class="highlighter-rouge">vertex()</code> method on
+						the
+						appropriate half-edge. Each of these vertices corresponded to the 4 vertices,
+						<code class="highlighter-rouge">v0 ... v3</code>, as shown in the diagram above.
+					</li>
+					<li>
+						Afterwards, I defined the edges and faces of the two triangles using the <code
+							class="highlighter-rouge">edge()</code>
+						and
+						<code class="highlighter-rouge">face()</code> methods on the appropriate half-edge. Each of
+						these edges and faces
+						corresponded to the 5 edges, <code class="highlighter-rouge">e0 ... e4</code>, and 2 faces,
+						<code class="highlighter-rouge">f0, f1</code>, as
+						shown
+						in
+						the diagram above.
+					</li>
+					<li>
+						In addition, I created 6 new half-edges, 3 new edges, 1 new vertex, and 2 new faces. The new
+						vertex is defined as the center of the edge that is being split while the 2 new faces are
+						the 2 bottom triangles that are created from the split.
+					</li>
+					<li>
+						Then, I updated each of the 16 half-edge pointers using the <code
+							class="highlighter-rouge">setNeighbors()</code>
+						method
+						according to the diagram above.
+					</li>
+					<li>
+						Finally, I reassigned the half-edge pointers for each of the 5 vertices, 8 edges, and 4
+						faces
+						according to the diagram above and returned the newly updated <code
+							class="highlighter-rouge">e0</code>.
+					</li>
+				</ol>
+				Some tricks I used was to follow my diagram very closely and checking which pointers I was passing
+				into
+				my functions as well as using the additional debugging utilities provided in the spec.
+			</li>
+		</ul>
+		</p>
+	</div>
+
+	<br>
+
+	<div class="bounding-box">
+		Show screenshots of a mesh before and after some edge splits.
+		<p>
+		<ul>
+			<li>
+				Here are some screenshots of <code class="highlighter-rouge">dae/teapot.dae</code> before and after some
+				edge flips.
+				<div align="middle">
+					<table>
+						<tr>
+							<td vertical-align="center">
+								<img src="./Images/Task4/sp24-bezier-task4-before-flip.png" align="center" />
+								<figcaption align="middle">Before Edge Splits</figcaption>
+							</td>
+							<td vertical-align="center">
+								<img src="./Images/Task5/sp24-bezier-task5-after-split.png" align="center" />
+								<figcaption align="middle">After Edge Splits</figcaption>
+							</td>
+						</tr>
+						<br>
+					</table>
+				</div>
+			</li>
+		</ul>
+		</p>
+	</div>
+	<br>
+
+	<div class="bounding-box">
+		Show screenshots of a mesh before and after a combination of both edge splits and edge flips.
+		<p>
+		<ul>
+			<li>
+				Here are some screenshots of <code class="highlighter-rouge">dae/teapot.dae</code> before and after some
+				edge flips.
+				<div align="middle">
+					<table>
+						<tr>
+							<td vertical-align="center">
+								<img src="./Images/Task4/sp24-bezier-task4-before-flip.png" align="center" />
+								<figcaption align="middle">Before Edge Flips and Splits</figcaption>
+							</td>
+							<td vertical-align="center">
+								<img src="./Images/Task5/sp24-bezier-task5-after-flip-split.png" align="center" />
+								<figcaption align="middle">After Edge Flips and Splits</figcaption>
+							</td>
+						</tr>
+						<br>
+					</table>
+				</div>
+			</li>
+		</ul>
+		</p>
+	</div>
+	<br>
+
+	<div class="bounding-box">
+		Write about your eventful debugging journey, if you have experienced one.
+		<p>
+		<ul>
+			<li>
+				Learning from my mistakes, I made sure to draw the diagram correctly and to follow it very closely
+				when I was assigning the pointers for each half-edge and the other edges, vertices, and faces. The
+				only issue I ran into was that sometimes when I clicked on an edge or vertex the program would crash
+				and this was because of a segmentation fault. After a while of debugging by rereading my code and my
+				diagram, I realized I had forgot to set on the edge and vertex pointers for the newly updated ones.
+				Then another issue occurred where one of the triangles would turn black and after debugging for a
+				bit I realized I had set the incorrect vertex for one of the newly created half-edge.
+			</li>
+			<li>
+				Here is the incorrect half-edge split:
+				<div align="middle">
+					<table>
+						<tr>
+							<td vertical-align="center">
+								<img src="./Images/Task5/sp24-bezier-task5-incorrect.png" align="center" />
+								<figcaption align="middle">Incorrect Edge Split: Black Triangle</figcaption>
+							</td>
+						</tr>
+						<br>
+					</table>
+
+			</li>
+		</ul>
+		<p>
+	</div>
+
+	<br>
+
+	<div class="bounding-box">
+		Extra Credit: If you have implemented support for boundary edges, show screenshots of your implementation
+		properly
+		handling split operations on boundary edges.
+		<p>
+		<ul>
+			<li>
+				Here are some screenshots of the <code class="highlighter-rouge">dae/beetle.dae</code> that depict
+				before and after splitting the boundary edges:
+				<div align="middle">
+					<table>
+						<tr>
+							<td vertical-align="center">
+								<img src="./Images/Task5/sp24-bezier-task5-boundary-split-before.png" align="center" />
+								<figcaption align="middle">Before Boundary Edge Split</figcaption>
+							</td>
+							<td vertical-align="center">
+								<img src="./Images/Task5/sp24-bezier-task5-boundary-split-after.png" align="center" />
+								<figcaption align="middle">After Boundary Edge Split</figcaption>
+							</td>
+						</tr>
+						<br>
+					</table>
+				</div>
+			</li>
+		</ul>
+		</p>
+	</div>
+	<br>
+
+
+	<h3 align="middle">Part 6: Loop Subdivision for Mesh Upsampling</h3>
+	<div class="bounding-box">
+		Briefly explain how you implemented the loop subdivision and describe any interesting implementation /
+		debugging tricks you have used.
+
+		<p>
+			I decided to follow the order of operations as described in the spec. Here are the formal steps I took
+			to implement the loop subdivision:
+		<ol>
+			<li>
+				First, I iterated through all of the vertices in mesh using a <code class="highlighter-rouge">for</code>
+				loop over the
+				<code>mesh.verticesBegin()</code> and <code class="highlighter-rouge">mesh.verticesEnd()</code>
+				iterators. For each vertex, I
+				found all of the neighbors that were connected to it and then computed the new position by weighting
+				it as the sum following the formula from lecture. I then set the <code
+					class="highlighter-rouge">vertex->newPosition</code> to
+				this weighted position and the <code class="highlighter-rouge">vertex->isNew</code> to <code
+					class="highlighter-rouge">false</code> because this was not
+				a newly created vertex.
+			</li>
+			<li>
+				Next, I iterated through all of the edges in the mesh using a <code class="highlighter-rouge">for</code>
+				loop over the
+				<code class="highlighter-rouge">mesh.EdgesBegin()</code> and <code
+					class="highlighter-rouge">mesh.EdgesEnd()</code> iterators. For each edge, I found
+				the vertex and face that it was connected to and then computed the new position by weighting it as
+				the sum following the formula from lecture. I then set the <code
+					class="highlighter-rouge">e->newPosition</code> to this
+				weighted position and the <code class="highlighter-rouge">e->isNew</code> to <code
+					class="highlighter-rouge">false</code> because this was not a newly
+				created edge.
+			</li>
+			<li>
+				Then, I iterated through all of these edges in the original mesh again in order to split each of
+				them and updated their position to be that of the previously computed new position stored in the
+				edge.
+			</li>
+			<li>
+				Afterwards, I iterated through all the edges in the mesh and flipped any of the newly created edges
+				that connected an old and new vertex.
+			</li>
+			<li>
+				Finally, I iterated through all of the vertices to set their position to the previously computed new
+				position stored in the vertex.
+			</li>
+		</ol>
+		</p>
+	</div>
+
+	<br>
+
+
+	<div class="bounding-box">
+		Take some notes, as well as some screenshots, of your observations on how meshes behave after loop
+		subdivision. What happens to sharp corners and edges? Can you reduce this effect by pre-splitting some
+		edges?
+		<p>
+		<ul>
+			<li>
+				Here are some screenshots of applying subdivision to the icosehedron mesh:
+				<div align="middle">
+					<table>
+						<tr>
+							<td vertical-align="center">
+								<img src="./Images/Task6/sp24-bezier-task6-upsample-0.png" align="center" />
+								<figcaption align="middle">Original Icosehedron Mesh</figcaption>
+							</td>
+							<td vertical-align="center">
+								<img src="./Images/Task6/sp24-bezier-task6-upsample-1.png" align="center" />
+								<figcaption align="middle">Icosehedron Mesh Upsampled 1 Time</figcaption>
+							</td>
+						</tr>
+						<tr>
+							<td vertical-align="center">
+								<img src="./Images/Task6/sp24-bezier-task6-upsample-2.png" align="center" />
+								<figcaption align="middle">Icosehedron Mesh Upsampled 2 Times</figcaption>
+							</td>
+							<td vertical-align="center">
+								<img src="./Images/Task6/sp24-bezier-task6-upsample-3.png" align="center" />
+								<figcaption align="middle">Icosehedron Mesh Upsampled 3 Times</figcaption>
+							</td>
+						</tr>
+						<tr>
+							<td vertical-align="center">
+								<img src="./Images/Task6/sp24-bezier-task6-upsample-4.png" align="center" />
+								<figcaption align="middle">Icosehedron Mesh Upsampled 4 Times</figcaption>
+							</td>
+							<td vertical-align="center">
+								<img src="./Images/Task6/sp24-bezier-task6-upsample-5.png" align="center" />
+								<figcaption align="middle">Icosehedron Mesh Upsampled 5 Times</figcaption>
+							</td>
+						</tr>
+						<br>
+					</table>
+				</div>
+			</li>
+			<li>
+				I realized that the mesh subdivision was very similar the HW 1's supersampling to reduce aliasing
+				and jaggies. The above meshes showed an analogous effect where after each subdivision performance
+				the mesh would become smoother and more rounded. The sharp corners and edges would become less
+				pronounced and the mesh would become more rounded. I realized that this effect could be reduced by
+				pre-splitting some edges because the edge splits will create new vertices which will be used to
+				update the positions of the existing vertices diagrammed in the implementation of the loop
+				subdivision. Afterwards, each vertex has a higher degrees so the distorting effect when the mesh is
+				upsampled will be reduced. Thus, the new vertices will be located at the corners of the mesh while
+				the existing vertices will be located at the center of the mesh and will lead to a more rounded mesh
+				but preserved corners and edges.
+			</li>
+		</ul>
+		</p>
+	</div>
+
+	<br>
+
+
+	<div class="bounding-box">
+		Load dae/cube.dae. Perform several iterations of loop subdivision on the cube. Notice that the cube
+		becomes
+		slightly asymmetric after repeated subdivisions. Can you pre-process the cube with edge flips and splits
+		so
+		that the cube subdivides symmetrically? Document these effects and explain why they occur. Also explain
+		how
+		your pre-processing helps alleviate the effects.
+
+		<p>
+		<ul>
+			<li>
+				Here are some screenshots of applying subdivision to the cube mesh:
+				<div align="middle">
+					<table>
+						<tr>
+							<td vertical-align="center">
+								<img src="./Images/Task6/sp24-bezier-task6-asymmetric-cube-0.png" align="center" />
+								<figcaption align="middle">Original Cube Mesh</figcaption>
+							</td>
+							<td vertical-align="center">
+								<img src="./Images/Task6/sp24-bezier-task6-asymmetric-cube-1.png" align="center" />
+								<figcaption align="middle">Cube Mesh Upsampled 1 Time</figcaption>
+							</td>
+						</tr>
+						<tr>
+							<td vertical-align="center">
+								<img src="./Images/Task6/sp24-bezier-task6-asymmetric-cube-2.png" align="center" />
+								<figcaption align="middle">Cube Mesh Upsampled 2 Times</figcaption>
+							</td>
+							<td vertical-align="center">
+								<img src="./Images/Task6/sp24-bezier-task6-asymmetric-cube-3.png" align="center" />
+								<figcaption align="middle">Cube Mesh Upsampled 3 Times</figcaption>
+							</td>
+						</tr>
+						<tr>
+							<td vertical-align="center">
+								<img src="./Images/Task6/sp24-bezier-task6-asymmetric-cube-4.png" align="center" />
+								<figcaption align="middle">Cube Mesh Upsampled 4 Times</figcaption>
+							</td>
+							<td vertical-align="center">
+								<img src="./Images/Task6/sp24-bezier-task6-asymmetric-cube-5.png" align="center" />
+								<figcaption align="middle">Cube Mesh Upsampled 5 Times</figcaption>
+							</td>
+						</tr>
+						<br>
+					</table>
+				</div>
+			</li>
+			<li>
+				The asymmetery of the cube occurs because of the asymmetric original mesh. Before, the cube mesh has
+				a single mesh edge that is shared by 2 of the vertices. Since the vertices are updated based on the
+				weighting of the neighbors, the 2 connected ones will remain closer to their original positions and
+				thus the cube looks stretched along the diagonal that is not originally connected.
+			</li>
+			<li>
+				Here are some screenshots of applying subdivision to the cube mesh after pre-processing:
+				<div align="middle">
+					<table>
+						<tr>
+							<td vertical-align="center">
+								<img src="./Images/Task6/sp24-bezier-task6-symmetric-cube-0.png" align="center" />
+								<figcaption align="middle">Preprocessed Cube Mesh</figcaption>
+							</td>
+							<td vertical-align="center">
+								<img src="./Images/Task6/sp24-bezier-task6-symmetric-cube-1.png" align="center" />
+								<figcaption align="middle">Symmetric Cube Mesh Upsampled 1 Time</figcaption>
+							</td>
+						</tr>
+						<tr>
+							<td vertical-align="center">
+								<img src="./Images/Task6/sp24-bezier-task6-symmetric-cube-2.png" align="center" />
+								<figcaption align="middle">Symmetric Cube Mesh Upsampled 2 Times</figcaption>
+							</td>
+							<td vertical-align="center">
+								<img src="./Images/Task6/sp24-bezier-task6-symmetric-cube-3.png" align="center" />
+								<figcaption align="middle">Symmetric Cube Mesh Upsampled 3 Times</figcaption>
+							</td>
+						</tr>
+						<tr>
+							<td vertical-align="center">
+								<img src="./Images/Task6/sp24-bezier-task6-symmetric-cube-4.png" align="center" />
+								<figcaption align="middle">Symmetric Cube Mesh Upsampled 4 Times</figcaption>
+							</td>
+							<td vertical-align="center">
+								<img src="./Images/Task6/sp24-bezier-task6-symmetric-cube-5.png" align="center" />
+								<figcaption align="middle">Symmetric Cube Mesh Upsampled 5 Times</figcaption>
+							</td>
+						</tr>
+						<br>
+					</table>
+				</div>
+			</li>
+			<li>
+				Thus, to make sure that each vertex has the same degree, I preprocessed the
+				cube by splitting the diagonal edge on every single face. This alleviates the asymmetric effect
+				because each vertex will be weighted equally when it is calculating the new vertex position as the
+				mesh is being upsampled. I did not need to flip nor split any edges after the mesh is upsampled and
+				thus is a valid preprocessing.
+			</li>
+		</ul>
+		</p>
+	</div>
+	<br>
+
+
+	<div class="bounding-box">
+		If you have implemented any extra credit extensions, explain what you did and document how they work
+		with
+		screenshots.
+		<p>
+			I did not implement any extra credit extensions.
+		</p>
+	</div>
+	<br>
+
+
+	<!-- <h3 align="middle">Part 7 (Optional, Possible Extra Credit)</h3> -->
+	<!-- <b>
+			Save your best polygon mesh as partsevenmodel.dae in your docs folder and show us a screenshot of the
+			mesh
+			in your write-up.
+		</b>
+		<p>
+			YOUR RESPONSE GOES HERE
+		</p>
+		<br>
+
+
+		<b>
+			Include a series of screenshots showing your original mesh and your mesh after one and two rounds of
+			subdivision. If you have used custom shaders, include screenshots of your mesh with those shaders
+			applied as
+			well.
+		</b>
+		<p>
+			YOUR RESPONSE GOES HERE
+		</p>
+		<br>
+
+
+		<b>
+			Describe what you have done to enhance your mesh beyond the simple humanoid mesh described in the
+			tutorial.
+		</b>
+		<p>
+			YOUR RESPONSE GOES HERE
+		</p> -->
+	<br>
+
+
+</body>
+
+</html>
