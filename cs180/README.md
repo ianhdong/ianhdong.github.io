@@ -1,6 +1,6 @@
 # CS180 Homework Webpage Repo
 
-The goal of this repo is to provide a template from which students can host CS184/284A homework writeups. 
+The goal of this repo is to provide a template from which students can host CS180 homework writeups. 
 
 ## Enabling Github Pages
 
@@ -8,4 +8,4 @@ To enable Github pages, go to the 'Settings' tab then click on 'Pages'. Under 'B
 
 ## Adding Homework Webpages
 
-There are 4 folders, one for each homework. Each contains an index.html file. When the links from the mainpage are clicked, these files will be loaded, so edit these to add your homework webpages.
+There are 5 folders, one for each project. Each contains an index.html file. When the links from the mainpage are clicked, these files will be loaded, so edit these to add your homework webpages.

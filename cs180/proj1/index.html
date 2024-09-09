@@ -1,0 +1,947 @@
+<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Strict//EN" "http://www.w3.org/TR/xhtml1/DTD/xhtml1-strict.dtd">
+<html xmlns="http://www.w3.org/1999/xhtml" xml:lang="en" lang="en">
+
+<head>
+  <script src="https://polyfill.io/v3/polyfill.min.js?features=es6"></script>
+  <script id="MathJax-script" async src="https://cdn.jsdelivr.net/npm/mathjax@3/es5/tex-mml-chtml.js"></script>
+  <style>
+    body {
+      padding: 100px;
+      width: 1000px;
+      margin: auto;
+      text-align: left;
+      font-weight: 300;
+      font-family: 'Open Sans', sans-serif;
+      color: #121212;
+      background-color: #f6ead7;
+    }
+
+    .bounding-box {
+      border: 2px solid #ccc;
+      padding: 20px;
+      border-radius: 10px;
+      box-shadow: 0 4px 8px rgba(0, 0, 0, 0.6);
+      /* Updated box-shadow */
+      max-width: 1000px;
+      margin: 0 auto;
+      background-color: #ffffff;
+    }
+
+    h1,
+    h2,
+    h3,
+    h4 {
+      font-family: 'Source Sans Pro', sans-serif;
+    }
+
+    .center {
+      display: flex;
+      justify-content: center;
+      align-items: center;
+      height: 100vh;
+      /* This centers the image vertically */
+    }
+
+    table {
+      width: 100%;
+
+    }
+
+    th,
+    td {
+      border: 3px solid black;
+      padding: 10px;
+      text-align: center;
+      vertical-align: middle;
+    }
+
+    th {
+      background-color: #f2f2f2;
+    }
+
+    hr {
+      border: 0;
+      height: 1px;
+      background-color: black;
+      margin: 20px 0;
+      /* Adjust margin as needed */
+    }
+
+    img {
+      max-width: 100%;
+      height: auto;
+      display: block;
+      margin: 0 auto;
+    }
+
+    figcaption {
+      margin-top: 5px;
+      /* Add some margin above captions */
+    }
+
+    .highlighter-rouge {
+      color: #b00505;
+      background-color: rgb(247, 222, 222);
+      border-radius: 4px;
+      padding: 2px;
+    }
+  </style>
+  <title>CS 184 Mesh Edit</title>
+  <meta http-equiv="content-type" content="text/html; charset=utf-8" />
+  <link href="https://fonts.googleapis.com/css?family=Open+Sans|Source+Sans+Pro" rel="stylesheet">
+
+  <script>
+    MathJax = {
+      tex: {
+        inlineMath: [['$', '$'], ['\\(', '\\)']]
+      }
+    };
+  </script>
+  <script id="MathJax-script" async src="https://cdn.jsdelivr.net/npm/mathjax@3/es5/tex-chtml.js">
+  </script>
+
+</head>
+
+
+<body>
+
+  <h1 align="middle">CS 184: Computer Graphics and Imaging, Spring 2024</h1>
+  <h1 align="middle"><a href="https://cal-cs184-student.github.io/hw-webpages-sp24-ianhdong/hw3/index.html">Homework
+      3: PathTracer</a></h1>
+  <h2 align="middle">Ian Dong</h2>
+
+  <br><br>
+
+
+
+  <div class="bounding-box">
+
+    <h2 align="middle">Overview</h2>
+    In this homework, I implemented a path tracing renderer. First, I worked on generating camera rays from image
+    space
+    to sensor in camera space and their intersection with triangles and spheres. Then, I built a bounding volume
+    hierarchy to accelerate ray intersection tests and speed up the path tracers rendering. Afterwards, I explored
+    direct illumination to simulate light sources and render images with realistic shadowing. Then, I implemented
+    global
+    illumination to simulate indirect lighting and reflections using diffuse BSDF. Finally, I implemented adaptive
+    sampling to reduce noise
+    in the rendered images.
+    <br><br>
+    <div align="center">
+      <table>
+        <tr>
+          <td align="middle">
+            <img src="./Images/bunny.png" width="480px" />
+            <figcaption align="middle">My bunny is the bounciest bunny</figcaption>
+        </tr>
+      </table>
+    </div>
+  </div>
+
+  <br><br>
+
+  <h2 align="middle">Section I: Ray Generation and Scene Intersection</h2>
+  <!-- Walk through the ray generation and primitive intersection parts of the rendering pipeline.
+Explain the triangle intersection algorithm you implemented in your own words.
+Show images with normal shading for a few small .dae files. -->
+
+  <div class="bounding-box">
+    <h3>
+      <!-- <b> -->
+      Walk through the ray generation and primitive intersection parts of the rendering pipeline.
+      <!-- </b> -->
+    </h3>
+    <p>
+      For the ray generation portion of the rendering pipeline, I first made sure to find the boundaries of the
+      camera space by calculating \(\text{tan}(\frac{\text{hFov}}{2})\) and \(\text{tan}(\frac{\text{vFov}}{2})\) since
+      the bottom left corner is defined as (\(-\text{tan}(\frac{\text{hFov}}{2})\), \(\text{tan}(\frac{\text{vFov}}{2})
+      -1\)) and the top right corner is defined as (\(\text{tan}(\frac{\text{hFov}}{2})\),
+      \(\text{tan}(\frac{\text{vFov}}{2}), -1\)). Then, I used the instance variables <code
+        class="highlighter-rouge">hFov</code> and <code class="highlighter-rouge">vFov</code> which are in degrees to
+      calculate the height and width length before using linear interpolation to find the camera image coordinates.
+      Afterwards, I used <code class="highlighter-rouge">this->c2w</code> to convert my camera image coordinates into
+      world space coordinates and also normalized the direction vector. Finally, I constructed the ray with this vector
+      and defined the <code class="highlighter-rouge">min_t</code> and <code class="highlighter-rouge">max_t</code>.
+    </p>
+    <p>
+      For the primitive intersection portion of the rendering pipeline, I generated <code
+        class="highlighter-rouge">num_samples</code> using <code
+        class="highlighter-rouge">this->gridSampler->get_sample()</code>. I made sure to normalize the coordinates
+      before calling on the previously implemented method to generate the ray. Finally, I called <code
+        class="highlighter-rouge">this->est_radiance_global_illumination()</code> to get the sample radiance and
+      averaged
+      the radiance to update the pixel in the buffer.
+    </p>
+  </div>
+  <br>
+
+  <div class="bounding-box">
+    <h3>
+      Explain the triangle/sphere intersection algorithm you implemented in your own words.
+    </h3>
+    <p>
+      For the ray-triangle intersection, I implemented the Moller-Trumbore formula. This algorithm takes in a ray with
+      origin, \(o\), and direction, \(d\), as well as a triangle with vertices, \(p_0\), \(p_1\), and \(p_2\) and solves
+      the following equation:
+      $$\vec{O} + t\vec{D} = (1 - b_1 - b_2) \vec{p}_0 + b_1 \vec{p}_1.$$
+      I followed the algorithm by defining each of the variables and solving for \(t\), \(b_1\), and \(b_2\). If \(t\)
+      was not within the range of the minimum and maximum time range,
+      the ray would be parallel to the triangle and thus would not intersect with the triangle given this time range.
+      Otherwise, the ray would intersect within the triangle's plane. However, I needed to make sure it was within the
+      triangle so I checked the barycentric coordinates to ensure they were both within [0, 1]. If they were, we
+      updated
+      the intersection struct.
+    </p>
+    <p>
+      For the ray-sphere intersection, I followed the steps in the class slides. I set the equation of the ray equal
+      to the equation of the sphere and solved for the intersection with the quadratic formula. I checked to see if the
+      discriminant was positive so that I could find the times of intersection. Because it was a quadratic equation,
+      there could be up to two solutions and assigned the smaller one to <code class="highlighter-rouge">t1</code> and
+      the larger one to <code class="highlighter-rouge">t2</code>. If these times of intersection were within the ray's time range, I updated the intersection struct.
+    </p>
+  </div>
+  <br>
+
+  <div class="bounding-box">
+    <h3>
+      Show images with normal shading for a few small .dae files.
+    </h3>
+    <!-- Example of including multiple figures -->
+    Here are some screenshots of the .dae files rendered with normal shading:
+    <br><br>
+    <div align="middle">
+      <table>
+        <tr align="center">
+          <td>
+            <img src="./Images/Task1/sp24-raytracer-task1-empty.png" align="middle" width="400px" />
+            <figcaption><code class="highlighter-rouge">CBempty.dae</code></figcaption>
+          </td>
+          <td>
+            <img src="./Images/Task1/sp24-raytracer-task1-spheres.png" align="middle" width="400px" />
+            <figcaption><code class="highlighter-rouge">CBspheres.dae</code></figcaption>
+          </td>
+        </tr>
+        <tr align="center">
+          <td>
+            <img src="./Images/Task1/sp24-raytracer-task1-coil.png" align="middle" width="400px" />
+            <figcaption><code class="highlighter-rouge">CBcoil.dae</code></figcaption>
+          </td>
+          <td>
+            <img src="./Images/Task1/sp24-raytracer-task1-gems.png" align="middle" width="400px" />
+            <figcaption><code class="highlighter-rouge">CBgems.dae</code></figcaption>
+          </td>
+        </tr>
+      </table>
+    </div>
+  </div>
+
+  <hr>
+  <br>
+
+
+  <h2 align="middle">Section II: Bounding Volume Hierarchy (20 Points)</h2>
+  <!-- Walk through your BVH construction algorithm. Explain the heuristic you chose for picking the splitting point.
+Show images with normal shading for a few large .dae files that you can only render with BVH acceleration.
+Compare rendering times on a few scenes with moderately complex geometries with and without BVH acceleration. Present your results in a one-paragraph analysis. -->
+  <div class="bounding-box">
+    <h3>
+      Walk through your BVH construction algorithm. Explain the heuristic you chose for picking the splitting point.
+    </h3>
+    <p>
+      I implemented a recursive BVH construction algorithm. These were the formal steps and cases.
+    <ol>
+      <li>
+        Base Case: If the number of primitives is less than or equal to <code
+          class="highlighter-rouge">max_leaf_size</code>, then I created a leaf node and assigned its start and end to
+        the passed in start and end iterators. Finally, I returned this leaf node.
+      </li>
+      <li>
+        Recursive Case: Otherwise, I needed to find the best split point to create the left and right BVH nodes. First,
+        I iterated through all three dimensions and created a new function to find the median of the primitives for the
+        current dimension. I temporarily split the primitives into the two nodes based on this median axis. The
+        heuristic I used was the sum of the surface areas of the two bounding boxes and chose the axis that minimized
+        this sum. Afterwards, I split the primitives into the two nodes, updated the iterator to connect them, and
+        found the midpoint before passing in the new start and end iterators into the recursive BVH construction
+        algorithm. If at any time a split led to all of the primitives being in one node, I would just follow the base
+        case logic and assign the start and end to the node. Finally, I returned the node.
+      </li>
+    </ol>
+    </p>
+  </div>
+  <br>
+  <div class="bounding-box">
+    <h3>
+      Show images with normal shading for a few large <code class="highlighter-rouge">.dae</code> files that you can
+      only render with BVH acceleration.
+    </h3>
+    Here are some screenshots of the <code class="highlighter-rouge">.dae</code> files rendered with normal shading
+    using BVH acceleration:
+    <br><br>
+    <!-- Example of including multiple figures -->
+    <div align="middle">
+      <table style="width:100%">
+        <tr align="center">
+          <td>
+            <img src="./Images/Task2/sp24-raytracer-task2-cow.png" align="middle" width="400px" />
+            <figcaption><code class="highlighter-rouge">cow.dae</code></figcaption>
+          </td>
+          <td>
+            <img src="./Images/Task2/sp24-raytracer-task2-beast.png" align="middle" width="400px" />
+            <figcaption><code class="highlighter-rouge">beast.dae</code></figcaption>
+          </td>
+        </tr>
+        <tr align="center">
+          <td>
+            <img src="./Images/Task2/sp24-raytracer-task2-maxplanck.png" align="middle" width="400px" />
+            <figcaption><code class="highlighter-rouge">maxplanck.dae</code></figcaption>
+          </td>
+          <td>
+            <img src="./Images/Task2/sp24-raytracer-task2-beetle.png" align="middle" width="400px" />
+            <figcaption><code class="highlighter-rouge">beetle.dae</code></figcaption>
+          </td>
+        </tr>
+      </table>
+    </div>
+  </div>
+  <br>
+
+  <div class="bounding-box">
+    <h3>
+      Compare rendering times on a few scenes with moderately complex geometries with and without BVH acceleration.
+      Present your results in a one-paragraph analysis.
+    </h3>
+    <p>
+      As shown in the table below, I found significant speedups in rendering times when using BVH acceleration. I used
+      three <code class="highlighter-rouge">.dae</code> scenes with differing number of primitives. It looks that the
+      rendering time is proportional to the average number of intersection tests per ray. Without BVH acceleration, we
+      had to cast every single ray on every primitive and thus it scales linearly with the number of primitives. With
+      BVH acceleration, I split the primitives into two different nodes so effectively reduced it down logarithmically
+      and thus do not need to check as many primitives so the intersection tests remain relatively constant. The BVH
+      data structure helps us to quickly find the intersection of a ray with the scene and thus significantly reduces
+      the time it takes to render the scene.
+    <table>
+      <thead>
+        <tr>
+          <th><code class="highlighter-rouge">.dae</code> Scene</th>
+          <th>Number of Primitives</th>
+          <th>Render Time (no BVH)</th>
+          <th>Render Time (BVH)</th>
+          <th>Avg Intersection Tests per Ray (no BVH)</th>
+          <th>Avg Intersection Tests per Ray (BVH)</th>
+        </tr>
+      </thead>
+      <tbody>
+        <tr>
+          <td><code class="highlighter-rouge">teapot.dae</code></td>
+          <td>2464</td>
+          <td>43.25 s</td>
+          <td>0.0752 ms</td>
+          <td>1006.19</td>
+          <td>2.89</td>
+        </tr>
+        <tr>
+          <td><code class="highlighter-rouge">peter.dae</code></td>
+          <td>40018 </td>
+          <td>697.63 s</td>
+          <td>0.0837 s</td>
+          <td>11753.02</td>
+          <td>2.41</td>
+        </tr>
+        <tr>
+          <td><code class="highlighter-rouge">CBlucy.dae</code></td>
+          <td>133796 </td>
+          <td>2640.11 s</td>
+          <td>0.1127 s</td>
+          <td>30217.62</td>
+          <td>3.03</td>
+        </tr>
+      </tbody>
+    </table>
+    </p>
+  </div>
+  <hr>
+  <br><br>
+
+  <h2 align="middle">Section III: Direct Illumination (20 Points)</h2>
+  <!-- Walk through both implementations of the direct lighting function.
+Show some images rendered with both implementations of the direct lighting function.
+Focus on one particular scene with at least one area light and compare the noise levels in soft shadows when rendering with 1, 4, 16, and 64 light rays (the -l flag) and with 1 sample per pixel (the -s flag) using light sampling, not uniform hemisphere sampling.
+Compare the results between uniform hemisphere sampling and lighting sampling in a one-paragraph analysis. -->
+
+  <div class="bounding-box">
+    <h3>
+      Walk through both implementations of the direct lighting function.
+    </h3>
+    <p>
+      Direct lighting is zero bounce lighting, the light that comes directly from the light source, plus one bounce
+      lighting, the light that comes back to the camera after reflecting off the scene once. For zero bounce, I only
+      need to return the light from the light source without any bounces. However, for one bounce, I need to determine
+      how much light is reflected back to the camera after the ray intersects with the scene. Because I cannot compute
+      an infinite integral, I instead used a Monte-Carlo Estimator of the reflectance.
+    </p>
+    <p>
+      For uniform hemisphere sampling, I iterated through the number of samples and sampled a vector uniformly from the
+      hemisphere and converted it into the world space. Afterwards, I created the ray with this vector as the
+      direction. If the ray intersected the scene, I would calculate the BSDF $f(\text{w_out}, \text{w_in})$, the
+      emitted radiance $L_i$, and the
+      angle
+      between the
+      surface normal and the sampled vector. Finally, I computed the sample mean of the reflectance calculations from
+      lecture using the following formula and previous calculations:
+      $$\frac{1}{N} \sum_{i = 1}^{n} \frac{f_r(\text{p}, \omega_i \rightarrow \omega_r) L_i(\text{p},
+      \omega_j) \text{cos}\theta_j}{p(\omega_j)}$$
+    </p>
+    <p>
+      For importance lighting sampling, instead of sampling from a uniform hemisphere I iterated through each of the
+      light sources and calculated the number of
+      samples needed based on if it was a delta light and sampled uniformly from each light source. Then, I iterated
+      through the number of samples and
+      calculated
+      the emitted radiance along with the sampled world space vector for our ray. If the ray intersected the scene, we
+      would calculate the BSDF and the angle between the surface normal and the sampled vector and rejected rays that
+      were on the opposite side of the surface. For each light, I computed the mean reflectance using the formula from
+      above. Finally, I added this mean reflectance to the total reflectance and returned the total reflectance.
+    </p>
+  </div>
+  <br>
+
+  <div class="bounding-box">
+    <h3>
+      Show some images rendered with both implementations of the direct lighting function.
+    </h3>
+    Here are some images rendered with both implementations of the direct lighting function:
+    <br><br>
+    <!-- Example of including multiple figures -->
+    <div align="middle">
+      <table style="width:100%">
+        <!-- Header -->
+        <tr align="center">
+          <th>
+            <b>Uniform Hemisphere Sampling</b>
+          </th>
+          <th>
+            <b>Light Sampling</b>
+          </th>
+        </tr>
+        <tr align="center">
+          <td>
+            <img src="./Images/Task3/sp24-raytracer-task3-CBspheres_lambertian-hemisphere.png" align="middle"
+              width="400px" />
+            <figcaption><code class="highlighter-rouge">CBspheres_lambertian.dae</code></figcaption>
+          </td>
+          <td>
+            <img src="./Images/Task3/sp24-raytracer-task3-CBspheres_lambertian-importance.png" align="middle"
+              width="400px" />
+            <figcaption><code class="highlighter-rouge">CBspheres_lambertian.dae</code></figcaption>
+          </td>
+        </tr>
+        <tr align="center">
+          <td>
+            <img src="./Images/Task3/sp24-raytracer-task3-CBbunny-hemisphere.png" align="middle" width="400px" />
+            <figcaption><code class="highlighter-rouge">CBbunny.dae</code></figcaption>
+          </td>
+          <td>
+            <img src="./Images/Task3/sp24-raytracer-task3-CBbunny-importance.png" align="middle" width="400px" />
+            <figcaption><code class="highlighter-rouge">CBbunny.dae</code></figcaption>
+          </td>
+        </tr>
+      </table>
+    </div>
+    <br>
+    I noticed that importance sampling converged much faster than uniform hemisphere sampling. The soft shadow noise
+    in
+    hemisphere sampling comes from the fact that only a small portion of the rays cast actually hit the scene. In
+    contrast, importance lighting sampling only considers the rays that actually contribute to the illumination of the
+    scene and thus has much less noise. This leads to much more smoother shadow scene renderings as shown in the above
+    images.
+  </div>
+  <br>
+  <div class="bounding-box">
+    <h3>
+      Focus on one particular scene with at least one area light and compare the noise levels in <b>soft shadows</b>
+      when rendering with 1, 4, 16, and 64 light rays (the -l flag) and with 1 sample per pixel (the -s flag) using
+      light sampling, <b>not</b> uniform hemisphere sampling.
+    </h3>
+    <!-- Example of including multiple figures -->
+    <div align="middle">
+      <table style="width:100%">
+        <tr align="center">
+          <td>
+            <img src="./Images/Task3/sp24-raytracer-task3-CBspheres_lambertian-1.png" align="middle" width="400px" />
+            <figcaption>1 Light Ray <code class="highlighter-rouge">(CBspheres_lambertian.dae)</code></figcaption>
+          </td>
+          <td>
+            <img src="./Images/Task3/sp24-raytracer-task3-CBspheres_lambertian-4.png" align="middle" width="400px" />
+            <figcaption>4 Light Rays <code class="highlighter-rouge">(CBspheres_lambertian.dae)</code></figcaption>
+          </td>
+        </tr>
+        <tr align="center">
+          <td>
+            <img src="./Images/Task3/sp24-raytracer-task3-CBspheres_lambertian-16.png" align="middle" width="400px" />
+            <figcaption>16 Light Rays <code class="highlighter-rouge">(CBspheres_lambertian.dae)</code></figcaption>
+          </td>
+          <td>
+            <img src="./Images/Task3/sp24-raytracer-task3-CBspheres_lambertian-64.png" align="middle" width="400px" />
+            <figcaption>64 Light Rays <code class="highlighter-rouge">(CBspheres_lambertian.dae)</code></figcaption>
+          </td>
+        </tr>
+      </table>
+    </div>
+    <p>
+      Shown in the images above, when there are low amount of light rays there are more noise in the soft shadows with
+      individual dots making it up. As I increase the number of light rays, however, I noticed that the noise
+      decreased dramatically. At 64 light rays, the noise was almost completely gone and the soft shadows were much
+      smoother. This is because with more light rays, I are able to sample more points on the light source and thus get
+      a better estimate of the light intensity at a point on the surface. This is especially important for area lights,
+      where the light intensity can vary across the light source. Thus, the more light rays I have, the more accurate
+      our estimate of the light intensity at a point on the surface and the smoother the soft shadows will be.
+    </p>
+  </div>
+  <br>
+
+  <div class="bounding-box">
+    <h3>
+      Compare the results between uniform hemisphere sampling and lighting sampling in a one-paragraph analysis.
+    </h3>
+    <p>
+      I noticed that importance sampling converged much faster than uniform hemisphere sampling. The soft shadow noise
+      in
+      hemisphere sampling comes from the fact that only a small portion of the rays cast actually hit the scene. In
+      contrast, importance lighting sampling only considers the rays that actually contribute to the illumination of the
+      scene and thus has much less noise. This leads to much more smoother shadow scene renderings as shown in the above
+      images.
+    </p>
+  </div>
+  <hr>
+  <br><br>
+
+
+  <h2 align="middle">Section IV: Global Illumination (20 Points)</h2>
+  <!-- Walk through your implementation of the indirect lighting function.
+Show some images rendered with global (direct and indirect) illumination. Use 1024 samples per pixel.
+Pick one scene and compare rendered views first with only direct illumination, then only indirect illumination. Use 1024 samples per pixel. (You will have to edit PathTracer::at_least_one_bounce_radiance(...) in your code to generate these views.)
+For <code>CBbunny.dae</code>, compare rendered views with max_ray_depth set to 0, 1, 2, 3, and 100 (the -m flag). Use 1024 samples per pixel.
+Pick one scene and compare rendered views with various sample-per-pixel rates, including at least 1, 2, 4, 8, 16, 64, and 1024. Use 4 light rays.
+You will probably want to use the instructional machines for the above renders in order to not burn up your own computer for hours. -->
+
+  <div class="bounding-box">
+    <h3>
+      Walk through your implementation of the indirect lighting function.
+    </h3>
+    <p>
+      I implemented a recursive function to calculate the indirect lighting as each bounce of the light will need to be
+      calculated with the previous bounce. These were the formal steps and cases.
+    <ol>
+      <li>
+        Base Case: If the ray's depth reaches 1, I can just return <code
+          class="highlighter-rouge">one_bounce_radiance</code>.
+      </li>
+      <li>
+        Recursive Case: Otherwise, I will flip a biased coin and continue path tracing with probability
+        \(\text{continuation}\_\text{prob}\). Then, I calculated the <code
+          class="highlighter-rouge">one_bounce_radiance</code> for
+        the current bounce. Afterwards, I sampled with the BSDF to figure out the next direction the ray will go and
+        set the depth to be one less than the current depth. If this ray intersected with the scene, I would recurse to
+        find the next emitted radiance and apply the reflectance formula. If <code
+          class="highlighter-rouge">isAccumBounces</code> is true, I add it to the running total radiance and else we
+        would return just the current level's radiance.
+      </li>
+    </ol>
+    </p>
+    <br>
+  </div>
+  <br>
+
+  <div class="bounding-box">
+    <h3>
+      Show some images rendered with global (direct and indirect) illumination. Use 1024 samples per pixel.
+    </h3>
+    <!-- Example of including multiple figures -->
+    Here are some images rendered with global (direct and indirect) illumination:
+    <br><br>
+    <div align="middle">
+      <table style="width:100%">
+        <tr align="center">
+          <td>
+            <img src="./Images/Task4/sp24-raytracer-task4-dragon-1024.png" align="middle" width="400px" />
+            <figcaption><code class="highlighter-rouge">dragon.dae</code></figcaption>
+          </td>
+          <td>
+            <img src="./Images/Task4/sp24-raytracer-task4-banana-1024.png" align="middle" width="400px" />
+            <figcaption><code class="highlighter-rouge">banana.dae</code></figcaption>
+          </td>
+        </tr>
+      </table>
+    </div>
+    <br>
+  </div>
+  <br>
+  <div class="bounding-box">
+    <h3>
+      Pick one scene and compare rendered views first with only direct illumination, then only indirect illumination.
+      Use 1024 samples per pixel. (You will have to edit PathTracer::at_least_one_bounce_radiance(...) in your code to
+      generate these views.)
+    </h3>
+    <!-- Example of including multiple figures -->
+    Here are the rendered images with only direct illumination and only indirect illumination:
+    <br><br>
+    <div align="middle">
+      <table style="width:100%">
+        <tr align="center">
+          <td>
+            <img src="./Images/Task4/sp24-raytracer-task4-CBspheres_lambertian-direct.png" align="middle"
+              width="400px" />
+            <figcaption>Only direct illumination <code class="highlighter-rouge">(CBspheres_lambertian.dae)</code>
+            </figcaption>
+          </td>
+          <td>
+            <img src="./Images/Task4/sp24-raytracer-task4-CBspheres_lambertian-indirect.png" align="middle"
+              width="400px" />
+            <figcaption>Only indirect illumination <code class="highlighter-rouge">(CBspheres_lambertian.dae)</code>
+            </figcaption>
+          </td>
+        </tr>
+      </table>
+    </div>
+    <p>
+      As shown above, the left scene only has direct illumination which is zero plus one bounce lighting while the right
+      scene only has indirect illumination. Both of these illuminations present an incomplete picture. Direct
+      illumination only illuminates the portions of the scene that the light rays can directly reach so they miss out on
+      the the ceiling and undersides of the spheres. Indirect lighting is the opposite as it only illuminates the
+      portions of the scene that the light rays cannot directly reach so they miss out on the the light source and the
+      direct light and illuminate the underside of the spheres. Thus, I need both direct and indirect illumination to
+      get a complete picture of the scene.
+    </p>
+  </div>
+  <br>
+  <br>
+  <div class="bounding-box">
+    <h3>
+      For <code class="highlighter-rouge">CBbunny.dae</code>, render the mth bounce of light with <code
+        class="highlighter-rouge">max_ray_depth</code> set to 0, 1, 2, 3, 4, and 5 (the <code
+        class="highlighter-rouge">-m</code> flag), and
+      <code class="highlighter-rouge">isAccumBounces=false</code>. Explain in your writeup what you see for the 2nd and
+      3rd bounce of light, and how it
+      contributes to the quality of the rendered image compared to rasterization. Use 1024 samples per pixel.
+    </h3>
+    Here are the rendered images with <code class="highlighter-rouge">max_ray_depth</code> set to 0, 1, 2, 3, 4, and 5
+    and <code class="highlighter-rouge">isAccumBounces=false</code>:
+    <br> <br>
+    <!-- Example of including multiple figures -->
+    <div align="middle">
+      <table style="width:100%">
+        <tr align="center">
+          <td>
+            <img src="./Images/Task4/sp24-raytracer-task4-bunny-false-0.png" align="middle" width="400px" />
+            <figcaption><code class="highlighter-rouge">max_ray_depth=0</code> <code
+                class="highlighter-rouge">CBbunny.dae</code></figcaption>
+          </td>
+          <td>
+            <img src="./Images/Task4/sp24-raytracer-task4-bunny-false-1.png" align="middle" width="400px" />
+            <figcaption><code class="highlighter-rouge">max_ray_depth=1</code> <code
+                class="highlighter-rouge">CBbunny.dae</code></figcaption>
+          </td>
+        </tr>
+        <tr align="center">
+          <td>
+            <img src="./Images/Task4/sp24-raytracer-task4-bunny-false-2.png" align="middle" width="400px" />
+            <figcaption><code class="highlighter-rouge">max_ray_depth=2</code> <code
+                class="highlighter-rouge">CBbunny.dae</code></figcaption>
+          </td>
+          <td>
+            <img src="./Images/Task4/sp24-raytracer-task4-bunny-false-3.png" align="middle" width="400px" />
+            <figcaption><code class="highlighter-rouge">max_ray_depth=3</code> <code
+                class="highlighter-rouge">CBbunny.dae</code></figcaption>
+          </td>
+        </tr>
+        <tr align="center">
+          <td>
+            <img src="./Images/Task4/sp24-raytracer-task4-bunny-false-4.png" align="middle" width="400px" />
+            <code class="highlighter-rouge">max_ray_depth=4</code> <code class="highlighter-rouge">CBbunny.dae</code>
+            </figcaption>
+          </td>
+          <td>
+            <img src="./Images/Task4/sp24-raytracer-task4-bunny-false-5.png" align="middle" width="400px" />
+            <figcaption><code class="highlighter-rouge">max_ray_depth=5</code> <code
+                class="highlighter-rouge">CBbunny.dae</code></figcaption>
+          </td>
+        </tr>
+      </table>
+    </div>
+    <br>
+    <p>
+      As shown above, the 2nd bounce image features a bunny with illumination on the underside of it because this light
+      bounces off the floor and then onto the bunny. The fur on the head and back is dark because the light does not
+      reach it on the second bounce but rather on the first bounce after it directly hits it. The 3rd bounce image is a
+      lot more darker and the bunny is almost completely covered in shadows. This is because the the 3rd bounce is not
+      hitting the bunny but going off to other parts of the room and is why only certain portions are illuminated. These
+      bounce are able to contribute and help render accurate shadows, recursive reflections, and refractions which
+      rasterization is not able to do. This helps to create a more realistic and accurate image of the scene based on
+      the lighting.
+    </p>
+  </div>
+  <br>
+
+  <div class="bounding-box">
+    <h3>
+      For <code class="highlighter-rouge">CBbunny.dae</code>, compare rendered views with <code
+        class="highlighter-rouge">max_ray_depth</code> set to 0, 1, 2, 3, 4 and 5 (the <code
+        class="highlighter-rouge">-m</code> flag).
+      Use 1024
+      samples per pixel.
+    </h3>
+    <!-- Example of including multiple figures -->
+    Here are the rendered images with <code class="highlighter-rouge">max_ray_depth</code> set to 0, 1, 2, 3, 4, and 5:
+    <br> <br>
+    <div align="middle">
+      <table style="width:100%">
+        <tr align="center">
+          <td>
+            <img src="./Images/Task4/sp24-raytracer-task4-bunny-false-0.png" align="middle" width="400px" />
+            <figcaption><code class="highlighter-rouge">max_ray_depth=0</code> <code
+                class="highlighter-rouge">CBbunny.dae</code></figcaption>
+          </td>
+          <td>
+            <img src="./Images/Task4/sp24-raytracer-task4-bunny-1.png" align="middle" width="400px" />
+            <figcaption><code class="highlighter-rouge">max_ray_depth=1</code> <code
+                class="highlighter-rouge">CBbunny.dae</code></figcaption>
+          </td>
+        </tr>
+        <tr align="center">
+          <td>
+            <img src="./Images/Task4/sp24-raytracer-task4-bunny-2.png" align="middle" width="400px" />
+            <figcaption><code class="highlighter-rouge">max_ray_depth=2</code> <code
+                class="highlighter-rouge">CBbunny.dae</code></figcaption>
+          </td>
+          <td>
+            <img src="./Images/Task4/sp24-raytracer-task4-bunny-3.png" align="middle" width="400px" />
+            <figcaption><code class="highlighter-rouge">max_ray_depth=3</code> <code
+                class="highlighter-rouge">CBbunny.dae</code></figcaption>
+          </td>
+        </tr>
+        <tr align="center">
+          <td>
+            <img src="./Images/Task4/sp24-raytracer-task4-bunny-4.png" align="middle" width="400px" />
+            <figcaption><code class="highlighter-rouge">max_ray_depth=4</code> <code
+                class="highlighter-rouge">CBbunny.dae</code></figcaption>
+          </td>
+          <td>
+            <img src="./Images/Task4/sp24-raytracer-task4-bunny-5.png" align="middle" width="400px" />
+            <figcaption><code class="highlighter-rouge">max_ray_depth=5</code> <code
+                class="highlighter-rouge">CBbunny.dae</code></figcaption>
+          </td>
+        </tr>
+      </table>
+    </div>
+    <br>
+    <p>
+      As shown in the images above, each bounce helps to convey more information about the scene as it lights up more
+      portions. The first scene, with <code class="highlighter-rouge">max_ray_depth=0</code>, only has zero bounce
+      lighting which is the light source itself. However, in the second scene with <code
+        class="highlighter-rouge">max_ray_depth=1</code>, the light bounces off the floor and onto the bunny and I can
+      observe the top of the bunny illuminated. Later bounces will also highlight the underside of the bunny as the
+      light bounces off the floor and walls and ultimately onto the bunny. This helps to diffuse all lighting.
+    </p>
+    <br>
+  </div>
+  <br>
+  <div class="bounding-box">
+    <h3>
+      For <code class="highlighter-rouge">CBbunny.dae</code>, output the Russian Roulette rendering with <code
+        class="highlighter-rouge">max_ray_depth</code> set to 0, 1, 2, 3, 4, and 100 (the -m flag). Use 1024 samples per
+      pixel.
+    </h3>
+    Here are the rendered Russian Roulette images with <code class="highlighter-rouge">max_ray_depth</code> set to 0, 1,
+    2, 3, 4, and 100:
+    <br> <br>
+    <!-- Example of including multiple figures -->
+    <div align="middle">
+      <table style="width:100%">
+        <tr align="center">
+          <td>
+            <img src="./Images/Task4/sp24-raytracer-task4-bunny-false-0.png" align="middle" width="400px" />
+            <figcaption><code class="highlighter-rouge">max_ray_depth=0</code> <code
+                class="highlighter-rouge">CBbunny.dae</code></figcaption>
+          </td>
+          <td>
+            <img src="./Images/Task4/sp24-raytracer-task4-bunny-russian-1.png" align="middle" width="400px" />
+            <figcaption><code class="highlighter-rouge">max_ray_depth=1</code> <code
+                class="highlighter-rouge">CBbunny.dae</code></figcaption>
+          </td>
+        </tr>
+        <tr align="center">
+          <td>
+            <img src="./Images/Task4/sp24-raytracer-task4-bunny-russian-2.png" align="middle" width="400px" />
+            <figcaption><code class="highlighter-rouge">max_ray_depth=2</code> <code
+                class="highlighter-rouge">CBbunny.dae</code></figcaption>
+          </td>
+          <td>
+            <img src="./Images/Task4/sp24-raytracer-task4-bunny-russian-3.png" align="middle" width="400px" />
+            <figcaption><code class="highlighter-rouge">max_ray_depth=3</code> <code
+                class="highlighter-rouge">CBbunny.dae</code></figcaption>
+          </td>
+        </tr>
+        <tr align="center">
+          <td>
+            <img src="./Images/Task4/sp24-raytracer-task4-bunny-russian-4.png" align="middle" width="400px" />
+            <figcaption><code class="highlighter-rouge">max_ray_depth=4</code> <code
+                class="highlighter-rouge">CBbunny.dae</code></figcaption>
+          </td>
+          <td>
+            <img src="./Images/Task4/sp24-raytracer-task4-bunny-russian-100.png" align="middle" width="400px" />
+            <figcaption><code class="highlighter-rouge">max_ray_depth=100</code> <code
+                class="highlighter-rouge">CBbunny.dae</code></figcaption>
+          </td>
+        </tr>
+      </table>
+    </div>
+    <br>
+    <p>
+      As shown in the images above, each bounce helps to convey more information about the scene as it lights up more
+      portions. The first scene, with <code class="highlighter-rouge">max_ray_depth=0</code>, only has zero bounce
+      lighting which is the light source itself. However, in the second scene with <code
+        class="highlighter-rouge">max_ray_depth=1</code>, the light bounces off the floor and onto the bunny and I can
+      observe the top of the bunny illuminated. Later bounces will also highlight the underside of the bunny as the
+      light bounces off the floor and walls and ultimately onto the bunny. This helps to diffuse all lighting. However,
+      at the 100 depth layer, there are not that many very large bounce rays because the continuation probability
+      compounds and thus the rays are more likely to terminate early. Thus, it does not convey as much information as
+      expected and looks very similar to the 4th bounce image.
+    </p>
+    <br>
+  </div>
+  <br>
+  <div class="bounding-box">
+    <h3>
+      Pick one scene and compare rendered views with various sample-per-pixel rates, including at least 1, 2, 4, 8,
+      16, 64, and 1024. Use 4 light rays.
+    </h3>
+    <!-- Example of including multiple figures -->
+    Here are the rendered images with various sample-per-pixel rates:
+    <br><br>
+    <div align="middle">
+      <table style="width:100%">
+        <tr align="center">
+          <td>
+            <img src="./Images/Task4/sp24-raytracer-task4-building-1.png" align="middle" width="400px" />
+            <figcaption>1 sample per pixel <code class="highlighter-rouge">(building.dae)</code></figcaption>
+          </td>
+          <td>
+            <img src="./Images/Task4/sp24-raytracer-task4-building-2.png" align="middle" width="400px" />
+            <figcaption>2 samples per pixel <code class="highlighter-rouge">(building.dae)</code></figcaption>
+          </td>
+        </tr>
+        <tr align="center">
+          <td>
+            <img src="./Images/Task4/sp24-raytracer-task4-building-4.png" align="middle" width="400px" />
+            <figcaption>4 samples per pixel <code class="highlighter-rouge">(building.dae)</code></figcaption>
+          </td>
+          <td>
+            <img src="./Images/Task4/sp24-raytracer-task4-building-8.png" align="middle" width="400px" />
+            <figcaption>8 samples per pixel <code class="highlighter-rouge">(building.dae)</code></figcaption>
+          </td>
+        </tr>
+        <tr align="center">
+          <td>
+            <img src="./Images/Task4/sp24-raytracer-task4-building-16.png" align="middle" width="400px" />
+            <figcaption>16 samples per pixel <code class="highlighter-rouge">(building.dae)</code></figcaption>
+          </td>
+          <td>
+            <img src="./Images/Task4/sp24-raytracer-task4-building-64.png" align="middle" width="400px" />
+            <figcaption>64 samples per pixel <code class="highlighter-rouge">(building.dae)</code></figcaption>
+          </td>
+        </tr>
+        <tr align="center">
+          <td>
+            <img src="./Images/Task4/sp24-raytracer-task4-building-1024.png" align="middle" width="400px" />
+            <figcaption>1024 samples per pixel <code class="highlighter-rouge">(building.dae)</code></figcaption>
+          </td>
+        </tr>
+      </table>
+    </div>
+    <br>
+    <p>
+      As shown in the images above, taking more samples helps reduce the noise in the image and shadows because they
+      become much more representative of the true scene.
+    </p>
+  </div>
+  <hr>
+  <br><br>
+
+
+  <h2 align="middle">Section V: Adaptive Sampling (20 Points)</h2>
+
+  <div class="bounding-box">
+    <h3>
+      Explain adaptive sampling. Walk through your implementation of the adaptive sampling.
+    </h3>
+    <p>
+      Adaptive sampling helps to improve the efficiency and quality of rendering images, especially in situations where
+      certain parts of the image require more computational resources to accurately represent than others. Instead of
+      increasing the sample rate and thus the rendering time, adaptive sampling concentrates the samples in the more
+      difficult parts of the image as there are some pixels that converge quicker than others. The idea is to allocate
+      more samples to regions that require higher fidelity representation, while reducing the number of samples in
+      smoother areas where details are less noticeable. I implemented adaptive sampling by updating \(s_1\) and \(s_2\)
+      as defined in the spec. After a multiple of <code class="highlighter-rouge">samplesPerBatch</code>, I calculated
+      the mean, standard deviation, and \(I\). If \(I \leq \text{maxTolerance} \cdot \mu\), I would stop sampling the
+      pixel and save the total number of samples that I have taken to calculate the color correctly. I used the
+      following equations:
+      $$s_1 = \sum_{i = 1}^{n} x_i$$
+      $$s_2 = \sum_{i = 1}^{n} x_i^2$$
+      $$\mu = \frac{s_1}{n}$$
+      $$\sigma^2 = \frac{1}{n - 1}\cdot \left(s_2 - \frac{s_1^2}{n}\right)$$
+      $$I = 1.96 \cdot \frac{\sigma}{\sqrt{n}}$$
+    </p>
+  </div>
+  <br>
+
+  <div class="bounding-box">
+    <h3>
+      Pick two scenes and render them with at least 2048 samples per pixel. Show a good sampling rate image with
+      clearly visible differences in sampling rate over various regions and pixels. Include both your sample rate
+      image, which shows your how your adaptive sampling changes depending on which part of the image you are
+      rendering, and your noise-free rendered result. Use 1 sample per light and at least 5 for max ray depth.
+    </h3>
+    Here are the rendered and their adaptive sampled sample rate images:
+    <br> <br>
+    <!-- Example of including multiple figures -->
+    <div align="middle">
+      <table style="width:100%">
+        <tr align="center">
+          <td>
+            <img src="./Images/Task5/sp24-raytracer-task5-walle-rendered.png" align="middle" width="400px" />
+            <figcaption>Rendered image <code class="highlighter-rouge">(wall-e.dae)</code></figcaption>
+          </td>
+          <td>
+            <img src="./Images/Task5/sp24-raytracer-task5-walle-sample-rate.png" align="middle" width="400px" />
+            <figcaption>Sample rate image <code class="highlighter-rouge">(wall-e.dae)</code></figcaption>
+          </td>
+        </tr>
+        <tr align="center">
+          <td>
+            <img src="./Images/Task5/sp24-raytracer-task5-bench-rendered.png" align="middle" width="400px" />
+            <figcaption>Rendered image <code class="highlighter-rouge">(bench.dae)</code></figcaption>
+          </td>
+          <td>
+            <img src="./Images/Task5/sp24-raytracer-task5-bench-sample-rate.png" align="middle" width="400px" />
+            <figcaption>Sample rate image <code class="highlighter-rouge">(bench.dae)</code></figcaption>
+          </td>
+        </tr>
+        <!-- <tr align="center">
+          <td>
+            <img src="./Images/Task5/sp24-raytracer-task5-banana-rendered.png" align="middle" width="400px" />
+            <figcaption>Rendered image <code>(banana.dae)</code></figcaption>
+          </td>
+          <td>
+            <img src="./Images/Task5/sp24-raytracer-task5-banana-sample-rate.png" align="middle" width="400px" />
+            <figcaption>Sample rate image <code>(banana.dae)</code></figcaption>
+          </td>
+        </tr> -->
+      </table>
+    </div>
+  </div>
+  <br>
+
+
+</body>
+
+</html>
