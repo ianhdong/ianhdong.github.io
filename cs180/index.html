@@ -1,26 +1,40 @@
 <html>
-	<head>
-	</head>
-	<body>
-		<h3>CS180 Project Webpages</h3>
-		<br><br>
-		<a href="/proj1/">Project 1</a>
-		<br><br>
-		<a href="/proj2/">Project 2</a>
-		<br><br>
-		<a href="/proj3/">Project 3</a>
-		<br><br>
-		<a href="/proj4/">Project 4</a>
-	</body>
-	<script>
-		var links = document.body.getElementsByTagName("a")
-		var a = window.location.href.indexOf(".io")
-		console.log(window.location.href)
-		var repo_name = window.location.href.substring(a+3)
-		for(var i = 0; i < links.length; i++){
-			var link = links[i]
-			var actual_name = link.href.substring(link.href.indexOf(".io")+4)
-			link.href = repo_name + actual_name
-		}
-	</script>
+
+<head>
+</head>
+<style>
+	body {
+		padding: 100px;
+		width: 1000px;
+		margin: auto;
+		text-align: left;
+		font-weight: 300;
+		color: #121212;
+		background-color: #f6ead7;
+	}
+</style>
+
+<body>
+	<h3>Welcome to my CS180 Project Webpages</h3>
+	<br><br>
+	<a href="/proj1/">Project 1</a>
+	<br><br>
+	<a href="/proj2/">Project 2</a>
+	<br><br>
+	<a href="/proj3/">Project 3</a>
+	<br><br>
+	<a href="/proj4/">Project 4</a>
+</body>
+<script>
+	var links = document.body.getElementsByTagName("a")
+	var a = window.location.href.indexOf(".io")
+	console.log(window.location.href)
+	var repo_name = window.location.href.substring(a + 3)
+	for (var i = 0; i < links.length; i++) {
+		var link = links[i]
+		var actual_name = link.href.substring(link.href.indexOf(".io") + 4)
+		link.href = repo_name + actual_name
+	}
+</script>
+
 </html>
