@@ -17,7 +17,7 @@
 <body>
 	<h3>Welcome to my CS180 Project Webpages</h3>
 	<br><br>
-	<a href="/proj1/">Project 1</a>
+	<a href="/proj1/index.html">Project 1</a>
 	<br><br>
 	<a href="/proj2/">Project 2</a>
 	<br><br>
@@ -27,6 +27,7 @@
 </body>
 <script>
 	var links = document.body.getElementsByTagName("a")
+	console.log(links)
 	var a = window.location.href.indexOf(".io")
 	console.log(window.location.href)
 	var repo_name = window.location.href.substring(a + 3)
