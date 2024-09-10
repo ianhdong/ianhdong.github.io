@@ -121,7 +121,8 @@
     using a unique method to capture color images by recording three exposures using red, green, and blue filters.
     Granted special permission by the Tsar, he traveled across the Russian Empire photographing various subjects,
     including the only color portrait of Leo Tolstoy. Although color printing technology did not exist at the time, he
-    envisioned these images being projected in classrooms across Russia. This project aims to recreate these images in their true colors. 
+    envisioned these images being projected in classrooms across Russia. This project aims to recreate these images in
+    their true colors by aligning the R and G plates to the B plate.
     <br><br>
   </div>
 
@@ -134,7 +135,10 @@
       Simple Single-scale Approach
     </h3>
     <p>
-      I first split the image into the three different red, green, and blue image channels. Afterwards, I fixed the blue channel and continuously overlay the red and green plates over it. For these small .jpg images, I exhaustively searched through a 30 by 30 box (15 on each side) to displace these plates and find the best displacement match using the metrics listed below.
+      I first split the image into the three different red, green, and blue image channels. Afterwards, I fixed the blue
+      channel and continuously overlay the red and green plates over it. For these small .jpg images, I exhaustively
+      searched through a 30 by 30 box (15 on each side) to displace these plates and find the best displacement match
+      using the metrics listed below.
     </p>
     <h3>Displacement Metrics</h3>
     <ul>
@@ -142,7 +146,11 @@
         Sum of Squared Differences (SSD):
         <ul>
           <li>
-            I had first tested the displacement match by calculating the sum of squared differences (SSD) between the two plates. The minimum SSD would indicate the best alignment. This displacement vector measured how close the RGB plates were to each other. It was one of the worst metrics mainly because small differences in lighting, contrast, or exposure between image layers can disproportionately affect the L2 norm, causing it to perform poorly in matching similar regions that only differ in brightness or contrast.
+            I had first tested the displacement match by calculating the sum of squared differences (SSD) between the
+            two plates. The minimum SSD would indicate the best alignment. This displacement vector measured how close
+            the RGB plates were to each other. It was one of the worst metrics mainly because small differences in
+            lighting, contrast, or exposure between image layers can disproportionately affect the L2 norm, causing it
+            to perform poorly in matching similar regions that only differ in brightness or contrast.
           </li>
         </ul>
       </li>
@@ -150,7 +158,10 @@
         Normalized Cross-Correlation (NCC):
         <ul>
           <li>
-            I then tested the normalized cross-correlation (NCC) metric. This metric was more robust to changes in lighting, contrast, or exposure between image layers. The maximum NCC would indicate the best alignment. This displacement metric normalizes the intensity of the images, making it insensitive to differences in brightness or contrast. It was able to perform better on the images compared to SSD.
+            I then tested the normalized cross-correlation (NCC) metric. This metric was more robust to changes in
+            lighting, contrast, or exposure between image layers. The maximum NCC would indicate the best alignment.
+            This displacement metric normalizes the intensity of the images, making it insensitive to differences in
+            brightness or contrast. It was able to perform better on the images compared to SSD.
           </li>
         </ul>
       </li>
@@ -158,7 +169,12 @@
         Structural Similarity Index Metric (SSIM):
         <ul>
           <li>
-            Finally, I tested the structural similarity index metric (SSIM). This metric was able to capture the perceived similarity between two images, focusing on structural information rather than just pixel-wise differences. It compared the luminance (brightness), contrast (intensity differences), and structure (spatial differences) and mimics human visual system's way of perceiving image quality The maximum SSIM would indicate the best alignment. This displacement metric was able to capture the perceived similarity between the images and was able to perform the best out of the three metrics.
+            Finally, I tested the structural similarity index metric (SSIM). This metric was able to capture the
+            perceived similarity between two images, focusing on structural information rather than just pixel-wise
+            differences. It compared the luminance (brightness), contrast (intensity differences), and structure
+            (spatial differences) and mimics human visual system's way of perceiving image quality The maximum SSIM
+            would indicate the best alignment. This displacement metric was able to capture the perceived similarity
+            between the images and was able to perform the best out of the three metrics.
           </li>
         </ul>
       </li>
@@ -170,10 +186,10 @@
   <h2 align="middle">Section II: Low Resolution JPG Results</h2>
   <div class="bounding-box">
     <h3 align="middle">
-      Low Resolution JPG Results.
+      Low Resolution JPG Results
     </h3>
     <!-- Example of including multiple figures -->
-    Here are some images of the low resolution JPG images after applying the simple single-scale approach. The displacment represents the change in the rows and then the columns.
+    Here are the results after applying the image pyramid approach to the low resolution JPG images. The first displacement number represents the change in the rows while the second represents the columns.
     <br><br>
     <div align="middle">
       <table>
@@ -193,8 +209,6 @@
             <br>
             Red Shift: (3, 2)
           </td>
-        </tr>
-        <tr align="center">
           <td>
             <img src="./Images/JPG Images/tobolsk.jpg" align="middle" width="400px" />
             <figcaption><code class="highlighter-rouge">tobolsk.jpg</code></figcaption>
@@ -208,13 +222,64 @@
   </div>
   <br>
   <br>
+  <h2 align="middle">Section III: Image Pyramid Approach</h2>
+
+  <div class="bounding-box">
+    <h3>
+      Image Pyramid Approach
+    </h3>
+    <p>
+      Like before, I split the images into its red, green, and blue channels. However, the naive simple single-scale was far too inefficient
+    </p>
+    <h3>Displacement Metrics</h3>
+    <ul>
+      <li>
+        Sum of Squared Differences (SSD):
+        <ul>
+          <li>
+            I had first tested the displacement match by calculating the sum of squared differences (SSD) between the
+            two plates. The minimum SSD would indicate the best alignment. This displacement vector measured how close
+            the RGB plates were to each other. It was one of the worst metrics mainly because small differences in
+            lighting, contrast, or exposure between image layers can disproportionately affect the L2 norm, causing it
+            to perform poorly in matching similar regions that only differ in brightness or contrast.
+          </li>
+        </ul>
+      </li>
+      <li>
+        Normalized Cross-Correlation (NCC):
+        <ul>
+          <li>
+            I then tested the normalized cross-correlation (NCC) metric. This metric was more robust to changes in
+            lighting, contrast, or exposure between image layers. The maximum NCC would indicate the best alignment.
+            This displacement metric normalizes the intensity of the images, making it insensitive to differences in
+            brightness or contrast. It was able to perform better on the images compared to SSD.
+          </li>
+        </ul>
+      </li>
+      <li>
+        Structural Similarity Index Metric (SSIM):
+        <ul>
+          <li>
+            Finally, I tested the structural similarity index metric (SSIM). This metric was able to capture the
+            perceived similarity between two images, focusing on structural information rather than just pixel-wise
+            differences. It compared the luminance (brightness), contrast (intensity differences), and structure
+            (spatial differences) and mimics human visual system's way of perceiving image quality The maximum SSIM
+            would indicate the best alignment. This displacement metric was able to capture the perceived similarity
+            between the images and was able to perform the best out of the three metrics.
+          </li>
+        </ul>
+      </li>
+    </ul>
+  </div>
+  <br>
+  <br>
   <h2 align="middle">Section IV: High Resolution TIF Results</h2>
   <div class="bounding-box">
     <h3 align="middle">
-      High Resolution TIF Results.
+      High Resolution TIF Results
     </h3>
     <!-- Example of including multiple figures -->
-    Here are some images of the high resolution TIF images after applying the image pyramid approach. The displacment represents the change in the rows and then the columns.
+    Here are the results after applying the image pyramid approach to the high resolution TIF images. The first displacement number represents the change in the rows while the second represents the columns.
     <br><br>
     <div align="middle">
       <table>
@@ -307,7 +372,47 @@
       </table>
     </div>
   </div>
+  <br>
+  <br>
 
+  <h2 align="middle">Section V: Prokudin-Gorskii Collection TIF Results</h2>
+  <div class="bounding-box">
+    <h3 align="middle">
+      Prokudin-Gorskii Collection TIF Results
+    </h3>
+    <!-- Example of including multiple figures -->
+    Here are the results after applying the image pyramid approach to the high resolution Prokudin-Gorskii collection
+    images. The first displacement number represents the change in the rows while the second represents the columns.
+    <br><br>
+    <div align="middle">
+      <table>
+        <tr align="center">
+          <td>
+            <img src="./Images/ProkudinGorskii Images/flowers.jpg" align="middle" width="400px" />
+            <figcaption><code class="highlighter-rouge">flowers.tif</code></figcaption>
+            Green Shift: (59, 28)
+            <br>
+            Red Shift: (126, 34)
+          </td>
+          <td>
+            <img src="./Images/ProkudinGorskii Images/tree.jpg" align="middle" width="400px" />
+            <figcaption><code class="highlighter-rouge">tree.jpg</code>
+            </figcaption>
+            Green Shift: (31, 30)
+            <br>
+            Red Shift: (55, 46)
+          </td>
+          <td>
+            <img src="./Images/ProkudinGorskii Images/ocean.jpg" align="middle" width="400px" />
+            <figcaption><code class="highlighter-rouge">ocean.jpg</code></figcaption>
+            Green Shift: (6, 1)
+            <br>
+            Red Shift: (12, -1)
+          </td>
+        </tr>
+      </table>
+    </div>
+  </div>
 </body>
 
 </html>
