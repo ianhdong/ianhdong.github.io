@@ -393,7 +393,7 @@
     <h3>
       Effects
     </h3>
-    Although it did not perform significantly better on some images, this algorithm helped to successfully align Emir. SSIM outperformed the other two metrics as it focused on the brightness and contrast between pixels instead of the raw values directly. However, it was a lot slower as the the algorithm took 156 seconds while NCC only took 27 seconds. Here are before and after images for Emir:
+    Although it did not perform significantly better on some images, this algorithm helped to successfully align Emir. SSIM outperformed the other two metrics as it focused on the brightness and contrast between pixels instead of the raw values directly. However, it was a lot slower as the the algorithm took 156 seconds while NCC only took 27 seconds. Here are the before and after images for Emir:
     <br><br>
     <div align="middle">
       <table>
@@ -412,6 +412,45 @@
             Green Shift: (-3, 7)
             <br>
             Red Shift: (107, 17)
+          </td>
+        </tr>
+      </table>
+    </div>
+  </div>
+  <div class="bounding-box">
+    <h3 align="middle">
+      Auto Crop
+    </h3>
+    <!-- Example of including multiple figures -->
+    I was able to implement my own auto crop algorithm. Instead of manually figuring out how much to crop from the sides based on the thickness of the black bars, this algorithm would be able to identify and crop the image plate on its own.
+
+    <h3>
+      Algorithm
+    </h3>
+    In my algorithm, I took in all three image plates and filtered the arrays by a certain threshold. I realized that higher values meant more on the darker side so I found the bounding box of the pixels with values less than the certain threshold. Finally, I cut away all of the pixels outside of this image as those represented the black bars.
+
+    <h3>
+      Effects
+    </h3>
+    This algorithm had a tremendous help in aligning the monastery image. The different channels were not at the correct places and certain parts had hues of red or green. With this algorithm, I was able to fix and align the channels better on top of each other by removing the unnecessary black bars. Here are the before and after images of the monastery.
+    <br><br>
+    <div align="middle">
+      <table>
+        <tr align="center">
+          <td>
+            <img src="./Images/JPG Images/monastery_no_autocrop.jpg" align="middle" width="400px" />
+            <figcaption><code class="highlighter-rouge">monastery_no_autocrop.jpg</code>
+            </figcaption>
+            Green Shift: (-6, 0)
+            <br>
+            Red Shift: (9, 1)
+          </td>
+          <td>
+            <img src="./Images/JPG Images/monastery_autocrop.jpg" align="middle" width="400px" />
+            <figcaption><code class="highlighter-rouge">monastery_autocrop.jpg</code></figcaption>
+            Green Shift: (-3, 2)
+            <br>
+            Red Shift: (3, 2)
           </td>
         </tr>
       </table>
