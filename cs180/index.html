@@ -13,7 +13,7 @@
 		background-color: #f6ead7;
 	}
 </style>
-
+<title>CS 180 Project Webpages/title>
 <body>
 	<h3>Welcome to my CS180 Project Webpages</h3>
 	<br><br>
@@ -27,9 +27,7 @@
 </body>
 <script>
 	var links = document.body.getElementsByTagName("a")
-	console.log(links)
 	var a = window.location.href.indexOf(".io")
-	console.log(window.location.href)
 	var repo_name = window.location.href.substring(a + 3)
 	for (var i = 0; i < links.length; i++) {
 		var link = links[i]
