@@ -172,7 +172,7 @@
             Finally, I tested the structural similarity index metric (SSIM). This metric was able to capture the
             perceived similarity between two images, focusing on structural information rather than just pixel-wise
             differences. It compared the luminance (brightness), contrast (intensity differences), and structure
-            (spatial differences) and mimics human visual system's way of perceiving image quality The maximum SSIM
+            (spatial differences) and mimics human visual system's way of perceiving image quality. The maximum SSIM
             would indicate the best alignment. This displacement metric was able to capture the perceived similarity
             between the images and was able to perform the best out of the three metrics but was about four times as slow.
           </li>
@@ -369,6 +369,49 @@
             Green Shift: (6, 1)
             <br>
             Red Shift: (12, -1)
+          </td>
+        </tr>
+      </table>
+    </div>
+  </div>
+
+  <h2 align="middle">Section VI: Bells and Whistles</h2>
+  <div class="bounding-box">
+    <h3 align="middle">
+      Structural Similarity Index Metric (SSIM)
+    </h3>
+    <!-- Example of including multiple figures -->
+    I was able to implement my own SSIM function to compare the similarities between the reference and shifted images. This metric focuses on structural information rather than just pixel-wise
+    differences. It compares the luminance (brightness), contrast (intensity differences), and structure
+    (spatial differences) and mimics human visual system's way of perceiving image quality. 
+
+    <h3>
+      Algorithm
+    </h3>
+    I followed along with <a href="https://en.wikipedia.org/wiki/Structural_similarity_index_measure#Algorithm"> Wikipedia's</a> approach in calculating the metrics. First, I calculated the mean and variance of each of the images. Then, I found the covariance between both. I also needed to calculate two variables to stabilize the division with a weak denominator which represented the luminance and contrast constants as well as the dynamic range of the pixels.
+
+    <h3>
+      Effects
+    </h3>
+    Although it did not perform significantly better on some images, this algorithm helped to successfully align Emir. SSIM outperformed the other two metrics as it focused on the brightness and contrast between pixels instead of the raw values directly. However, it was a lot slower as the the algorithm took 156 seconds while NCC only took 27 seconds. Here are before and after images for Emir:
+    <br><br>
+    <div align="middle">
+      <table>
+        <tr align="center">
+          <td>
+            <img src="./Images/ProkudinGorskii Images/emir_with_ncc.jpg" align="middle" width="400px" />
+            <figcaption><code class="highlighter-rouge">emir_with_ncc.jpg</code>
+            </figcaption>
+            Green Shift: (31, 30)
+            <br>
+            Red Shift: (55, 46)
+          </td>
+          <td>
+            <img src="./Images/TIF Images/emir_with_ssim.jpg" align="middle" width="400px" />
+            <figcaption><code class="highlighter-rouge">emir_with_ssim.jpg</code></figcaption>
+            Green Shift: (-3, 7)
+            <br>
+            Red Shift: (107, 17)
           </td>
         </tr>
       </table>
