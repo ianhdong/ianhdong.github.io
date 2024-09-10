@@ -174,7 +174,7 @@
             differences. It compared the luminance (brightness), contrast (intensity differences), and structure
             (spatial differences) and mimics human visual system's way of perceiving image quality The maximum SSIM
             would indicate the best alignment. This displacement metric was able to capture the perceived similarity
-            between the images and was able to perform the best out of the three metrics.
+            between the images and was able to perform the best out of the three metrics but was about four times as slow.
           </li>
         </ul>
       </li>
@@ -229,47 +229,8 @@
       Image Pyramid Approach
     </h3>
     <p>
-      Like before, I split the images into its red, green, and blue channels. However, the naive simple single-scale was far too inefficient
+      Like before, I split the images into its red, green, and blue channels. However, the naive simple single-scale was far too inefficient for the large (.tif) images so I needed to use an image pyramid to speed up this process. I decided to use five levels as it worked the best for the images and scaled down each of the plates to search iteratively within them starting from the smallest. After I had gotten the best displacement using the above SSIM metric, I made sure to add to the running displacement total. I also scaled these displacement values by a factor of two to ensure that the next scaled up image would search in the correct location. Before iteratively searching in the next image, I made sure to roll this plate so that it would already be aligned. Using this image pyramid really helped speed up this process tremendously.
     </p>
-    <h3>Displacement Metrics</h3>
-    <ul>
-      <li>
-        Sum of Squared Differences (SSD):
-        <ul>
-          <li>
-            I had first tested the displacement match by calculating the sum of squared differences (SSD) between the
-            two plates. The minimum SSD would indicate the best alignment. This displacement vector measured how close
-            the RGB plates were to each other. It was one of the worst metrics mainly because small differences in
-            lighting, contrast, or exposure between image layers can disproportionately affect the L2 norm, causing it
-            to perform poorly in matching similar regions that only differ in brightness or contrast.
-          </li>
-        </ul>
-      </li>
-      <li>
-        Normalized Cross-Correlation (NCC):
-        <ul>
-          <li>
-            I then tested the normalized cross-correlation (NCC) metric. This metric was more robust to changes in
-            lighting, contrast, or exposure between image layers. The maximum NCC would indicate the best alignment.
-            This displacement metric normalizes the intensity of the images, making it insensitive to differences in
-            brightness or contrast. It was able to perform better on the images compared to SSD.
-          </li>
-        </ul>
-      </li>
-      <li>
-        Structural Similarity Index Metric (SSIM):
-        <ul>
-          <li>
-            Finally, I tested the structural similarity index metric (SSIM). This metric was able to capture the
-            perceived similarity between two images, focusing on structural information rather than just pixel-wise
-            differences. It compared the luminance (brightness), contrast (intensity differences), and structure
-            (spatial differences) and mimics human visual system's way of perceiving image quality The maximum SSIM
-            would indicate the best alignment. This displacement metric was able to capture the perceived similarity
-            between the images and was able to perform the best out of the three metrics.
-          </li>
-        </ul>
-      </li>
-    </ul>
   </div>
   <br>
   <br>
