@@ -2,92 +2,20 @@
 <html xmlns="http://www.w3.org/1999/xhtml" xml:lang="en" lang="en">
 
 <head>
+	<link rel="stylesheet" href="../css/styles.css">
+	<script>
+		document.addEventListener("DOMContentLoaded", function () {
+			fetch('../navbar.html')
+				.then(response => response.text())
+				.then(data => {
+					document.getElementById('navbar').innerHTML = data;
+				});
+		});
+	</script>
 	<script src="https://polyfill.io/v3/polyfill.min.js?features=es6"></script>
 	<script id="MathJax-script" async src="https://cdn.jsdelivr.net/npm/mathjax@3/es5/tex-mml-chtml.js"></script>
-	<style>
-		body {
-			padding: 100px;
-			width: 1000px;
-			margin: auto;
-			text-align: left;
-			font-weight: 300;
-			font-family: 'Open Sans', sans-serif;
-			color: #121212;
-			background-color: #f6ead7;
-			cursor: url(https://rsha256.github.io/cloth-clear-32.png), auto;
-		}
 
-		.bounding-box {
-			border: 2px solid #ccc;
-			padding: 20px;
-			border-radius: 10px;
-			box-shadow: 0 4px 8px rgba(0, 0, 0, 0.6);
-			/* Updated box-shadow */
-			max-width: 1000px;
-			margin: 0 auto;
-			background-color: #ffffff;
-		}
-
-		h1,
-		h2,
-		h3,
-		h4 {
-			font-family: 'Source Sans Pro', sans-serif;
-		}
-
-		.center {
-			display: flex;
-			justify-content: center;
-			align-items: center;
-			height: 100vh;
-			/* This centers the image vertically */
-		}
-
-		table {
-			width: 100%;
-
-		}
-
-		th,
-		td {
-			border: 3px solid black;
-			padding: 10px;
-			text-align: center;
-			vertical-align: middle;
-		}
-
-		th {
-			background-color: #f2f2f2;
-		}
-
-		hr {
-			border: 0;
-			height: 1px;
-			background-color: black;
-			margin: 20px 0;
-			/* Adjust margin as needed */
-		}
-
-		img {
-			max-width: 100%;
-			height: auto;
-			display: block;
-			margin: 0 auto;
-		}
-
-		figcaption {
-			margin-top: 5px;
-			/* Add some margin above captions */
-		}
-
-		.highlighter-rouge {
-			color: #b00505;
-			background-color: rgb(247, 222, 222);
-			border-radius: 4px;
-			padding: 3px;
-		}
-	</style>
-	<title>CS 184 Mesh Edit</title>
+	<title>CS 180: Images of the Russian Empire</title>
 	<meta http-equiv="content-type" content="text/html; charset=utf-8" />
 	<link href="https://fonts.googleapis.com/css?family=Open+Sans|Source+Sans+Pro" rel="stylesheet">
 
@@ -103,7 +31,7 @@
 </head>
 
 <body>
-
+	<div id="navbar"></div>
 	<h1 align="middle">CS 184: Computer Graphics and Imaging, Spring 2024</h1>
 	<h1 align="middle"><a href="https://cal-cs184-student.github.io/hw-webpages-sp24-ianhdong/hw4/index.html">Homework
 			4: Cloth Simulation</a></h1>
@@ -216,7 +144,12 @@
 			force calculated, I implemented Verlet integration to compute the new location for each of the <code
 				class="highlighter-rouge">PointMass</code> objects using the following equation:
 			$$x_{t + dt} = x_t + (1 - d) \cdot (x_t x_{t - dt}) + a_t \cdot (dt)^2$$
-			where $a_t$ is the total force from before divided by the mass of the <code class="highlighter-rouge">PointMass</code>. $d$ represented the damping factor and was used to slow down the velocity of the cloth because in real life friction and air resistance are forces that oppose the velocity of the cloth. Finally, to ensure that the springs did not stretch more than 10% of their original rest length, I looped through each pair of springs and shifted them towards each other and checked for corner cases when they would be pinned and could not be adjusted.
+			where $a_t$ is the total force from before divided by the mass of the <code
+				class="highlighter-rouge">PointMass</code>. $d$ represented the damping factor and was used to slow down
+			the velocity of the cloth because in real life friction and air resistance are forces that oppose the
+			velocity of the cloth. Finally, to ensure that the springs did not stretch more than 10% of their original
+			rest length, I looped through each pair of springs and shifted them towards each other and checked for
+			corner cases when they would be pinned and could not be adjusted.
 		</p>
 	</div>
 	<br>

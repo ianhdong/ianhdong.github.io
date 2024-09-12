@@ -1,4 +1,4 @@
-<html>
+<!-- <html>
 
 <head>
 </head>
@@ -17,7 +17,7 @@
 <body>
 	<h3>Welcome to my CS180 Project Webpages</h3>
 	<br><br>
-	<a href="/proj1/index.html">Project 1</a>
+	<a href="/proj1/">Project 1</a>
 	<br><br>
 	<a href="/proj2/">Project 2</a>
 	<br><br>
@@ -36,4 +36,32 @@
 	}
 </script>
 
+</html> -->
+
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Course Projects</title>
+    <link rel="stylesheet" href="./css/styles.css">
+	<script>
+        document.addEventListener("DOMContentLoaded", function() {
+            fetch('navbar.html')
+                .then(response => response.text())
+                .then(data => {
+                    document.getElementById('navbar').innerHTML = data;
+                });
+        });
+    </script>
+</head>
+<body>
+	<div id="navbar"></div>
+
+    <div class="content">
+        <h1>Welcome to the Course Projects</h1>
+        <p>Select a project from the dropdown menu to explore each project.</p>
+    </div>
+
+</body>
 </html>
