@@ -30,10 +30,10 @@
 
 <body>
   <div class="content">
-    
-    <!-- <div id="navbar"></div> -->
+
     <h1 align="middle">CS 180: Intro to Computer Vision and Computational Photography, Fall 2024</h1>
-    <h1 align="middle"><a href="https://ianhdong.github.io/cs180/proj2">Project 2: Fun with Filters and Frequencies!</a></h1>
+    <h1 align="middle"><a href="https://ianhdong.github.io/cs180/proj2">Project 2: Fun with Filters and Frequencies!</a>
+    </h1>
     <h2 align="middle">Ian Dong</h2>
 
     <br><br>
@@ -44,9 +44,16 @@
 
       <h2 align="middle">Overview</h2>
 
-      This project explores how using 2D convolutions, frequencies and filters can help process images. First, I used finite difference operators to detect edges in images. Later, I built an algorithm to sharpen and blur images which was then used to create hybrid images as described in the 2006 SIGGRAPH <a href="http://olivalab.mit.edu/publications/OlivaTorralb_Hybrid_Siggraph06.pdf">paper</a> by Oliva, Torralba, and Schyns. Finally, I looked into multiresolution blending which used Gaussian and Laplacian stacks blend images together as described in the 1983 <a href="https://persci.mit.edu/pub_pdfs/spline83.pdf">paper</a> by Burt and Adelson.
-      
-      to create new images through the use of Gaussian and Laplacian stacks, following the approach described in the 1983 paper by Burt and Adelson.
+      This project explores how using 2D convolutions, frequencies and filters can help process images. First, I used
+      finite difference operators to detect edges in images. Later, I built an algorithm to sharpen and blur images
+      which was then used to create hybrid images as described in the 2006 SIGGRAPH <a
+        href="http://olivalab.mit.edu/publications/OlivaTorralb_Hybrid_Siggraph06.pdf">paper</a> by Oliva, Torralba, and
+      Schyns. Finally, I looked into multiresolution blending which used Gaussian and Laplacian stacks blend images
+      together as described in the 1983 <a href="https://persci.mit.edu/pub_pdfs/spline83.pdf">paper</a> by Burt and
+      Adelson.
+
+      to create new images through the use of Gaussian and Laplacian stacks, following the approach described in the
+      1983 paper by Burt and Adelson.
       <br><br>
     </div>
 
@@ -59,363 +66,380 @@
         Finite Difference Operator
       </h3>
       <p>
-        I first split the image into the three different red, green, and blue image channels. Afterwards, I fixed the
-        blue
-        channel and continuously overlay the red and green plates over it. For these small .jpg images, I exhaustively
-        searched through a 30 by 30 box (15 on each side) to displace these plates and find the best displacement match
-        using the metrics listed below.
+        First, I looked into using simple finite difference kernels in the <code class="highlighter-rouge">x</code> and
+        <code class="highlighter-rouge">y</code> directions. By convolving the camera man image with these finite
+        operators, I calculated the partial derivatives and thus was able to detect the image's edges.
+        $$D_x = \begin{bmatrix} 1 & -1 \end{bmatrix}$$
+        $$D_y = \begin{bmatrix} 1 \\ -1 \end{bmatrix}$$
+        To calculate the image's gradient magnitude, I took the square root of the sum of the squares of the partial
+        derivatives.
+        $$\text{Gradient Magnitude} = \sqrt{(\frac{\partial I}{\partial x})^2 + (\frac{\partial I}{\partial y})^2}$$
+        where $$\frac{\partial I}{\partial x} = I \ast D_x$$ and $$\frac{\partial I}{\partial y} = I \ast D_y$$ Finally,
+        I binarized the image by specifying a threshold and setting the pixels values above this value to 1 and anything
+        below to 0. This helped to highlight the edges better. Here are the results:
       </p>
-      <h3>Displacement Metrics</h3>
-      <ul>
-        <li>
-          Sum of Squared Differences (SSD):
-          <ul>
-            <li>
-              I had first tested the displacement match by calculating the sum of squared differences (SSD) between the
-              two plates. The minimum SSD would indicate the best alignment. This displacement vector measured how close
-              the RGB plates were to each other. It was one of the worst metrics mainly because small differences in
-              lighting, contrast, or exposure between image layers can disproportionately affect the L2 norm, causing it
-              to perform poorly in matching similar regions that only differ in brightness or contrast.
-            </li>
-          </ul>
-        </li>
-        <li>
-          Normalized Cross-Correlation (NCC):
-          <ul>
-            <li>
-              I then tested the normalized cross-correlation (NCC) metric. This metric was more robust to changes in
-              lighting, contrast, or exposure between image layers. The maximum NCC would indicate the best alignment.
-              This displacement metric normalizes the intensity of the images, making it insensitive to differences in
-              brightness or contrast. It was able to perform better on the images compared to SSD.
-            </li>
-          </ul>
-        </li>
-        <li>
-          Structural Similarity Index Metric (SSIM):
-          <ul>
-            <li>
-              Finally, I tested the structural similarity index metric (SSIM). This metric was able to capture the
-              perceived similarity between two images, focusing on structural information rather than just pixel-wise
-              differences. It compared the luminance (brightness), contrast (intensity differences), and structure
-              (spatial differences) and mimics human visual system's way of perceiving image quality. The maximum SSIM
-              would indicate the best alignment. This displacement metric was able to capture the perceived similarity
-              between the images and was able to perform the best out of the three metrics but was about four times as
-              slow.
-            </li>
-          </ul>
-        </li>
-      </ul>
-    </div>
-    <br>
-    <br>
+      <div align="middle"></div>
+      <table>
+        <tr align="center">
+          <td>
+            <img src="./Images/partial-x.png" align="middle" width="300px" />
+          </td>
+          <td>
+            <img src="./Images/partial-y.png" align="middle" width="300px" />
+          </td>
 
-    <h2 align="middle">Section II: Low Resolution JPG Results</h2>
-    <div class="bounding-box">
-      <h3 align="middle">
-        Low Resolution JPG Results
-      </h3>
-      <!-- Example of including multiple figures -->
-      Here are the results after applying the image pyramid approach to the low resolution JPG images. The first
-      displacement number represents the change in the rows while the second represents the columns.
-      <br><br>
-      <div align="middle">
-        <table>
-          <tr align="center">
-            <td>
-              <img src="./Images/JPG Images/cathedral.jpg" align="middle" width="400px" />
-              <figcaption><code class="highlighter-rouge">cathedral.jpg</code></figcaption>
-              Green Shift: (5, 2)
-              <br>
-              Red Shift: (12, 3)
-            </td>
-            <td>
-              <img src="./Images/JPG Images/monastery.jpg" align="middle" width="400px" />
-              <figcaption><code class="highlighter-rouge">monastery.jpg</code>
-              </figcaption>
-              Green Shift: (-3, 2)
-              <br>
-              Red Shift: (3, 2)
-            </td>
-            <td>
-              <img src="./Images/JPG Images/tobolsk.jpg" align="middle" width="400px" />
-              <figcaption><code class="highlighter-rouge">tobolsk.jpg</code></figcaption>
-              Green Shift: (3, 3)
-              <br>
-              Red Shift: (6, 3)
-            </td>
-          </tr>
-        </table>
-      </div>
+        </tr>
+        <tr align="center">
+          <td>
+            <img src="./Images/gradient-mag.png" align="middle" width="300px" />
+          </td>
+          <td>
+            <img src="./Images/binarized-gradient-mag.png" align="middle" width="300px" />
+          </td>
+        </tr>
+      </table>
     </div>
-    <br>
-    <br>
-    <h2 align="middle">Section III: Image Pyramid Approach</h2>
 
+    <br></br>
     <div class="bounding-box">
       <h3>
-        Image Pyramid Approach
+        Derivative of Gaussian (DoG) Filter
       </h3>
       <p>
-        Like before, I split the images into its red, green, and blue channels. However, the naive simple single-scale
-        was
-        far too inefficient for the large (.tif) images so I needed to use an image pyramid to speed up this process. I
-        decided to use five levels as it worked the best for the images and scaled down each of the plates to search
-        iteratively within them starting from the smallest. After I had gotten the best displacement using the above
-        SSIM
-        metric, I made sure to add to the running displacement total. I also scaled these displacement values by a
-        factor
-        of two to ensure that the next scaled up image would search in the correct location. Before iteratively
-        searching
-        in the next image, I made sure to roll this plate so that it would already be aligned. Using this image pyramid
-        really helped speed up this process tremendously.
+        The edges above showed a lot of noise and were not as smooth like in the actual image. This time I used a smoothing operator, the Gaussian filter, to help reduce the noise. I convolved this new filter to blur some of the image's features and then applied the same steps above. Afterwards, I noticed significant differences compared to just the finite difference operator as the edges became much smoother and thicker because the filter helped to reduce the noise. Here are the results:
       </p>
+      <div align="middle"></div>
+      <table>
+        <tr align="center">
+          <td>
+            <img src="./Images/dog-partial-x.png" align="middle" width="300px" />
+          </td>
+          <td>
+            <img src="./Images/dog-partial-y.png" align="middle" width="300px" />
+          </td>
+
+        </tr>
+        <tr align="center">
+          <td>
+            <img src="./Images/dog-gradient-mag.png" align="middle" width="300px" />
+          </td>
+          <td>
+            <img src="./Images/dog-binarized-gradient-mag.png" align="middle" width="300px" />
+          </td>
+        </tr>
+      </table>
+      <p>
+        To show that convolutions and filters are associative, I convolved the partial derivative kernels with the Gaussian filter before applying it to the image. The resulting images reveal that they are the same. Here are the results:
+      </p>
+      <div align="middle"></div>
+      <table>
+        <tr align="center">
+          <td>
+            <img src="./Images/dog-partial-x.png" align="middle" width="300px" />
+          </td>
+          <td>
+            <img src="./Images/dog-partial-y.png" align="middle" width="300px" />
+          </td>
+
+        </tr>
+        <tr align="center">
+          <td>
+            <img src="./Images/dog-gradient-mag.png" align="middle" width="300px" />
+          </td>
+          <td>
+            <img src="./Images/dog-binarized-gradient-mag.png" align="middle" width="300px" />
+          </td>
+        </tr>
+      </table>
     </div>
-    <br>
-    <br>
-    <h2 align="middle">Section IV: High Resolution TIF Results</h2>
-    <div class="bounding-box">
-      <h3 align="middle">
-        High Resolution TIF Results
-      </h3>
-      <!-- Example of including multiple figures -->
-      Here are the results after applying the image pyramid approach to the high resolution TIF images. The first
-      displacement number represents the change in the rows while the second represents the columns.
-      <br><br>
-      <div align="middle">
-        <table>
-          <tr align="center">
-            <td>
-              <img src="./Images/TIF Images/church.jpg" align="middle" width="400px" />
-              <figcaption><code class="highlighter-rouge">church.tif</code></figcaption>
-              Green Shift: (25, 0)
-              <br>
-              Red Shift: (58, -4)
-            </td>
-            <td>
-              <img src="./Images/TIF Images/emir.jpg" align="middle" width="400px" />
-              <figcaption><code class="highlighter-rouge">emir.tif</code>
-              </figcaption>
-              Green Shift: (50, 21)
-              <br>
-              Red Shift: (105, 40)
-            </td>
-            <td>
-              <img src="./Images/TIF Images/harvesters.jpg" align="middle" width="400px" />
-              <figcaption><code class="highlighter-rouge">harvesters.tif</code></figcaption>
-              Green Shift: (60, 16)
-              <br>
-              Red Shift: (124, 13)
-            </td>
-          </tr>
-          <tr align="center">
-            <td>
-              <img src="./Images/TIF Images/icon.jpg" align="middle" width="400px" />
-              <figcaption><code class="highlighter-rouge">icon.tif</code></figcaption>
-              Green Shift: (40, 17)
-              <br>
-              Red Shift: (89, 23)
-            </td>
-            <td>
-              <img src="./Images/TIF Images/lady.jpg" align="middle" width="400px" />
-              <figcaption><code class="highlighter-rouge">lady.tif</code></figcaption>
-              Green Shift: (53, 8)
-              <br>
-              Red Shift: (117, 10)
-            </td>
-            <td>
-              <img src="./Images/TIF Images/melons.jpg" align="middle" width="400px" />
-              <figcaption><code class="highlighter-rouge">melons.tif</code></figcaption>
-              Green Shift: (82, 8)
-              <br>
-              Red Shift: (178, 12)
-            </td>
-          </tr>
-          <tr align="center">
-            <td>
-              <img src="./Images/TIF Images/onion_church.jpg" align="middle" width="400px" />
-              <figcaption><code class="highlighter-rouge">onion_church.tif</code></figcaption>
-              Green Shift: (51, 26)
-              <br>
-              Red Shift: (108, 36)
-            </td>
-            <td>
-              <img src="./Images/TIF Images/sculpture.jpg" align="middle" width="400px" />
-              <figcaption><code class="highlighter-rouge">sculpture.tif</code></figcaption>
-              Green Shift: (33, -11)
-              <br>
-              Red Shift: (140, -26)
-            </td>
-            <td>
-              <img src="./Images/TIF Images/self_portrait.jpg" align="middle" width="400px" />
-              <figcaption><code class="highlighter-rouge">self_portrait.tif</code></figcaption>
-              Green Shift: (78, 28)
-              <br>
-              Red Shift: (176, 36)
-            </td>
-          </tr>
-          <tr align="center">
-            <td>
-              <img src="./Images/TIF Images/three_generations.jpg" align="middle" width="400px" />
-              <figcaption><code class="highlighter-rouge">three_generations.tif</code></figcaption>
-              Green Shift: (54, 11)
-              <br>
-              Red Shift: (112, 9)
-            </td>
-            <td>
-              <img src="./Images/TIF Images/train.jpg" align="middle" width="400px" />
-              <figcaption><code class="highlighter-rouge">train.tif</code></figcaption>
-              Green Shift: (43, 5)
-              <br>
-              Red Shift: (87, 31)
-            </td>
-          </tr>
-        </table>
-      </div>
     </div>
-    <br>
-    <br>
+  </div>
 
-    <h2 align="middle">Section V: Prokudin-Gorskii Collection TIF/JPG Results</h2>
-    <div class="bounding-box">
-      <h3 align="middle">
-        Prokudin-Gorskii Collection TIF/JPG Results
-      </h3>
-      <!-- Example of including multiple figures -->
-      Here are the results after applying the image pyramid approach to the high resolution Prokudin-Gorskii collection
-      images. The first displacement number represents the change in the rows while the second represents the columns.
-      <br><br>
-      <div align="middle">
-        <table>
-          <tr align="center">
-            <td>
-              <img src="./Images/ProkudinGorskii Images/flowers.jpg" align="middle" width="400px" />
-              <figcaption><code class="highlighter-rouge">flowers.tif</code></figcaption>
-              Green Shift: (59, 28)
-              <br>
-              Red Shift: (126, 34)
-            </td>
-            <td>
-              <img src="./Images/ProkudinGorskii Images/tree.jpg" align="middle" width="400px" />
-              <figcaption><code class="highlighter-rouge">tree.jpg</code>
-              </figcaption>
-              Green Shift: (31, 30)
-              <br>
-              Red Shift: (55, 46)
-            </td>
-            <td>
-              <img src="./Images/ProkudinGorskii Images/ocean.jpg" align="middle" width="400px" />
-              <figcaption><code class="highlighter-rouge">ocean.jpg</code></figcaption>
-              Green Shift: (6, 1)
-              <br>
-              Red Shift: (12, -1)
-            </td>
-          </tr>
-        </table>
-      </div>
+
+
+  <br>
+  <br>
+
+  <h2 align="middle">Section II: Fun with Frequencies</h2>
+  <div class="bounding-box">
+    <h3 align="middle">
+      Low Resolution JPG Results
+    </h3>
+    <!-- Example of including multiple figures -->
+    Here are the results after applying the image pyramid approach to the low resolution JPG images. The first
+    displacement number represents the change in the rows while the second represents the columns.
+    <br><br>
+  </div>
+  <br>
+  <br>
+  <h2 align="middle">Section III: Image Pyramid Approach</h2>
+
+  <div class="bounding-box">
+    <h3>
+      Image Pyramid Approach
+    </h3>
+    <p>
+      Like before, I split the images into its red, green, and blue channels. However, the naive simple single-scale
+      was
+      far too inefficient for the large (.tif) images so I needed to use an image pyramid to speed up this process. I
+      decided to use five levels as it worked the best for the images and scaled down each of the plates to search
+      iteratively within them starting from the smallest. After I had gotten the best displacement using the above
+      SSIM
+      metric, I made sure to add to the running displacement total. I also scaled these displacement values by a
+      factor
+      of two to ensure that the next scaled up image would search in the correct location. Before iteratively
+      searching
+      in the next image, I made sure to roll this plate so that it would already be aligned. Using this image pyramid
+      really helped speed up this process tremendously.
+    </p>
+  </div>
+  <br>
+  <br>
+  <h2 align="middle">Section IV: High Resolution TIF Results</h2>
+  <div class="bounding-box">
+    <h3 align="middle">
+      High Resolution TIF Results
+    </h3>
+    <!-- Example of including multiple figures -->
+    Here are the results after applying the image pyramid approach to the high resolution TIF images. The first
+    displacement number represents the change in the rows while the second represents the columns.
+    <br><br>
+    <div align="middle">
+      <table>
+        <tr align="center">
+          <td>
+            <img src="./Images/TIF Images/church.jpg" align="middle" width="300px" />
+            <figcaption><code class="highlighter-rouge">church.tif</code></figcaption>
+            Green Shift: (25, 0)
+            <br>
+            Red Shift: (58, -4)
+          </td>
+          <td>
+            <img src="./Images/TIF Images/emir.jpg" align="middle" width="300px" />
+            <figcaption><code class="highlighter-rouge">emir.tif</code>
+            </figcaption>
+            Green Shift: (50, 21)
+            <br>
+            Red Shift: (105, 40)
+          </td>
+          <td>
+            <img src="./Images/TIF Images/harvesters.jpg" align="middle" width="300px" />
+            <figcaption><code class="highlighter-rouge">harvesters.tif</code></figcaption>
+            Green Shift: (60, 16)
+            <br>
+            Red Shift: (124, 13)
+          </td>
+        </tr>
+        <tr align="center">
+          <td>
+            <img src="./Images/TIF Images/icon.jpg" align="middle" width="300px" />
+            <figcaption><code class="highlighter-rouge">icon.tif</code></figcaption>
+            Green Shift: (40, 17)
+            <br>
+            Red Shift: (89, 23)
+          </td>
+          <td>
+            <img src="./Images/TIF Images/lady.jpg" align="middle" width="300px" />
+            <figcaption><code class="highlighter-rouge">lady.tif</code></figcaption>
+            Green Shift: (53, 8)
+            <br>
+            Red Shift: (117, 10)
+          </td>
+          <td>
+            <img src="./Images/TIF Images/melons.jpg" align="middle" width="300px" />
+            <figcaption><code class="highlighter-rouge">melons.tif</code></figcaption>
+            Green Shift: (82, 8)
+            <br>
+            Red Shift: (178, 12)
+          </td>
+        </tr>
+        <tr align="center">
+          <td>
+            <img src="./Images/TIF Images/onion_church.jpg" align="middle" width="300px" />
+            <figcaption><code class="highlighter-rouge">onion_church.tif</code></figcaption>
+            Green Shift: (51, 26)
+            <br>
+            Red Shift: (108, 36)
+          </td>
+          <td>
+            <img src="./Images/TIF Images/sculpture.jpg" align="middle" width="300px" />
+            <figcaption><code class="highlighter-rouge">sculpture.tif</code></figcaption>
+            Green Shift: (33, -11)
+            <br>
+            Red Shift: (140, -26)
+          </td>
+          <td>
+            <img src="./Images/TIF Images/self_portrait.jpg" align="middle" width="300px" />
+            <figcaption><code class="highlighter-rouge">self_portrait.tif</code></figcaption>
+            Green Shift: (78, 28)
+            <br>
+            Red Shift: (176, 36)
+          </td>
+        </tr>
+        <tr align="center">
+          <td>
+            <img src="./Images/TIF Images/three_generations.jpg" align="middle" width="300px" />
+            <figcaption><code class="highlighter-rouge">three_generations.tif</code></figcaption>
+            Green Shift: (54, 11)
+            <br>
+            Red Shift: (112, 9)
+          </td>
+          <td>
+            <img src="./Images/TIF Images/train.jpg" align="middle" width="300px" />
+            <figcaption><code class="highlighter-rouge">train.tif</code></figcaption>
+            Green Shift: (43, 5)
+            <br>
+            Red Shift: (87, 31)
+          </td>
+        </tr>
+      </table>
     </div>
+  </div>
+  <br>
+  <br>
 
-    <h2 align="middle">Section VI: Bells and Whistles</h2>
-    <div class="bounding-box">
-      <h3 align="middle">
-        Structural Similarity Index Metric (SSIM)
-      </h3>
-      <!-- Example of including multiple figures -->
-      I was able to implement my own SSIM function to compare the similarities between the reference and shifted images.
-      This metric focuses on structural information rather than just pixel-wise
-      differences. It compares the luminance (brightness), contrast (intensity differences), and structure
-      (spatial differences) and mimics human visual system's way of perceiving image quality.
-
-      <h3>
-        Algorithm
-      </h3>
-      I followed along with <a href="https://en.wikipedia.org/wiki/Structural_similarity_index_measure#Algorithm">
-        Wikipedia's</a> approach in calculating the metrics. First, I calculated the mean and variance of each of the
-      images. Then, I found the covariance between both. I also needed to calculate two variables to stabilize the
-      division with a weak denominator which represented the luminance and contrast constants as well as the dynamic
-      range
-      of the pixels.
-
-      <h3>
-        Effects
-      </h3>
-      Although it did not perform significantly better on some images, this algorithm helped to successfully align Emir.
-      SSIM outperformed the other two metrics as it focused on the brightness and contrast between pixels instead of the
-      raw values directly. However, it was a lot slower as the the algorithm took 156 seconds while NCC only took 27
-      seconds. Here are the before and after images for Emir:
-      <br><br>
-      <div align="middle">
-        <table>
-          <tr align="center">
-            <td>
-              <img src="./Images/TIF Images/emir_with_ncc.jpg" align="middle" width="400px" />
-              <figcaption><code class="highlighter-rouge">emir_with_ncc.jpg</code>
-              </figcaption>
-              Green Shift: (31, 30)
-              <br>
-              Red Shift: (55, 46)
-            </td>
-            <td>
-              <img src="./Images/TIF Images/emir_with_ssim.jpg" align="middle" width="400px" />
-              <figcaption><code class="highlighter-rouge">emir_with_ssim.jpg</code></figcaption>
-              Green Shift: (-3, 7)
-              <br>
-              Red Shift: (107, 17)
-            </td>
-          </tr>
-        </table>
-      </div>
+  <h2 align="middle">Section V: Prokudin-Gorskii Collection TIF/JPG Results</h2>
+  <div class="bounding-box">
+    <h3 align="middle">
+      Prokudin-Gorskii Collection TIF/JPG Results
+    </h3>
+    <!-- Example of including multiple figures -->
+    Here are the results after applying the image pyramid approach to the high resolution Prokudin-Gorskii collection
+    images. The first displacement number represents the change in the rows while the second represents the columns.
+    <br><br>
+    <div align="middle">
+      <table>
+        <tr align="center">
+          <td>
+            <img src="./Images/ProkudinGorskii Images/flowers.jpg" align="middle" width="300px" />
+            <figcaption><code class="highlighter-rouge">flowers.tif</code></figcaption>
+            Green Shift: (59, 28)
+            <br>
+            Red Shift: (126, 34)
+          </td>
+          <td>
+            <img src="./Images/ProkudinGorskii Images/tree.jpg" align="middle" width="300px" />
+            <figcaption><code class="highlighter-rouge">tree.jpg</code>
+            </figcaption>
+            Green Shift: (31, 30)
+            <br>
+            Red Shift: (55, 46)
+          </td>
+          <td>
+            <img src="./Images/ProkudinGorskii Images/ocean.jpg" align="middle" width="300px" />
+            <figcaption><code class="highlighter-rouge">ocean.jpg</code></figcaption>
+            Green Shift: (6, 1)
+            <br>
+            Red Shift: (12, -1)
+          </td>
+        </tr>
+      </table>
     </div>
-    <br>
-    <br>
-    <div class="bounding-box">
-      <h3 align="middle">
-        Auto Crop
-      </h3>
-      <!-- Example of including multiple figures -->
-      I was able to implement my own auto crop algorithm. Instead of manually figuring out how much to crop from the
-      sides
-      based on the thickness of the black bars, this algorithm would be able to identify and crop the image plate on its
-      own.
+  </div>
 
-      <h3>
-        Algorithm
-      </h3>
-      In my algorithm, I took in all three image plates and filtered the arrays by a certain threshold. I realized that
-      higher values meant more on the darker side so I found the bounding box of the pixels with values less than the
-      certain threshold. Finally, I cut away all of the pixels outside of this image as those represented the black
-      bars.
+  <h2 align="middle">Section VI: Bells and Whistles</h2>
+  <div class="bounding-box">
+    <h3 align="middle">
+      Structural Similarity Index Metric (SSIM)
+    </h3>
+    <!-- Example of including multiple figures -->
+    I was able to implement my own SSIM function to compare the similarities between the reference and shifted images.
+    This metric focuses on structural information rather than just pixel-wise
+    differences. It compares the luminance (brightness), contrast (intensity differences), and structure
+    (spatial differences) and mimics human visual system's way of perceiving image quality.
 
-      <h3>
-        Effects
-      </h3>
-      This algorithm had a tremendous help in aligning the monastery image. The different channels were not at the
-      correct
-      places and certain parts had hues of red or green. With this algorithm, I was able to fix and align the channels
-      better on top of each other by removing the unnecessary black bars. Here are the before and after images of the
-      monastery.
-      <br><br>
-      <div align="middle">
-        <table>
-          <tr align="center">
-            <td>
-              <img src="./Images/JPG Images/monastery_no_autocrop.jpg" align="middle" width="400px" />
-              <figcaption><code class="highlighter-rouge">monastery_no_autocrop.jpg</code>
-              </figcaption>
-              Green Shift: (-6, 0)
-              <br>
-              Red Shift: (9, 1)
-            </td>
-            <td>
-              <img src="./Images/JPG Images/monastery_autocrop.jpg" align="middle" width="400px" />
-              <figcaption><code class="highlighter-rouge">monastery_autocrop.jpg</code></figcaption>
-              Green Shift: (-3, 2)
-              <br>
-              Red Shift: (3, 2)
-            </td>
-          </tr>
-        </table>
-      </div>
+    <h3>
+      Algorithm
+    </h3>
+    I followed along with <a href="https://en.wikipedia.org/wiki/Structural_similarity_index_measure#Algorithm">
+      Wikipedia's</a> approach in calculating the metrics. First, I calculated the mean and variance of each of the
+    images. Then, I found the covariance between both. I also needed to calculate two variables to stabilize the
+    division with a weak denominator which represented the luminance and contrast constants as well as the dynamic
+    range
+    of the pixels.
+
+    <h3>
+      Effects
+    </h3>
+    Although it did not perform significantly better on some images, this algorithm helped to successfully align Emir.
+    SSIM outperformed the other two metrics as it focused on the brightness and contrast between pixels instead of the
+    raw values directly. However, it was a lot slower as the the algorithm took 156 seconds while NCC only took 27
+    seconds. Here are the before and after images for Emir:
+    <br><br>
+    <div align="middle">
+      <table>
+        <tr align="center">
+          <td>
+            <img src="./Images/TIF Images/emir_with_ncc.jpg" align="middle" width="300px" />
+            <figcaption><code class="highlighter-rouge">emir_with_ncc.jpg</code>
+            </figcaption>
+            Green Shift: (31, 30)
+            <br>
+            Red Shift: (55, 46)
+          </td>
+          <td>
+            <img src="./Images/TIF Images/emir_with_ssim.jpg" align="middle" width="300px" />
+            <figcaption><code class="highlighter-rouge">emir_with_ssim.jpg</code></figcaption>
+            Green Shift: (-3, 7)
+            <br>
+            Red Shift: (107, 17)
+          </td>
+        </tr>
+      </table>
     </div>
+  </div>
+  <br>
+  <br>
+  <div class="bounding-box">
+    <h3 align="middle">
+      Auto Crop
+    </h3>
+    <!-- Example of including multiple figures -->
+    I was able to implement my own auto crop algorithm. Instead of manually figuring out how much to crop from the
+    sides
+    based on the thickness of the black bars, this algorithm would be able to identify and crop the image plate on its
+    own.
+
+    <h3>
+      Algorithm
+    </h3>
+    In my algorithm, I took in all three image plates and filtered the arrays by a certain threshold. I realized that
+    higher values meant more on the darker side so I found the bounding box of the pixels with values less than the
+    certain threshold. Finally, I cut away all of the pixels outside of this image as those represented the black
+    bars.
+
+    <h3>
+      Effects
+    </h3>
+    This algorithm had a tremendous help in aligning the monastery image. The different channels were not at the
+    correct
+    places and certain parts had hues of red or green. With this algorithm, I was able to fix and align the channels
+    better on top of each other by removing the unnecessary black bars. Here are the before and after images of the
+    monastery.
+    <br><br>
+    <div align="middle">
+      <table>
+        <tr align="center">
+          <td>
+            <img src="./Images/JPG Images/monastery_no_autocrop.jpg" align="middle" width="300px" />
+            <figcaption><code class="highlighter-rouge">monastery_no_autocrop.jpg</code>
+            </figcaption>
+            Green Shift: (-6, 0)
+            <br>
+            Red Shift: (9, 1)
+          </td>
+          <td>
+            <img src="./Images/JPG Images/monastery_autocrop.jpg" align="middle" width="300px" />
+            <figcaption><code class="highlighter-rouge">monastery_autocrop.jpg</code></figcaption>
+            Green Shift: (-3, 2)
+            <br>
+            Red Shift: (3, 2)
+          </td>
+        </tr>
+      </table>
+    </div>
+  </div>
+  </div>
   </div>
 </body>
 
