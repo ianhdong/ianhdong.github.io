@@ -389,7 +389,12 @@
       Gaussian and Laplacian Stacks
       </h3>
       <p>
-        Next, I explored blending images together using Gaussian and Laplacian stacks. To create the Gaussian stack, I applied a low pass filter to the original image and then on each successive layer. This meant that the blurring accumulated as the layers increased. To create the Laplacian stack, I took the difference between each of the Gaussian layers. The last level of the Laplacian stack was the same as the last level of the Gaussian stack. Here are the Gaussian and Laplacian stacks for the apple and orange:
+        Next, I explored blending images together using Gaussian and Laplacian stacks. To create the Gaussian stack, I applied a low pass filter to the original image and then on each successive layer. This meant that the blurring accumulated as the layers increased. To create the Laplacian stack, I took the difference between each of the Gaussian layers. The last level of the Laplacian stack was the same as the last level of the Gaussian stack. 
+        I used the following formula to find the Laplacian stack:
+
+        $$L_i = G_i - G_{i+1}$$
+        
+        Here are the Gaussian and Laplacian stacks for the apple and orange:
       </p>
       <table>
         <tr align="center">
@@ -420,7 +425,39 @@
     </div>
     <br> <br>
     <div class="bounding-box">
-      
+      <h3 align="middle">
+        Multiresolution Blending
+      </h3>
+      <p>
+        To implement multiresolution blending, I used the two images' Laplacian stacks as well as a mask's Gaussian stack. The mask's Gaussians tack helps to blur the edges and blend the two images' frequencies together. I used the algorithms above to create the Gaussian and Laplacian stacks. This is the formula I used to blend the images:
+        
+        $$\text{Blended Image}_i = \text{left_l_stack}_i * \text{mask_g_stack}_i + \text{right_l_stack}_i * (1 - \text{mask_g_stack}_i)$$
+        Here are the results for the apple and orange:
+        <table>
+          <tr align="center">
+            <td>
+              <img src="./Images/AppleOrange/apple.jpeg" align="middle" />
+              <figcaption>Apple Image</figcaption>
+            </td>
+            <td>
+              <img src="./Images/AppleOrange/orange.jpeg" align="middle" />
+              <figcaption>Orange Image</figcaption>
+            </td>
+            <td>
+              <img src="./Images/AppleOrange/apple_mask.png" alt="">
+              <figcaption>Mask</figcaption>
+            </td>
+          </tr>
+        </table>
+        <table>
+          <tr align="center">
+            <td>
+              <img src="./Images/AppleOrange/apple-orange-blended.png" align="middle" />
+              <figcaption>Apple Orange Blended Image</figcaption>
+            </td>
+          </tr>
+        </table>
+      </p>
     </div>
   </div>
 </body>
