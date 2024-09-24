@@ -433,6 +433,7 @@
         
         $$\text{Blended Image}_i = \text{left_l_stack}_i * \text{mask_g_stack}_i + \text{right_l_stack}_i * (1 - \text{mask_g_stack}_i)$$
         Here are the results for the apple and orange:
+        </p>
         <table>
           <tr align="center">
             <td>
@@ -457,7 +458,61 @@
             </td>
           </tr>
         </table>
+      <br>
+      <p>
+        I also blended together Michael Jordan and Jimmy Butler as there has been a rumor going on that Butler is Jordan's lost son. I wanted to see how similar they were and created a mask to blend them together. Here are the results:
       </p>
+      <table>
+        <tr align="center">
+          <td>
+            <img src="./Images/JordanButler/jordan.jpeg" align="middle" width="250px"/>
+            <figcaption>Jordan Image</figcaption>
+          </td>
+          <td>
+            <img src="./Images/JordanButler/butler.jpeg" align="middle" width="250px"/>
+            <figcaption>Butler Image</figcaption>
+          </td>
+          <td>
+            <img src="./Images/AppleOrange/apple_mask.png" align="middle" widht="250px">
+            <figcaption>Mask</figcaption>
+          </td>
+        </tr>
+      </table>
+      <table>
+        <tr align="center">
+          <td>
+            <img src="./Images/JordanButler/jordan-butler-blended.png" align="middle" />
+            <figcaption>Jordan Butler Blended Image</figcaption>
+          </td>
+        </tr>
+      </table>
+
+      <br>
+      For the irregular mask, I decided to blend my face onto Steph Curry as he is shooting a three. I wanted to see how well the blending would work with a mask that was not a perfect circle. Here are the results:
+      <table>
+        <tr align="center">
+          <td>
+            <img src="./Images/IanSteph/ian.png" align="middle" width="300px"/>
+            <figcaption>Ian Image</figcaption>
+          </td>
+          <td>
+            <img src="./Images/IanSteph/steph-shooting.jpg" align="middle" width="300px"/>
+            <figcaption>Steph Shooting Image</figcaption>
+          </td>
+          <td>
+            <img src="./Images/IanSteph/ian-mask.jpg" align="middle" width="300px">
+            <figcaption>Mask</figcaption>
+          </td>
+        </tr>
+      </table>
+      <table>
+        <tr align="center">
+          <td>
+            <img src="./Images/IanSteph/ian-steph-blended.png" align="middle" />
+            <figcaption>Ian Steph Blended Image</figcaption>
+          </td>
+        </tr>
+      </table>
     </div>
   </div>
 </body>
