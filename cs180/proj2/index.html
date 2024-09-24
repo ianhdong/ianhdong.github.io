@@ -11,7 +11,7 @@
   <script src="https://polyfill.io/v3/polyfill.min.js?features=es6"></script>
   <script id="MathJax-script" async src="https://cdn.jsdelivr.net/npm/mathjax@3/es5/tex-mml-chtml.js"></script>
 
-  <title>CS 180 Project 1: Images of the Russian Empire</title>
+  <title>CS 180 Project 2: Fun with Filters and Frequencies!</title>
   <meta http-equiv="content-type" content="text/html; charset=utf-8" />
   <link href="https://fonts.googleapis.com/css?family=Open+Sans|Source+Sans+Pro" rel="stylesheet">
 
@@ -98,7 +98,7 @@
       </table>
     </div>
 
-    <br></br>
+    <br><br>
     <div class="bounding-box">
       <h3 align="center">
         Derivative of Gaussian (DoG) Filter
@@ -250,274 +250,114 @@
         </tr>
       </table>
     </div>
-    <br>
-    <br>
-    <h2 align="middle">Section III: Image Pyramid Approach</h2>
-
+    <br> <br>
     <div class="bounding-box">
-      <h3>
-        Image Pyramid Approach
+      <h3 align="center">
+        Hybrid Images
       </h3>
       <p>
-        Like before, I split the images into its red, green, and blue channels. However, the naive simple single-scale
-        was
-        far too inefficient for the large (.tif) images so I needed to use an image pyramid to speed up this process. I
-        decided to use five levels as it worked the best for the images and scaled down each of the plates to search
-        iteratively within them starting from the smallest. After I had gotten the best displacement using the above
-        SSIM
-        metric, I made sure to add to the running displacement total. I also scaled these displacement values by a
-        factor
-        of two to ensure that the next scaled up image would search in the correct location. Before iteratively
-        searching
-        in the next image, I made sure to roll this plate so that it would already be aligned. Using this image pyramid
-        really helped speed up this process tremendously.
+        In this section, I created hybrid images which are static images that change in interpretation as a function of the viewing distance. The main idea is that at closer distances the image with higher frequencies would dominate and easier to see while at further distances the image with lower frequencies would dominate. By blending the high frequency portion of one image with the low-frequency portion of another, I would get a hybrid image that leads to different interpretations at different distances.
+        
+        I followed along with the 2006 SIGGRAPH <a
+        href="http://olivalab.mit.edu/publications/OlivaTorralb_Hybrid_Siggraph06.pdf">algorithm</a> to create these hybrid images by first applying a Gaussian filter to the two images and then subtracting the low-frequency portion from the original to get the high-frequency portion. I then combined the high-frequency portion of one image with the low-frequency portion of another to create the hybrid image. Here are the results:
       </p>
-    </div>
-    <br>
-    <br>
-    <h2 align="middle">Section IV: High Resolution TIF Results</h2>
-    <div class="bounding-box">
-      <h3 align="middle">
-        High Resolution TIF Results
-      </h3>
-      <!-- Example of including multiple figures -->
-      Here are the results after applying the image pyramid approach to the high resolution TIF images. The first
-      displacement number represents the change in the rows while the second represents the columns.
-      <br><br>
-      <div align="middle">
-        <table>
-          <tr align="center">
-            <td>
-              <img src="./Images/TIF Images/church.jpg" align="middle" width="300px" />
-              <figcaption><code class="highlighter-rouge">church.tif</code></figcaption>
-              Green Shift: (25, 0)
-              <br>
-              Red Shift: (58, -4)
-            </td>
-            <td>
-              <img src="./Images/TIF Images/emir.jpg" align="middle" width="300px" />
-              <figcaption><code class="highlighter-rouge">emir.tif</code>
-              </figcaption>
-              Green Shift: (50, 21)
-              <br>
-              Red Shift: (105, 40)
-            </td>
-            <td>
-              <img src="./Images/TIF Images/harvesters.jpg" align="middle" width="300px" />
-              <figcaption><code class="highlighter-rouge">harvesters.tif</code></figcaption>
-              Green Shift: (60, 16)
-              <br>
-              Red Shift: (124, 13)
-            </td>
-          </tr>
-          <tr align="center">
-            <td>
-              <img src="./Images/TIF Images/icon.jpg" align="middle" width="300px" />
-              <figcaption><code class="highlighter-rouge">icon.tif</code></figcaption>
-              Green Shift: (40, 17)
-              <br>
-              Red Shift: (89, 23)
-            </td>
-            <td>
-              <img src="./Images/TIF Images/lady.jpg" align="middle" width="300px" />
-              <figcaption><code class="highlighter-rouge">lady.tif</code></figcaption>
-              Green Shift: (53, 8)
-              <br>
-              Red Shift: (117, 10)
-            </td>
-            <td>
-              <img src="./Images/TIF Images/melons.jpg" align="middle" width="300px" />
-              <figcaption><code class="highlighter-rouge">melons.tif</code></figcaption>
-              Green Shift: (82, 8)
-              <br>
-              Red Shift: (178, 12)
-            </td>
-          </tr>
-          <tr align="center">
-            <td>
-              <img src="./Images/TIF Images/onion_church.jpg" align="middle" width="300px" />
-              <figcaption><code class="highlighter-rouge">onion_church.tif</code></figcaption>
-              Green Shift: (51, 26)
-              <br>
-              Red Shift: (108, 36)
-            </td>
-            <td>
-              <img src="./Images/TIF Images/sculpture.jpg" align="middle" width="300px" />
-              <figcaption><code class="highlighter-rouge">sculpture.tif</code></figcaption>
-              Green Shift: (33, -11)
-              <br>
-              Red Shift: (140, -26)
-            </td>
-            <td>
-              <img src="./Images/TIF Images/self_portrait.jpg" align="middle" width="300px" />
-              <figcaption><code class="highlighter-rouge">self_portrait.tif</code></figcaption>
-              Green Shift: (78, 28)
-              <br>
-              Red Shift: (176, 36)
-            </td>
-          </tr>
-          <tr align="center">
-            <td>
-              <img src="./Images/TIF Images/three_generations.jpg" align="middle" width="300px" />
-              <figcaption><code class="highlighter-rouge">three_generations.tif</code></figcaption>
-              Green Shift: (54, 11)
-              <br>
-              Red Shift: (112, 9)
-            </td>
-            <td>
-              <img src="./Images/TIF Images/train.jpg" align="middle" width="300px" />
-              <figcaption><code class="highlighter-rouge">train.tif</code></figcaption>
-              Green Shift: (43, 5)
-              <br>
-              Red Shift: (87, 31)
-            </td>
-          </tr>
-        </table>
-      </div>
-    </div>
-    <br>
-    <br>
+      <table>
+        <tr align="center">
+          <td>
+            <img src="./Images/DerekNutmeg/nutmeg.jpg" align="middle" width="300px" />
+            <figcaption>Nutmeg (High Frequency)</figcaption>
+          </td>
+          <td>
+            <img src="./Images/DerekNutmeg/DerekPicture.jpg" align="middle" width="300px" />
+            <figcaption>Derek (Low Frequency)</figcaption>
+          </td>
+          <td>
+            <img src="./Images/DerekNutmeg/derek-nutmeg-final.jpg" align="middle" width="300px" />
+            <figcaption>Hybrid Image</figcaption>
+          </td>
+        </tr>
+      </table>
+      <br>
+      <p>
+        I decided to overlay two Akron legends: Steph Curry and Lebron James over each other. The results were interesting as the hybrid image showed a mix of both players at different distances. At closer distances, the image looked more like Steph Curry while at further distances, the image looked more like Lebron James. Here are the results:
+      </p>
+      <div align="middle"></div>
+      <table>
+        <tr align="center">
+          <td>
+            <img src="./Images/StephLebron/steph-curry.jpeg" align="middle" width="300px" />
+            <figcaption>Steph Curry (High Frequency)</figcaption>
+          </td>
+          <td>
+            <img src="./Images/StephLebron/lebron-james.jpeg" align="middle" width="300px" />
+            <figcaption>Lebron James (Low Frequency)</figcaption>
+          </td>
+          <td>
+            <img src="./Images/StephLebron/steph-curry_lebron-james_hybrid.png" align="middle" width="300px" />
+            <figcaption>Hybrid Image</figcaption>
+          </td>
+        </tr>
+      </table>
+      <br>
 
-    <h2 align="middle">Section V: Prokudin-Gorskii Collection TIF/JPG Results</h2>
-    <div class="bounding-box">
-      <h3 align="middle">
-        Prokudin-Gorskii Collection TIF/JPG Results
-      </h3>
-      <!-- Example of including multiple figures -->
-      Here are the results after applying the image pyramid approach to the high resolution Prokudin-Gorskii collection
-      images. The first displacement number represents the change in the rows while the second represents the columns.
-      <br><br>
-      <div align="middle">
-        <table>
-          <tr align="center">
-            <td>
-              <img src="./Images/ProkudinGorskii Images/flowers.jpg" align="middle" width="300px" />
-              <figcaption><code class="highlighter-rouge">flowers.tif</code></figcaption>
-              Green Shift: (59, 28)
-              <br>
-              Red Shift: (126, 34)
-            </td>
-            <td>
-              <img src="./Images/ProkudinGorskii Images/tree.jpg" align="middle" width="300px" />
-              <figcaption><code class="highlighter-rouge">tree.jpg</code>
-              </figcaption>
-              Green Shift: (31, 30)
-              <br>
-              Red Shift: (55, 46)
-            </td>
-            <td>
-              <img src="./Images/ProkudinGorskii Images/ocean.jpg" align="middle" width="300px" />
-              <figcaption><code class="highlighter-rouge">ocean.jpg</code></figcaption>
-              Green Shift: (6, 1)
-              <br>
-              Red Shift: (12, -1)
-            </td>
-          </tr>
-        </table>
-      </div>
-    </div>
+      I also created a hybrid image between a lion and a tiger. Through this process, I experimented with using each one as the high frequency image and the other as the low frequency image. Here are the results:
 
-    <h2 align="middle">Section VI: Bells and Whistles</h2>
-    <div class="bounding-box">
-      <h3 align="middle">
-        Structural Similarity Index Metric (SSIM)
-      </h3>
-      <!-- Example of including multiple figures -->
-      I was able to implement my own SSIM function to compare the similarities between the reference and shifted images.
-      This metric focuses on structural information rather than just pixel-wise
-      differences. It compares the luminance (brightness), contrast (intensity differences), and structure
-      (spatial differences) and mimics human visual system's way of perceiving image quality.
-
-      <h3>
-        Algorithm
-      </h3>
-      I followed along with <a href="https://en.wikipedia.org/wiki/Structural_similarity_index_measure#Algorithm">
-        Wikipedia's</a> approach in calculating the metrics. First, I calculated the mean and variance of each of the
-      images. Then, I found the covariance between both. I also needed to calculate two variables to stabilize the
-      division with a weak denominator which represented the luminance and contrast constants as well as the dynamic
-      range
-      of the pixels.
-
-      <h3>
-        Effects
-      </h3>
-      Although it did not perform significantly better on some images, this algorithm helped to successfully align Emir.
-      SSIM outperformed the other two metrics as it focused on the brightness and contrast between pixels instead of the
-      raw values directly. However, it was a lot slower as the the algorithm took 156 seconds while NCC only took 27
-      seconds. Here are the before and after images for Emir:
-      <br><br>
-      <div align="middle">
-        <table>
-          <tr align="center">
-            <td>
-              <img src="./Images/TIF Images/emir_with_ncc.jpg" align="middle" width="300px" />
-              <figcaption><code class="highlighter-rouge">emir_with_ncc.jpg</code>
-              </figcaption>
-              Green Shift: (31, 30)
-              <br>
-              Red Shift: (55, 46)
-            </td>
-            <td>
-              <img src="./Images/TIF Images/emir_with_ssim.jpg" align="middle" width="300px" />
-              <figcaption><code class="highlighter-rouge">emir_with_ssim.jpg</code></figcaption>
-              Green Shift: (-3, 7)
-              <br>
-              Red Shift: (107, 17)
-            </td>
-          </tr>
-        </table>
-      </div>
-    </div>
-    <br>
-    <br>
-    <div class="bounding-box">
-      <h3 align="middle">
-        Auto Crop
-      </h3>
-      <!-- Example of including multiple figures -->
-      I was able to implement my own auto crop algorithm. Instead of manually figuring out how much to crop from the
-      sides
-      based on the thickness of the black bars, this algorithm would be able to identify and crop the image plate on its
-      own.
-
-      <h3>
-        Algorithm
-      </h3>
-      In my algorithm, I took in all three image plates and filtered the arrays by a certain threshold. I realized that
-      higher values meant more on the darker side so I found the bounding box of the pixels with values less than the
-      certain threshold. Finally, I cut away all of the pixels outside of this image as those represented the black
-      bars.
-
-      <h3>
-        Effects
-      </h3>
-      This algorithm had a tremendous help in aligning the monastery image. The different channels were not at the
-      correct
-      places and certain parts had hues of red or green. With this algorithm, I was able to fix and align the channels
-      better on top of each other by removing the unnecessary black bars. Here are the before and after images of the
-      monastery.
-      <br><br>
-      <div align="middle">
-        <table>
-          <tr align="center">
-            <td>
-              <img src="./Images/JPG Images/monastery_no_autocrop.jpg" align="middle" width="300px" />
-              <figcaption><code class="highlighter-rouge">monastery_no_autocrop.jpg</code>
-              </figcaption>
-              Green Shift: (-6, 0)
-              <br>
-              Red Shift: (9, 1)
-            </td>
-            <td>
-              <img src="./Images/JPG Images/monastery_autocrop.jpg" align="middle" width="300px" />
-              <figcaption><code class="highlighter-rouge">monastery_autocrop.jpg</code></figcaption>
-              Green Shift: (-3, 2)
-              <br>
-              Red Shift: (3, 2)
-            </td>
-          </tr>
-        </table>
-      </div>
+      <table>
+        <tr align="center">
+          <td>
+            <img src="./Images/TigerLion/tiger.png" align="middle" width="300px" />
+            <figcaption>Tiger</figcaption>
+          </td>
+          <td>
+            <img src="./Images/TigerLion/lion.png" align="middle" width="300px" />
+            <figcaption>Lion</figcaption>
+          </td>
+          <td>
+            <img src="./Images/TigerLion/tiger_lion_hybrid.png" align="middle" width="300px" />
+            <figcaption>Tiger (High) Lion (Low)</figcaption>
+          </td>
+          <td>
+            <img src="./Images/TigerLion/lion_tiger_hybrid.png" align="middle" width="300px" />
+            <figcaption>Lion (High) Tiger (Low)</figcaption>
+          </td>
+        </tr>
+      </table>
+      <br>
+      As I was trying to get the Steph and Lebron hybrid image to work, I had gotten a few failures. Here is one of them:
+      <table>
+        <tr align="center">
+          <td>
+            <img src="./Images/StephLebron/failure.png" align="middle" width="300px" />
+            <figcaption>Failure</figcaption>
+          </td>
+        </tr>
+      </table>
+      <br>
+      My favorite hybrid image was the one between Steph and Lebron. I applied the FFT to the original images, the filtered images, and the hybrid image. Here are the results:
+      <table>
+        <tr align="center">
+          <td>
+            <img src="./Images/StephLebron/high-freq-fft.png" align="middle" width="300px" />
+            <figcaption>High Frequency Image FFT</figcaption>
+          </td>
+          <td>
+            <img src="./Images/StephLebron/filtered-high-freq-fft.png" align="middle" width="300px" />
+            <figcaption>Filtered High Frequency Image FFT</figcaption>
+          </td>
+          <td>
+            <img src="./Images/StephLebron/low-freq-fft.png" align="middle" width="300px" />
+            <figcaption>Low Frequency Image FFT</figcaption>
+          </td>
+          <td>
+            <img src="./Images/StephLebron/filtered-low-freq-fft.png" align="middle" width="300px" />
+            <figcaption>Filtered Low Frequency Image FFT</figcaption>
+          </td>
+          <td>
+            <img src="./Images/StephLebron/hybrid-fft.png" align="middle" width="300px" />
+            <figcaption>Hybrid Image FFT</figcaption>
+          </td>
+        </tr>
+      </table>
     </div>
   </div>
 </body>
