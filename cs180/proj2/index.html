@@ -389,8 +389,38 @@
       Gaussian and Laplacian Stacks
       </h3>
       <p>
-        Next, I explored blending images together using Gaussian and Laplacian stacks. To create the Gaussian stack, I applied a low pass filter to the original image and then on each successive layer. This meant that the blurring accumulated as the layers increased. To create the Laplacian stack, I took the difference between each of the Gaussian layers. The last level of the Laplacian stack was the same as the last level of the Gaussian stack. Here are the Laplacian stack images for the apple (left) and the orange (right):
+        Next, I explored blending images together using Gaussian and Laplacian stacks. To create the Gaussian stack, I applied a low pass filter to the original image and then on each successive layer. This meant that the blurring accumulated as the layers increased. To create the Laplacian stack, I took the difference between each of the Gaussian layers. The last level of the Laplacian stack was the same as the last level of the Gaussian stack. Here are the Gaussian and Laplacian stacks for the apple and orange:
       </p>
+      <table>
+        <tr align="center">
+          <td>
+            <img src="./Images/AppleOrange/apple-gaussian.png" align="middle" />
+            <figcaption>Apple Gaussian Stack</figcaption>
+          </td>
+        </tr>
+        <tr>
+          <td>
+            <img src="./Images/AppleOrange/apple-laplacian.png" align="middle"/>
+            <figcaption>Apple Laplacian Stack</figcaption>
+          </td>
+        </tr>
+        <tr>
+          <td>
+            <img src="./Images/AppleOrange/orange-gaussian.png" align="middle"/>
+            <figcaption>Orange Gaussian Stack</figcaption>
+          </td>
+        </tr>
+        <tr>
+          <td>
+            <img src="./Images/AppleOrange/orange-laplacian.png" align="middle"/>
+            <figcaption>Orange Laplacian Stack</figcaption>
+          </td>
+        </tr>
+      </table>
+    </div>
+    <br> <br>
+    <div class="bounding-box">
+      
     </div>
   </div>
 </body>
