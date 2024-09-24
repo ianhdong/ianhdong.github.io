@@ -198,7 +198,8 @@
         </tr>
       </table>
       <br>
-      In the images below, we can see that as alpha increases the sunset and surrounding areas became much more defined and saturated.
+      In the images below, we can see that as alpha increases the sunset and surrounding areas became much more defined
+      and saturated.
       <table>
         <tr align="center">
           <td>
@@ -224,7 +225,9 @@
         </tr>
       </table>
       <br>
-      This sharpening algorithm can also help resharpen an image that was blurred by a Gaussian filter. It looks like when alpha = 4 is when the blurred image starts to look more like the original. Increasing alpha past it makes the image look more saturated.
+      This sharpening algorithm can also help resharpen an image that was blurred by a Gaussian filter. It looks like
+      when alpha = 4 is when the blurred image starts to look more like the original. Increasing alpha past it makes the
+      image look more saturated.
       <table>
         <tr align="center">
           <td>
@@ -256,10 +259,17 @@
         Hybrid Images
       </h3>
       <p>
-        In this section, I created hybrid images which are static images that change in interpretation as a function of the viewing distance. The main idea is that at closer distances the image with higher frequencies would dominate and easier to see while at further distances the image with lower frequencies would dominate. By blending the high frequency portion of one image with the low-frequency portion of another, I would get a hybrid image that leads to different interpretations at different distances.
-        
+        In this section, I created hybrid images which are static images that change in interpretation as a function of
+        the viewing distance. The main idea is that at closer distances the image with higher frequencies would dominate
+        and easier to see while at further distances the image with lower frequencies would dominate. By blending the
+        high frequency portion of one image with the low-frequency portion of another, I would get a hybrid image that
+        leads to different interpretations at different distances.
+
         I followed along with the 2006 SIGGRAPH <a
-        href="http://olivalab.mit.edu/publications/OlivaTorralb_Hybrid_Siggraph06.pdf">algorithm</a> to create these hybrid images by first applying a Gaussian filter to the two images and then subtracting the low-frequency portion from the original to get the high-frequency portion. I then combined the high-frequency portion of one image with the low-frequency portion of another to create the hybrid image. Here are the results:
+          href="http://olivalab.mit.edu/publications/OlivaTorralb_Hybrid_Siggraph06.pdf">algorithm</a> to create these
+        hybrid images by first applying a Gaussian filter to the two images and then subtracting the low-frequency
+        portion from the original to get the high-frequency portion. I then combined the high-frequency portion of one
+        image with the low-frequency portion of another to create the hybrid image. Here are the results:
       </p>
       <table>
         <tr align="center">
@@ -279,7 +289,10 @@
       </table>
       <br>
       <p>
-        I decided to overlay two Akron legends: Steph Curry and Lebron James over each other. The results were interesting as the hybrid image showed a mix of both players at different distances. At closer distances, the image looked more like Steph Curry while at further distances, the image looked more like Lebron James. Here are the results:
+        I decided to overlay two Akron legends: Steph Curry and Lebron James over each other. The results were
+        interesting as the hybrid image showed a mix of both players at different distances. At closer distances, the
+        image looked more like Steph Curry while at further distances, the image looked more like Lebron James. Here are
+        the results:
       </p>
       <div align="middle"></div>
       <table>
@@ -300,7 +313,8 @@
       </table>
       <br>
 
-      I also created a hybrid image between a lion and a tiger. Through this process, I experimented with using each one as the high frequency image and the other as the low frequency image. Here are the results:
+      I also created a hybrid image between a lion and a tiger. Through this process, I experimented with using each one
+      as the high frequency image and the other as the low frequency image. Here are the results:
 
       <table>
         <tr align="center">
@@ -323,17 +337,8 @@
         </tr>
       </table>
       <br>
-      As I was trying to get the Steph and Lebron hybrid image to work, I had gotten a few failures. Here is one of them:
-      <table>
-        <tr align="center">
-          <td>
-            <img src="./Images/StephLebron/failure.png" align="middle" width="300px" />
-            <figcaption>Failure</figcaption>
-          </td>
-        </tr>
-      </table>
-      <br>
-      My favorite hybrid image was the one between Steph and Lebron. I applied the FFT to the original images, the filtered images, and the hybrid image. Here are the results:
+      My favorite hybrid image was the one between Steph and Lebron. I applied the FFT to the original images, the
+      filtered images, and the hybrid image. Here are the results:
       <table>
         <tr align="center">
           <td>
@@ -358,6 +363,34 @@
           </td>
         </tr>
       </table>
+      <br>
+      As I was trying to get the Steph and Lebron hybrid image to work, I had gotten a few failures. For this one, I had tried to combine the two players but they were facing different directions which made it difficult to align and get a good hybrid image. Here are the results:
+      <table>
+        <tr align="center">
+          <td>
+            <img src="./Images/StephLebron/steph.jpg" align="middle" width="300px" />
+            <figcaption>Steph Curry</figcaption>
+          </td>
+          <td>
+            <img src="./Images/StephLebron/lebron.jpg" align="middle" width="300px" />
+            <figcaption>Lebron James</figcaption>
+          </td>
+          <td>
+            <img src="./Images/StephLebron/steph-lebron.jpg" align="middle" width="300px" />
+            <figcaption>Steph Lebron Hybrid Failure</figcaption>
+          </td>
+        </tr>
+      </table>
+      <br>
+    </div>
+    <br> <br>
+    <div class="bounding-box">
+      <h3 align="center">
+      Gaussian and Laplacian Stacks
+      </h3>
+      <p>
+        Next, I explored blending images together using Gaussian and Laplacian stacks. To create the Gaussian stack, I applied a low pass filter to the original image and then on each successive layer. This meant that the blurring accumulated as the layers increased. To create the Laplacian stack, I took the difference between each of the Gaussian layers. The last level of the Laplacian stack was the same as the last level of the Gaussian stack. Here are the Laplacian stack images for the apple (left) and the orange (right):
+      </p>
     </div>
   </div>
 </body>
