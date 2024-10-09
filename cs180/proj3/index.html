@@ -61,7 +61,9 @@
       <p>
         First, I used the labelling tool provided by last year's students to define the pairs of corresponding points
         that mapped both images' eyes, mouths, noses, and face structure. I had also added corner points for both images
-        to help with the warping process. After I got the points, I passed them into <code class="highlighter-rouge">Delaunay</code> to find the optimal triangles. Finally, I overlayed the points and the triangles over the original images. Here are the images with the corresponding points and triangulations:
+        to help with the warping process. After I got the points, I passed them into <code
+          class="highlighter-rouge">Delaunay</code> to find the optimal triangles. Finally, I overlayed the points and
+        the triangles over the original images. Here are the images with the corresponding points and triangulations:
       </p>
       <div align="middle"></div>
       <table>
@@ -94,9 +96,9 @@
               <img src="./Images/IanSteph/steph_triangle.png" align="middle" width="400px" />
               <figcaption>Steph Triangularized</figcaption>
             </td>
-  
+
           </tr>
-      </table>
+        </table>
     </div>
 
     <br>
@@ -108,7 +110,13 @@
         Affine Warping
       </h3>
       <p>
-        Once I had the triangles for the correspondences, I first averaged them to get the "mid-way" points. I then used the equations to inverse warp from the "mid-way" points back to the original images' points. During this process, I calculated the affine transformation matrix so that I could fill in the "mid-way" face with the points from the original images. I had also incorporated <code class="highlighter-rouge">warp_frac</code> to interpolate the location of the points between the images and <code class="highlighter-rouge">dissolve_frac</code> to interpolate the resulting colors between the two original images. Here are the original images and the "mid-way" face:
+        Once I had the triangles for the correspondences, I first averaged them to get the "mid-way" points. I then used
+        the equations to inverse warp from the "mid-way" points back to the original images' points. During this
+        process, I calculated the affine transformation matrix so that I could fill in the "mid-way" face with the
+        points from the original images. I had also incorporated <code class="highlighter-rouge">warp_frac</code> to
+        interpolate the location of the points between the images and <code
+          class="highlighter-rouge">dissolve_frac</code> to interpolate the resulting colors between the two original
+        images. Here are the original images and the "mid-way" face:
       </p>
       <table>
         <tr align="center">
@@ -117,12 +125,12 @@
             <figcaption>Ian (Original)</figcaption>
           </td>
           <td>
-            <img src="./Images/IanSteph/steph.png" align="middle" width="400px" />
-            <figcaption>Steph (Original)</figcaption>
-          </td>
-          <td>
             <img src="./Images/IanSteph/ian_steph_midway.png" align="middle" width="400px" />
             <figcaption>Ian Steph "Midway" Face</figcaption>
+          </td>
+          <td>
+            <img src="./Images/IanSteph/steph.png" align="middle" width="400px" />
+            <figcaption>Steph (Original)</figcaption>
           </td>
         </tr>
       </table>
@@ -135,7 +143,12 @@
         The Morph Sequence
       </h3>
       <p>
-       After morphing my face with Steph Curry's, I decided to vary the <code class="highlighter-rouge">warp_frac</code> and <code class="highlighter-rouge">dissolve_frac</code> to create a morph sequence. These two parameters controlled how much warping and cross dissolving between the two images and ranged from 0 to 1. I had also created a video of the morph sequence to show the gradual change between the two faces. For the video, I created 55 equally spaced frames, used an fps of 20, and also reversed it to show Steph Curry morphing into my face as well. Here is the video:
+        After morphing my face with Steph Curry's, I decided to vary the <code
+          class="highlighter-rouge">warp_frac</code> and <code class="highlighter-rouge">dissolve_frac</code> to create
+        a morph sequence. These two parameters controlled how much warping and cross dissolving between the two images
+        and ranged from 0 to 1. I had also created a video of the morph sequence to show the gradual change between the
+        two faces. For the video, I created 55 equally spaced frames, used an fps of 20, and also reversed it to show
+        Steph Curry morphing into my face as well. Here is the video:
       </p>
       <table>
         <tr align="center">
@@ -145,35 +158,114 @@
           </td>
         </tr>
       </table>
-  </div>
-  <br>
-  <br>
-  <h2 align="middle">Section IV: The Mean Face of a Population</h2>
+    </div>
+    <br>
+    <br>
+    <h2 align="middle">Section IV: The Mean Face of a Population</h2>
     <div class="bounding-box">
       <h3 align="center">
         The Mean Face
       </h3>
       <p>
-       After morphing my face with Steph Curry's, I decided to vary the <code class="highlighter-rouge">warp_frac</code> and <code class="highlighter-rouge">dissolve_frac</code> to create a morph sequence. These two parameters controlled how much warping and cross dissolving between the two images and ranged from 0 to 1. I had also created a video of the morph sequence to show the gradual change between the two faces. For the video, I created 55 equally spaced frames, used an fps of 20, and also reversed it to show Steph Curry morphing into my face as well. Here is the video:
+        I used the Danes dataset to get the mean face of the population. This was very similar to the previous merging
+        of two faces but instead I would take in a list of images and points and equally weight them for the final
+        merged image. I found the average face of this population and then warped some of the original Danes to this
+        average face. Here are the images:
       </p>
       <table>
         <tr align="center">
           <td>
-            <img src="./Images/IanSteph/ian_steph_curry.gif" align="middle" width="300px" />
-            <figcaption>Ian Steph Morph Sequence</figcaption>
+            <img src="./Images/Dane/average_Dane.png" align="middle" width="300px" />
+            <figcaption>Average Neutral Dane Face</figcaption>
           </td>
         </tr>
       </table>
-  </div>
-  <br>
-  <br>
-  <h2 align="middle">Section VI: Bells and Whistles</h2>
+      <br>
+      <table>
+        <tr align="center">
+          <td>
+            <img src="./Images/Dane/original2.png" align="middle" width="300px" />
+            <figcaption>2nd Dane Image (Original)</figcaption>
+          </td>
+          <td>
+            <img src="./Images/Dane/warped2.png" align="middle" width="300px" />
+            <figcaption>2nd Dane Image (Warped)</figcaption>
+          </td>
+        </tr>
+        <tr align="center">
+          <td>
+            <img src="./Images/Dane/original5.png" align="middle" width="300px" />
+            <figcaption>5th Dane Image (Original)</figcaption>
+          </td>
+          <td>
+            <img src="./Images/Dane/warped5.png" align="middle" width="300px" />
+            <figcaption>5th Dane Image (Warped)</figcaption>
+          </td>
+        </tr>
+        <tr align="center">
+          <td>
+            <img src="./Images/Dane/original12.png" align="middle" width="300px" />
+            <figcaption>12th Dane Image (Original)</figcaption>
+          </td>
+          <td>
+            <img src="./Images/Dane/warped12.png" align="middle" width="300px" />
+            <figcaption>12th Dane Image (Warped)</figcaption>
+          </td>
+        </tr>
+        <tr align="center">
+          <td>
+            <img src="./Images/Dane/original18.png" align="middle" width="300px" />
+            <figcaption>18th Dane Image (Original)</figcaption>
+          </td>
+          <td>
+            <img src="./Images/Dane/warped18.png" align="middle" width="300px" />
+            <figcaption>18th Dane Image (Warped)</figcaption>
+          </td>
+        </tr>
+      </table>
+      <br>
+      <br>
+      <p>
+        I also warped my face onto this average Dane face and that face onto mine. Here are the results:
+      </p>
+      <table>
+        <tr align="center">
+          <td>
+            <img src="./Images/IanSteph/ian.png" align="middle" width="400px" />
+            <figcaption>Ian (Original)</figcaption>
+          </td>
+          <td>
+            <img src="./Images/Dane/average_dane.png" align="middle" width="400px" />
+            <figcaption>Dane (Original)</figcaption>
+          </td>
+        </tr>
+        <tr align="center">
+          <td>
+            <img src="./Images/Dane/ian_warped.png" align="middle" width="400px" />
+            <figcaption>Ian (Warped)</figcaption>
+          </td>
+          <td>
+            <img src="./Images/Dane/dane_warped.png" align="middle" width="400px" />
+            <figcaption>Dane (Warped)</figcaption>
+          </td>
+        </tr>
+      </table>
+    </div>
+    <br>
+    <br>
+    <h2 align="middle">Section VI: Bells and Whistles</h2>
     <div class="bounding-box">
       <h3 align="center">
         Morphing to White Guy
       </h3>
       <p>
-       For my bells and whistles, I decided to morph my face with an average white guy's face that I had found online. To get just the shape of the other white guy, I used a <code class="highlighter-rouge">warp_frac</code> of 0 and a <code class="highlighter-rouge">dissolve_frac</code> of 0.6. Then, to get just the color, I used a <code class="highlighter-rouge">warp_frac</code> of 1 and a <code class="highlighter-rouge">dissolve_frac</code> of 0.2. Finally, I used a <code class="highlighter-rouge">warp_frac</code> of 0.5 and a <code class="highlighter-rouge">dissolve_frac</code> of 0.5 to get both a mix of the shape and color. Here are the images:
+        For my bells and whistles, I decided to morph my face with an average white guy's face that I had found online.
+        To get just the shape of the other white guy, I used a <code class="highlighter-rouge">warp_frac</code> of 0 and
+        a <code class="highlighter-rouge">dissolve_frac</code> of 0.6. Then, to get just the color, I used a <code
+          class="highlighter-rouge">warp_frac</code> of 1 and a <code class="highlighter-rouge">dissolve_frac</code> of
+        0.2. Finally, I used a <code class="highlighter-rouge">warp_frac</code> of 0.5 and a <code
+          class="highlighter-rouge">dissolve_frac</code> of 0.5 to get both a mix of the shape and color. Here are the
+        images:
       </p>
       <table>
         <tr align="center">
@@ -205,7 +297,7 @@
         </tr>
       </table>
       <br>
-  </div>
+    </div>
 </body>
 
 </html>
