@@ -7,10 +7,11 @@
   <link rel="stylesheet" href="/cs180/css/styles.css">
   <script src="/cs180/js/hamburger.js" defer></script>
 
+
   <script src="https://polyfill.io/v3/polyfill.min.js?features=es6"></script>
   <script id="MathJax-script" async src="https://cdn.jsdelivr.net/npm/mathjax@3/es5/tex-mml-chtml.js"></script>
 
-  <title>CS 180 Project 4: Coming Soon</title>
+  <title>CS 180 Project 4: Image Warping and Mosaicing</title>
   <meta http-equiv="content-type" content="text/html; charset=utf-8" />
   <link href="https://fonts.googleapis.com/css?family=Open+Sans|Source+Sans+Pro" rel="stylesheet">
 
@@ -29,12 +30,315 @@
 
 <body>
   <div class="content">
+
     <h1 align="middle">CS 180: Intro to Computer Vision and Computational Photography, Fall 2024</h1>
-    <h1 align="middle"><a href="/cs180/proj2/">Project 4: Coming Soon</a></h1>
+    <h1 align="middle"><a href="https://ianhdong.github.io/cs180/proj4">Project 4: Image Warping and Mosaicing</a>
+    </h1>
     <h2 align="middle">Ian Dong</h2>
 
     <br><br>
-  </div>
+
+
+
+    <div class="bounding-box">
+
+      <h2 align="middle">Overview</h2>
+
+      This project explores how to create image mosaicing by taking multiple photographs and projective warping, resampling, and compositioning them. I computed homographies to change the perspective of the images with the help of solving linear systems and inverting matrices. Finally, I used linear interpolation to fill in the warped image and then blended them together to create a seamless mosaic.
+      <br><br>
+    </div>
+
+    <br><br>
+
+    <h2 align="middle">Section I: Shoot the Photos</h2>
+
+    <div class="bounding-box">
+      <h3 align="middle">
+        Shooting and Digitizing Photographs
+      </h3>
+      <p>
+        First, I needed photos in order to create the rectifications and mosaic stiching. I took pairs of pictures that had the same center of projection. In order to create a smooth projective, I rotated my camera while capturing the photos. Here are the original images:
+      </p>
+      <div align="middle"></div>
+      <table>
+        <tr align="center">
+          <td>
+            <img src="./Images/macbook/macbook.jpeg" align="middle" width="400px" />
+            <figcaption>Macbook (Original)</figcaption>
+          </td>
+          <td>
+            <img src="./Images/restaurant-sign/sign.jpg" align="middle" width="400px" />
+            <figcaption>Restaurant Sign (Original)</figcaption>
+          </td>
+        </tr>
+        <tr align="center">
+          <td>
+            <img src="./Images/kitchen/sink_left.jpeg" align="middle" width="400px" />
+            <figcaption>Kitchen Left</figcaption>
+          </td>
+          <td>
+            <img src="./Images/kitchen/sink_right.jpeg" align="middle" width="400px" />
+            <figcaption>Kitchen Right</figcaption>
+          </td>
+        </tr>
+        <tr align="center">
+          <td>
+            <img src="./Images/outside-street/outside_left.jpeg" align="middle" width="400px" />
+            <figcaption>Outside Street Left</figcaption>
+          </td>
+          <td>
+            <img src="./Images/outside-street/outside_right.jpeg" align="middle" width="400px" />
+            <figcaption>Outside Street Right</figcaption>
+          </td>
+        </tr>
+        <tr align="center">
+          <td>
+            <img src="./Images/campanile/campanile_left.jpeg" align="middle" width="400px" />
+            <figcaption>Campanile Left</figcaption>
+          </td>
+          <td>
+            <img src="./Images/campanile/campanile_right.jpeg" align="middle" width="400px" />
+            <figcaption>Campanile Right</figcaption>
+          </td>
+        </tr>
+      </table>
+    </div>
+
+    <br>
+    <br>
+
+    <h2 align="middle">Section II: Computing the "Mid-way" Face</h2>
+    <div class="bounding-box">
+      <h3 align="middle">
+        Affine Warping
+      </h3>
+      <p>
+        Once I had the triangles for the correspondences, I first averaged them to get the "mid-way" points. I then used
+        the equations to inverse warp from the "mid-way" points back to the original images' points. During this
+        process, I calculated the affine transformation matrix so that I could fill in the "mid-way" face with the
+        points from the original images. I had also incorporated <code class="highlighter-rouge">warp_frac</code> to
+        interpolate the location of the points between the images and <code
+          class="highlighter-rouge">dissolve_frac</code> to interpolate the resulting colors between the two original
+        images. Here are the original images and the "mid-way" face:
+      </p>
+      <table>
+        <tr align="center">
+          <td>
+            <img src="./Images/IanSteph/ian.png" align="middle" width="400px" />
+            <figcaption>Ian (Original)</figcaption>
+          </td>
+          <td>
+            <img src="./Images/IanSteph/ian_steph_midway.png" align="middle" width="400px" />
+            <figcaption>Ian Steph "Midway" Face</figcaption>
+          </td>
+          <td>
+            <img src="./Images/IanSteph/steph.png" align="middle" width="400px" />
+            <figcaption>Steph (Original)</figcaption>
+          </td>
+        </tr>
+      </table>
+    </div>
+    <br> <br>
+
+    <h2 align="middle">Section III: The Morph Sequence</h2>
+    <div class="bounding-box">
+      <h3 align="center">
+        The Morph Sequence
+      </h3>
+      <p>
+        After morphing my face with Steph Curry's, I decided to vary the <code
+          class="highlighter-rouge">warp_frac</code> and <code class="highlighter-rouge">dissolve_frac</code> to create
+        a morph sequence. These two parameters controlled how much warping and cross dissolving between the two images
+        and ranged from 0 to 1. I had also created a video of the morph sequence to show the gradual change between the
+        two faces. For the video, I created 55 equally spaced frames, used an fps of 20, and also reversed it to show
+        Steph Curry morphing into my face as well. Here is the video:
+      </p>
+      <table>
+        <tr align="center">
+          <td>
+            <img src="./Images/IanSteph/ian_steph_curry.gif" align="middle" width="300px" />
+            <figcaption>Ian Steph Morph Sequence</figcaption>
+          </td>
+        </tr>
+      </table>
+    </div>
+    <br>
+    <br>
+    <h2 align="middle">Section IV: The Mean Face of a Population</h2>
+    <div class="bounding-box">
+      <h3 align="center">
+        The Mean Face
+      </h3>
+      <p>
+        I used the Danes dataset to get the mean face of the population. This was very similar to the previous merging
+        of two faces but instead I would take in a list of images and points and equally weight them for the final
+        merged image. I found the average face of this population and then warped some of the original Danes to this
+        average face. Here are the images:
+      </p>
+      <table>
+        <tr align="center">
+          <td>
+            <img src="./Images/Dane/average_dane.png" align="middle" width="300px" />
+            <figcaption>Average Neutral Dane Face</figcaption>
+          </td>
+        </tr>
+      </table>
+      <br>
+      <table>
+        <tr align="center">
+          <td>
+            <img src="./Images/Dane/original2.png" align="middle" width="300px" />
+            <figcaption>2nd Dane Image (Original)</figcaption>
+          </td>
+          <td>
+            <img src="./Images/Dane/warped2.png" align="middle" width="300px" />
+            <figcaption>2nd Dane Image (Warped)</figcaption>
+          </td>
+        </tr>
+        <tr align="center">
+          <td>
+            <img src="./Images/Dane/original5.png" align="middle" width="300px" />
+            <figcaption>5th Dane Image (Original)</figcaption>
+          </td>
+          <td>
+            <img src="./Images/Dane/warped5.png" align="middle" width="300px" />
+            <figcaption>5th Dane Image (Warped)</figcaption>
+          </td>
+        </tr>
+        <tr align="center">
+          <td>
+            <img src="./Images/Dane/original12.png" align="middle" width="300px" />
+            <figcaption>12th Dane Image (Original)</figcaption>
+          </td>
+          <td>
+            <img src="./Images/Dane/warped12.png" align="middle" width="300px" />
+            <figcaption>12th Dane Image (Warped)</figcaption>
+          </td>
+        </tr>
+        <tr align="center">
+          <td>
+            <img src="./Images/Dane/original18.png" align="middle" width="300px" />
+            <figcaption>18th Dane Image (Original)</figcaption>
+          </td>
+          <td>
+            <img src="./Images/Dane/warped18.png" align="middle" width="300px" />
+            <figcaption>18th Dane Image (Warped)</figcaption>
+          </td>
+        </tr>
+      </table>
+      <br>
+      <br>
+      <p>
+        I also warped my face onto this average Dane face and that face onto mine. Here are the results:
+      </p>
+      <table>
+        <tr align="center">
+          <td>
+            <img src="./Images/IanSteph/ian.png" align="middle" width="400px" />
+            <figcaption>Ian (Original)</figcaption>
+          </td>
+          <td>
+            <img src="./Images/Dane/average_dane.png" align="middle" width="400px" />
+            <figcaption>Dane (Original)</figcaption>
+          </td>
+        </tr>
+        <tr align="center">
+          <td>
+            <img src="./Images/Dane/ian_warped.png" align="middle" width="400px" />
+            <figcaption>Ian (Warped)</figcaption>
+          </td>
+          <td>
+            <img src="./Images/Dane/dane_warped.png" align="middle" width="400px" />
+            <figcaption>Dane (Warped)</figcaption>
+          </td>
+        </tr>
+      </table>
+    </div>
+    <br>
+    <br>
+    <h2 align="middle">Section V: Caricature</h2>
+    <div class="bounding-box">
+      <h3 align="center">
+        Extrapolating from the Mean
+      </h3>
+      <p>
+        For the caricature, I used the mean neutral Dane face from the last step and extrapolated away from it. The
+        equation I used was:
+        $$
+        \alpha * \text{Ian} + (1 - \alpha) * \text{average Dane}
+        $$
+        I set $\alpha$ to be larger than 1 to extrapolate in the direction of Ian's face. Here are the images:
+      </p>
+      <table>
+        <tr align="center">
+          <td>
+            <img src="./Images/Dane/caricature1.5.png" align="middle" width="400px" />
+            <figcaption>$\alpha = 1.5$</figcaption>
+          </td>
+          <td>
+            <img src="./Images/Dane/caricature2.png" align="middle" width="400px" />
+            <figcaption>$\alpha = 2.0$</figcaption>
+          </td>
+        </tr>
+        <tr align="center">
+          <td>
+            <img src="./Images/Dane/caricature2.5.png" align="middle" width="400px" />
+            <figcaption>$\alpha = 2.5$</figcaption>
+          </td>
+          <td>
+            <img src="./Images/Dane/caricature3.png" align="middle" width="400px" />
+            <figcaption>$\alpha = 3.0$</figcaption>
+          </td>
+        </tr>
+      </table>
+    </div>
+    <br>
+    <br>
+    <h2 align="middle">Section VI: Bells and Whistles</h2>
+    <div class="bounding-box">
+      <h3 align="center">
+        Morphing to White Guy
+      </h3>
+      <p>
+        For my bells and whistles, I decided to morph my face with an average white guy's face that I had found online.
+        To get just the shape of the other white guy, I used a <code class="highlighter-rouge">warp_frac</code> of 0 and
+        a <code class="highlighter-rouge">dissolve_frac</code> of 0.6. Then, to get just the color, I used a <code
+          class="highlighter-rouge">warp_frac</code> of 1 and a <code class="highlighter-rouge">dissolve_frac</code> of
+        0.2. Finally, I used a <code class="highlighter-rouge">warp_frac</code> of 0.5 and a <code
+          class="highlighter-rouge">dissolve_frac</code> of 0.5 to get both a mix of the shape and color. Here are the
+        images:
+      </p>
+      <table>
+        <tr align="center">
+          <td>
+            <img src="./Images/IanWhiteGuy/ian.png" align="middle" width="400px" />
+            <figcaption>Ian (Original)</figcaption>
+          </td>
+          <td>
+            <img src="./Images/IanWhiteGuy/average_white_guy.jpg" align="middle" width="400px" />
+            <figcaption>Average White Guy (Original)</figcaption>
+          </td>
+        </tr>
+      </table>
+      <br>
+      <table>
+        <tr align="center">
+          <td>
+            <img src="./Images/IanWhiteGuy/ian_white_guy_shape.png" align="middle" width="400px" />
+            <figcaption>White Guy Shape</figcaption>
+          </td>
+          <td>
+            <img src="./Images/IanWhiteGuy/ian_white_guy_color.png" align="middle" width="400px" />
+            <figcaption>White Guy Color</figcaption>
+          </td>
+          <td>
+            <img src="./Images/IanWhiteGuy/ian_white_guy_merge.png" align="middle" width="400px" />
+            <figcaption>White Guy Shape and Color</figcaption>
+          </td>
+        </tr>
+      </table>
+      <br>
+    </div>
 </body>
 
 </html>
