@@ -107,19 +107,13 @@
     <br>
     <br>
 
-    <h2 align="middle">Section II: Computing the "Mid-way" Face</h2>
+    <h2 align="middle">Section II: Recovering the Homographies</h2>
     <div class="bounding-box">
       <h3 align="middle">
         Affine Warping
       </h3>
       <p>
-        Once I had the triangles for the correspondences, I first averaged them to get the "mid-way" points. I then used
-        the equations to inverse warp from the "mid-way" points back to the original images' points. During this
-        process, I calculated the affine transformation matrix so that I could fill in the "mid-way" face with the
-        points from the original images. I had also incorporated <code class="highlighter-rouge">warp_frac</code> to
-        interpolate the location of the points between the images and <code
-          class="highlighter-rouge">dissolve_frac</code> to interpolate the resulting colors between the two original
-        images. Here are the original images and the "mid-way" face:
+        A homography is a projective mapping between any two images that have the same center of projection. I first created a function that I could select pairs of corresponding points between the two image. This way we can use them to recover the homography to warp one of the images onto the other. 
       </p>
       <table>
         <tr align="center">
