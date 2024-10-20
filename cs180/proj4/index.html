@@ -110,27 +110,64 @@
     <h2 align="middle">Section II: Recovering the Homographies</h2>
     <div class="bounding-box">
       <h3 align="middle">
-        Affine Warping
+        Homography Calculations and Formula Derivation
       </h3>
       <p>
-        A homography is a projective mapping between any two images that have the same center of projection. I first created a function that I could select pairs of corresponding points between the two image. This way we can use them to recover the homography to warp one of the images onto the other. 
+        A homography is a projective mapping between any two images that have the same center of projection. I first created a function that I could select pairs of corresponding points between the two image. This way we can use them to recover the homography to warp one of the images onto the other. Let's create a homography matrix that maps points from an image to another image. Define $(x, y)$ as the source point and $(x', y')$ as the destination point. Here are the sets of equations:
+        $$
+        \begin{bmatrix}
+        wx' \\
+        wy' \\
+        w
+        \end{bmatrix} = \begin{bmatrix}
+        a & b & c \\
+        d & e & f \\
+        g & h & 1
+        \end{bmatrix}
+        \begin{bmatrix}
+        x \\
+        y \\
+        1
+        \end{bmatrix}
+        $$
+        Then, expand out the matrix multiplication:
+        $$
+        \begin{align*}
+        wx' & = ax + by + c \\
+        wy' & = dx + ey + f \\
+        w & = gx + hy + 1
+        \end{align*}
+        $$
+        Since there is an equation for $w$, substitute it into the other two equations:
+        $$
+        \begin{align*}
+        ax + by + c &= (gx + hy + 1)x' \\
+        dx + ey + f &= (gx + hy + 1)y'
+        \end{align*}
+        $$
+        Finally, we have the new matrix form:
+        $$
+        \begin{bmatrix}
+        x & y & 1 & 0 & 0 & 0 & -x'x & -x'y \\
+        0 & 0 & 0 & x & y & 1 & -y'x & -y'y \\
+        \end{bmatrix}
+        \begin{bmatrix}
+        a \\
+        b \\
+        c \\
+        d \\
+        e \\
+        f \\
+        g \\
+        h
+        \end{bmatrix} = 
+        \begin{bmatrix}
+        x' \\
+        y'
+        \end{bmatrix}
+        $$
+        After I created the $A$ matrix and $b$ vector of the other image's points, I used <code class="highlighter-rouge">np.linalg.lstq</code> to solve for the homography matrix. This is because if there are more than 4 corresponding points, the system is overdetermined so we must use the least squares method to solve for the homography matrix that approximates the best fit.
       </p>
-      <table>
-        <tr align="center">
-          <td>
-            <img src="./Images/IanSteph/ian.png" align="middle" width="400px" />
-            <figcaption>Ian (Original)</figcaption>
-          </td>
-          <td>
-            <img src="./Images/IanSteph/ian_steph_midway.png" align="middle" width="400px" />
-            <figcaption>Ian Steph "Midway" Face</figcaption>
-          </td>
-          <td>
-            <img src="./Images/IanSteph/steph.png" align="middle" width="400px" />
-            <figcaption>Steph (Original)</figcaption>
-          </td>
-        </tr>
-      </table>
     </div>
     <br> <br>
 
