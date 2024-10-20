@@ -44,20 +44,25 @@
 
       <h2 align="middle">Overview</h2>
 
-      This project explores how to create image mosaicing by taking multiple photographs and projective warping, resampling, and compositioning them. I computed homographies to change the perspective of the images with the help of solving linear systems and inverting matrices. Finally, I used linear interpolation to fill in the warped image and then blended them together to create a seamless mosaic.
+      This project explores how to create image mosaicing by taking multiple photographs and projective warping,
+      resampling, and compositioning them. I computed homographies to change the perspective of the images with the help
+      of solving linear systems and inverting matrices. Finally, I used linear interpolation to fill in the warped image
+      and then blended them together to create a seamless mosaic.
       <br><br>
     </div>
 
     <br><br>
 
-    <h2 align="middle">Section I: Shoot the Photos</h2>
+    <h2 align="middle">Section I: Shooting the Photos</h2>
 
     <div class="bounding-box">
       <h3 align="middle">
         Shooting and Digitizing Photographs
       </h3>
       <p>
-        First, I needed photos in order to create the rectifications and mosaic stiching. I took pairs of pictures that had the same center of projection. In order to create a smooth projective, I rotated my camera while capturing the photos. Here are the original images:
+        First, I needed photos in order to create the rectifications and mosaic stiching. I took pairs of pictures that
+        had the same center of projection. In order to create a smooth projective, I rotated my camera while capturing
+        the photos. Here are the original images:
       </p>
       <div align="middle"></div>
       <table>
@@ -113,7 +118,16 @@
         Homography Calculations and Formula Derivation
       </h3>
       <p>
-        A homography is a projective mapping between any two images that have the same center of projection. I first created a function that I could select pairs of corresponding points between the two image. This way we can use them to recover the homography to warp one of the images onto the other. Let's create a homography matrix that maps points from an image to another image. Define $(x, y)$ as the source point and $(x', y')$ as the destination point. Here are the sets of equations:
+        A homography is a projective mapping between any two images that have the same center of projection. I first
+        created a function that I could select pairs of corresponding points between the two image. This way we can use
+        them to recover the homography to warp one of the images onto the other. Let's create a homography matrix that
+        maps points from an image to another image. Define $(x, y)$ as the source point and $(x', y')$ as the
+        destination point. However, because of noise it is often infeasible to find $H$ where it exactly transform the
+        points. Instead, we can find the best fit homography matrix that approximates the transformation.
+        Here are the sets of equations that map the source point to the destination point using the homography matrix:
+        $$
+        p' = H \cdot p \\
+        $$
         $$
         \begin{bmatrix}
         wx' \\
@@ -160,35 +174,51 @@
         f \\
         g \\
         h
-        \end{bmatrix} = 
+        \end{bmatrix} =
         \begin{bmatrix}
         x' \\
         y'
         \end{bmatrix}
         $$
-        After I created the $A$ matrix and $b$ vector of the other image's points, I used <code class="highlighter-rouge">np.linalg.lstq</code> to solve for the homography matrix. This is because if there are more than 4 corresponding points, the system is overdetermined so we must use the least squares method to solve for the homography matrix that approximates the best fit.
+        After I created the $A$ matrix and $b$ vector of the other image's points, I used <code
+          class="highlighter-rouge">np.linalg.lstq</code> to solve for the homography matrix. This is because if there
+        are more than 4 corresponding points, the system is overdetermined so we must use the least squares method to
+        solve for the homography matrix that approximates the best fit.
       </p>
     </div>
     <br> <br>
 
-    <h2 align="middle">Section III: The Morph Sequence</h2>
+    <h2 align="middle">Section III: Rectifying the Photos</h2>
     <div class="bounding-box">
       <h3 align="center">
         The Morph Sequence
       </h3>
       <p>
-        After morphing my face with Steph Curry's, I decided to vary the <code
-          class="highlighter-rouge">warp_frac</code> and <code class="highlighter-rouge">dissolve_frac</code> to create
-        a morph sequence. These two parameters controlled how much warping and cross dissolving between the two images
-        and ranged from 0 to 1. I had also created a video of the morph sequence to show the gradual change between the
-        two faces. For the video, I created 55 equally spaced frames, used an fps of 20, and also reversed it to show
-        Steph Curry morphing into my face as well. Here is the video:
+        Rectification is the process of converting an object that is rectangular in nature but looks different at another angle back into a rectangle. First, I specified the locations of the corresponding rectangle that I wanted to warp my image into. Then I calculated the homography matrix between the corresponding points on the image and these locations. Finally, I created another <code class="highlighter-rouge">warp_image</code> function which used the inverse homography matrix to find the original points to fill in the warped image and linearly interpolated between the pixels.         
+      </p>
+      <p>
+        For the warped MacBook, I used a corresponding rectangle located at [[0, 0], [600, 0], [0, 400], [600, 400]] and for the warped restaurant sign I used a corresponding rectangle located at [[0, 0], [150, 0], [0, 420], [150, 420]].
+        Here are the images:
       </p>
       <table>
         <tr align="center">
           <td>
-            <img src="./Images/IanSteph/ian_steph_curry.gif" align="middle" width="300px" />
-            <figcaption>Ian Steph Morph Sequence</figcaption>
+            <img src="./Images/macbook/macbook.jpeg" align="middle" width="400px" />
+            <figcaption>MacBook (Original)</figcaption>
+          </td>
+          <td>
+            <img src="./Images/macbook/macbook_warped.jpg" align="middle" width="400px" />
+            <figcaption>MacBook (Rectified)</figcaption>
+          </td>
+        </tr>
+        <tr align="center">
+          <td>
+            <img src="./Images/restaurant-sign/sign.jpg" align="middle" width="400px" />
+            <figcaption>Restaurant Sign (Original)</figcaption>
+          </td>
+          <td>
+            <img src="./Images/restaurant-sign/sign_warped.jpg" align="middle" width="400px" />
+            <figcaption>Restaurant Sign (Rectified)</figcaption>
           </td>
         </tr>
       </table>
@@ -322,53 +352,6 @@
           </td>
         </tr>
       </table>
-    </div>
-    <br>
-    <br>
-    <h2 align="middle">Section VI: Bells and Whistles</h2>
-    <div class="bounding-box">
-      <h3 align="center">
-        Morphing to White Guy
-      </h3>
-      <p>
-        For my bells and whistles, I decided to morph my face with an average white guy's face that I had found online.
-        To get just the shape of the other white guy, I used a <code class="highlighter-rouge">warp_frac</code> of 0 and
-        a <code class="highlighter-rouge">dissolve_frac</code> of 0.6. Then, to get just the color, I used a <code
-          class="highlighter-rouge">warp_frac</code> of 1 and a <code class="highlighter-rouge">dissolve_frac</code> of
-        0.2. Finally, I used a <code class="highlighter-rouge">warp_frac</code> of 0.5 and a <code
-          class="highlighter-rouge">dissolve_frac</code> of 0.5 to get both a mix of the shape and color. Here are the
-        images:
-      </p>
-      <table>
-        <tr align="center">
-          <td>
-            <img src="./Images/IanWhiteGuy/ian.png" align="middle" width="400px" />
-            <figcaption>Ian (Original)</figcaption>
-          </td>
-          <td>
-            <img src="./Images/IanWhiteGuy/average_white_guy.jpg" align="middle" width="400px" />
-            <figcaption>Average White Guy (Original)</figcaption>
-          </td>
-        </tr>
-      </table>
-      <br>
-      <table>
-        <tr align="center">
-          <td>
-            <img src="./Images/IanWhiteGuy/ian_white_guy_shape.png" align="middle" width="400px" />
-            <figcaption>White Guy Shape</figcaption>
-          </td>
-          <td>
-            <img src="./Images/IanWhiteGuy/ian_white_guy_color.png" align="middle" width="400px" />
-            <figcaption>White Guy Color</figcaption>
-          </td>
-          <td>
-            <img src="./Images/IanWhiteGuy/ian_white_guy_merge.png" align="middle" width="400px" />
-            <figcaption>White Guy Shape and Color</figcaption>
-          </td>
-        </tr>
-      </table>
-      <br>
     </div>
 </body>
 
