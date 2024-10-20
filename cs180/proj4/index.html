@@ -191,7 +191,7 @@
     <h2 align="middle">Section III: Rectifying the Photos</h2>
     <div class="bounding-box">
       <h3 align="center">
-        The Morph Sequence
+        Rectification
       </h3>
       <p>
         Rectification is the process of converting an object that is rectangular in nature but looks different at another angle back into a rectangle. First, I specified the locations of the corresponding rectangle that I wanted to warp my image into. Then I calculated the homography matrix between the corresponding points on the image and these locations. Finally, I created another <code class="highlighter-rouge">warp_image</code> function which used the inverse homography matrix to find the original points to fill in the warped image and linearly interpolated between the pixels.         
@@ -225,130 +225,67 @@
     </div>
     <br>
     <br>
-    <h2 align="middle">Section IV: The Mean Face of a Population</h2>
+    <h2 align="middle">Section IV: Mosaic Image Blending</h2>
     <div class="bounding-box">
       <h3 align="center">
-        The Mean Face
+        Mosaic Blending
       </h3>
       <p>
-        I used the Danes dataset to get the mean face of the population. This was very similar to the previous merging
-        of two faces but instead I would take in a list of images and points and equally weight them for the final
-        merged image. I found the average face of this population and then warped some of the original Danes to this
-        average face. Here are the images:
+        Mosaic blending is the process of blending two images together to create a seamless transition between the two. I defined multiple corresponding points that appeared in both the left and right images. Using these points, I calculated the homography matrix to warp the left image into the right image's perspective. I used the previous functions talked about above for this warping. Then, I created another function <code class="highlighter-rouge">get_warped_corners</code> which transformed the warped image's original bounding box into the new warped bounding box. This way I can create an entire mosaic big enough to fit both images. Using the top left corner, I found the unique translation to transform it to (0, 0). This meant that I could find the displacement to place the right image at the correct location. Finally, I used simple feathering (weighted averaging) at every pixel where the center of the unwarped image would be 1 and it would fall of linearly until it hit 0 at the edges. This way combining the warped and unwarped images would blend together seamlessly. Here are the results:
       </p>
       <table>
         <tr align="center">
           <td>
-            <img src="./Images/Dane/average_dane.png" align="middle" width="300px" />
-            <figcaption>Average Neutral Dane Face</figcaption>
-          </td>
-        </tr>
-      </table>
-      <br>
-      <table>
-        <tr align="center">
-          <td>
-            <img src="./Images/Dane/original2.png" align="middle" width="300px" />
-            <figcaption>2nd Dane Image (Original)</figcaption>
+            <img src="./Images/kitchen/sink_left.jpeg" align="middle" width="300px" />
+            <figcaption>Kitchen Left</figcaption>
           </td>
           <td>
-            <img src="./Images/Dane/warped2.png" align="middle" width="300px" />
-            <figcaption>2nd Dane Image (Warped)</figcaption>
-          </td>
-        </tr>
-        <tr align="center">
-          <td>
-            <img src="./Images/Dane/original5.png" align="middle" width="300px" />
-            <figcaption>5th Dane Image (Original)</figcaption>
+            <img src="./Images/kitchen/sink_right.jpeg" align="middle" width="300px" />
+            <figcaption>Kitchen Right</figcaption>
           </td>
           <td>
-            <img src="./Images/Dane/warped5.png" align="middle" width="300px" />
-            <figcaption>5th Dane Image (Warped)</figcaption>
+            <img src="./Images/kitchen/sink_left_canvas.jpg" align="middle" width="300px" />
+            <figcaption>Kitchen Left (Warped)</figcaption>
+          </td>
+          <td>
+            <img src="./Images/kitchen/sink_mosaic_final.jpg" align="middle" width="300px" />
+            <figcaption>Kitchen Mosaic</figcaption>
           </td>
         </tr>
         <tr align="center">
           <td>
-            <img src="./Images/Dane/original12.png" align="middle" width="300px" />
-            <figcaption>12th Dane Image (Original)</figcaption>
+            <img src="./Images/outside-street/outside_left.jpg" align="middle" width="300px" />
+            <figcaption>Outside Left</figcaption>
           </td>
           <td>
-            <img src="./Images/Dane/warped12.png" align="middle" width="300px" />
-            <figcaption>12th Dane Image (Warped)</figcaption>
-          </td>
-        </tr>
-        <tr align="center">
-          <td>
-            <img src="./Images/Dane/original18.png" align="middle" width="300px" />
-            <figcaption>18th Dane Image (Original)</figcaption>
+            <img src="./Images/outside-street/outside_right.jpg" align="middle" width="300px" />
+            <figcaption>Outside Right</figcaption>
           </td>
           <td>
-            <img src="./Images/Dane/warped18.png" align="middle" width="300px" />
-            <figcaption>18th Dane Image (Warped)</figcaption>
-          </td>
-        </tr>
-      </table>
-      <br>
-      <br>
-      <p>
-        I also warped my face onto this average Dane face and that face onto mine. Here are the results:
-      </p>
-      <table>
-        <tr align="center">
-          <td>
-            <img src="./Images/IanSteph/ian.png" align="middle" width="400px" />
-            <figcaption>Ian (Original)</figcaption>
+            <img src="./Images/outside-street/outside_left_canvas.jpg" align="middle" width="300px" />
+            <figcaption>Outside Left (Warped)</figcaption>
           </td>
           <td>
-            <img src="./Images/Dane/average_dane.png" align="middle" width="400px" />
-            <figcaption>Dane (Original)</figcaption>
+            <img src="./Images/outside-street/outside_mosaic_final.jpg" align="middle" width="300px" />
+            <figcaption>Outside Street Mosaic</figcaption>
           </td>
         </tr>
         <tr align="center">
           <td>
-            <img src="./Images/Dane/ian_warped.png" align="middle" width="400px" />
-            <figcaption>Ian (Warped)</figcaption>
+            <img src="./Images/campanile/campanile_left.jpg" align="middle" width="300px" />
+            <figcaption>Campanile Left</figcaption>
           </td>
           <td>
-            <img src="./Images/Dane/dane_warped.png" align="middle" width="400px" />
-            <figcaption>Dane (Warped)</figcaption>
-          </td>
-        </tr>
-      </table>
-    </div>
-    <br>
-    <br>
-    <h2 align="middle">Section V: Caricature</h2>
-    <div class="bounding-box">
-      <h3 align="center">
-        Extrapolating from the Mean
-      </h3>
-      <p>
-        For the caricature, I used the mean neutral Dane face from the last step and extrapolated away from it. The
-        equation I used was:
-        $$
-        \alpha * \text{Ian} + (1 - \alpha) * \text{average Dane}
-        $$
-        I set $\alpha$ to be larger than 1 to extrapolate in the direction of Ian's face. Here are the images:
-      </p>
-      <table>
-        <tr align="center">
-          <td>
-            <img src="./Images/Dane/caricature1.5.png" align="middle" width="400px" />
-            <figcaption>$\alpha = 1.5$</figcaption>
+            <img src="./Images/campanile/campanile_right.jpg" align="middle" width="300px" />
+            <figcaption>Campanile Right</figcaption>
           </td>
           <td>
-            <img src="./Images/Dane/caricature2.png" align="middle" width="400px" />
-            <figcaption>$\alpha = 2.0$</figcaption>
-          </td>
-        </tr>
-        <tr align="center">
-          <td>
-            <img src="./Images/Dane/caricature2.5.png" align="middle" width="400px" />
-            <figcaption>$\alpha = 2.5$</figcaption>
+            <img src="./Images/campanile/campanile_left_canvas.jpg" align="middle" width="300px" />
+            <figcaption>Campanile Left (Warped)</figcaption>
           </td>
           <td>
-            <img src="./Images/Dane/caricature3.png" align="middle" width="400px" />
-            <figcaption>$\alpha = 3.0$</figcaption>
+            <img src="./Images/campanile/campanile_mosaic_final.jpg" align="middle" width="300px" />
+            <figcaption>Campanile Mosaic</figcaption>
           </td>
         </tr>
       </table>
