@@ -462,6 +462,41 @@
         </tr>
       </table>
     </div>
+
+    <br>
+    <br>
+    <h2 align="middle">Section IV: Matching Feature Descriptors</h2>
+
+    <div class="bounding-box">
+      <h3 align="middle">
+        Matching Feature Descriptors
+      </h3>
+      <p>
+        With the flattened feature descriptors, I would be able to find the best matches between the images. I followed along with the algorithm in this <a href="https://inst.eecs.berkeley.edu/~cs180/fa24/hw/proj4/Papers/MOPS.pdf">research paper</a>. First, I used the provided <code class="highlighter-rouge">dist2</code> function to calculate the SSD between each pair of points from image 1 and image 2. Then, I found the Lowe's score for each point in image 1 which is the ratio of 1-NN distance to 2-NN distance. If the Lowe's score we below a certain a threshold, I added the point and its 1-NN to the matches. Finally, I plotted each point in image 1 with its corresponding 1-NN in image 2. 
+        Here are the results:
+      </p>
+      <div align="middle"></div>
+      <table>
+        <tr align="center">
+          <td>
+            <img src="./Images/4b/sink/sink_matching_points.png" align="middle" width="400px" />
+            <figcaption>Sink Matching Feature Descriptors</figcaption>
+          </td>
+        </tr>
+        <tr align="center">
+          <td>
+            <img src="./Images/4b/outside-street/outside_matching_points.png" align="middle" width="400px" />
+            <figcaption>Outside Matching Feature Descriptors</figcaption>
+          </td>
+        </tr>
+        <tr align="center">
+          <td>
+            <img src="./Images/4b/campanile/campanile_matching_points.png" align="middle" width="400px" />
+            <figcaption>Campanile Matching Feature Descriptors</figcaption>
+          </td>
+        </tr>
+      </table>
+    </div>
 </body>
 
 </html>
