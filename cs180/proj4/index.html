@@ -375,6 +375,57 @@
         </tr>
       </table>
     </div>
+
+    <br>
+    <br>
+
+    <h2 align="middle">Section II: Adaptive Non-Maximal Suppression</h2>
+
+    <div class="bounding-box">
+      <h3 align="middle">
+        ANMS Algorithm
+      </h3>
+      <p>
+        As shown above, there were a lot of different corner points. I wanted to distribute the points more evenly around the images. First, I found the distances between each pair of points from the two different images. Then, I sorted by the corner response value. For each point in the first image, I calculated the suppression radius using the following formula:
+
+        $$ r_i = \min_j |x_i - x_j|, \text{ s.t. } f(x_i) < c_{\text{robust}} \cdot f(x_j)$$
+
+        Finally, I sorted the points by their suppression radius and selected the $n$ points with the largest radius. This way I could get a better spatial distribution of the points. Here are the results:
+      </p>
+      <div align="middle"></div>
+      <table>
+        <tr align="center">
+          <td>
+            <img src="./Images/4b/sink/sink_left_anms.png" align="middle" width="400px" />
+            <figcaption>Sink Left (ANMS)</figcaption>
+          </td>
+          <td>
+            <img src="./Images/4b/sink/sink_right_anms.png" align="middle" width="400px" />
+            <figcaption>Sink Right (ANMS)</figcaption>
+          </td>
+        </tr>
+        <tr align="center">
+          <td>
+            <img src="./Images/4b/outside-street/outside_left_anms.png" align="middle" width="400px" />
+            <figcaption>Outside Left (ANMS)</figcaption>
+          </td>
+          <td>
+            <img src="./Images/4b/outside-street/outside_right_anms.png" align="middle" width="400px" />
+            <figcaption>Outside Right (ANMS)</figcaption>
+          </td>
+        </tr>
+        <tr align="center">
+          <td>
+            <img src="./Images/4b/campanile/campanile_left_anms.png" align="middle" width="400px" />
+            <figcaption>Campanile Left (ANMS)</figcaption>
+          </td>
+          <td>
+            <img src="./Images/4b/campanile/campanile_right_anms.png" align="middle" width="400px" />
+            <figcaption>Campanile Right (ANMS)</figcaption>
+          </td>
+        </tr>
+      </table>
+    </div>
 </body>
 
 </html>
