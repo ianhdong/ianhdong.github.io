@@ -44,7 +44,8 @@
 
       <h2 align="middle" id="4a">Overview</h2>
 
-      The first part of the project explores how to create image mosaicing by taking multiple photographs and projective warping,
+      The first part of the project explores how to create image mosaicing by taking multiple photographs and projective
+      warping,
       resampling, and compositioning them. I computed homographies to change the perspective of the images with the help
       of solving linear systems and inverting matrices. Finally, I used linear interpolation to fill in the warped image
       and then blended them together to create a seamless mosaic.
@@ -88,12 +89,12 @@
         </tr>
         <tr align="center">
           <td>
-            <img src="./Images/4a/outside-street/outside_left.jpg" align="middle" width="400px" />
-            <figcaption>Outside Street Left</figcaption>
+            <img src="./Images/4a/outside/outside_left.jpg" align="middle" width="400px" />
+            <figcaption>Outside Left</figcaption>
           </td>
           <td>
-            <img src="./Images/4a/outside-street/outside_right.jpg" align="middle" width="400px" />
-            <figcaption>Outside Street Right</figcaption>
+            <img src="./Images/4a/outside/outside_right.jpg" align="middle" width="400px" />
+            <figcaption>Outside Right</figcaption>
           </td>
         </tr>
         <tr align="center">
@@ -194,10 +195,17 @@
         Rectification
       </h3>
       <p>
-        Rectification is the process of converting an object that is rectangular in nature but looks different at another angle back into a rectangle. First, I specified the locations of the corresponding rectangle that I wanted to warp my image into. Then I calculated the homography matrix between the corresponding points on the image and these locations. Finally, I created another <code class="highlighter-rouge">warp_image</code> function which used the inverse homography matrix to find the original points to fill in the warped image and linearly interpolated between the pixels.         
+        Rectification is the process of converting an object that is rectangular in nature but looks different at
+        another angle back into a rectangle. First, I specified the locations of the corresponding rectangle that I
+        wanted to warp my image into. Then I calculated the homography matrix between the corresponding points on the
+        image and these locations. Finally, I created another <code class="highlighter-rouge">warp_image</code> function
+        which used the inverse homography matrix to find the original points to fill in the warped image and linearly
+        interpolated between the pixels.
       </p>
       <p>
-        For the warped MacBook, I used a corresponding rectangle located at [[0, 0], [600, 0], [0, 400], [600, 400]] and for the warped restaurant sign I used a corresponding rectangle located at [[0, 0], [150, 0], [0, 420], [150, 420]].
+        For the warped MacBook, I used a corresponding rectangle located at [[0, 0], [600, 0], [0, 400], [600, 400]] and
+        for the warped restaurant sign I used a corresponding rectangle located at [[0, 0], [150, 0], [0, 420], [150,
+        420]].
         Here are the images:
       </p>
       <table>
@@ -231,7 +239,17 @@
         Mosaic Blending
       </h3>
       <p>
-        Mosaic blending is the process of blending two images together to create a seamless transition between the two. I defined multiple corresponding points that appeared in both the left and right images. Using these points, I calculated the homography matrix to warp the left image into the right image's perspective. I used the previous functions talked about above for this warping. Then, I created another function <code class="highlighter-rouge">get_warped_corners</code> which transformed the warped image's original bounding box into the new warped bounding box. This way I can create an entire mosaic big enough to fit both images. Using the top left corner, I found the unique translation to transform it to (0, 0). This meant that I could find the displacement to place the right image at the correct location. Finally, I used simple feathering (weighted averaging) at every pixel where the center of the unwarped image would be 1 and it would fall of linearly until it hit 0 at the edges. This way combining the warped and unwarped images would blend together seamlessly. Here are the results:
+        Mosaic blending is the process of blending two images together to create a seamless transition between the two.
+        I defined multiple corresponding points that appeared in both the left and right images. Using these points, I
+        calculated the homography matrix to warp the left image into the right image's perspective. I used the previous
+        functions talked about above for this warping. Then, I created another function <code
+          class="highlighter-rouge">get_warped_corners</code> which transformed the warped image's original bounding box
+        into the new warped bounding box. This way I can create an entire mosaic big enough to fit both images. Using
+        the top left corner, I found the unique translation to transform it to (0, 0). This meant that I could find the
+        displacement to place the right image at the correct location. Finally, I used simple feathering (weighted
+        averaging) at every pixel where the center of the unwarped image would be 1 and it would fall of linearly until
+        it hit 0 at the edges. This way combining the warped and unwarped images would blend together seamlessly. Here
+        are the results:
       </p>
       <table>
         <tr align="center">
@@ -254,20 +272,20 @@
         </tr>
         <tr align="center">
           <td>
-            <img src="./Images/4a/outside-street/outside_left.jpg" align="middle" width="300px" />
+            <img src="./Images/4a/outside/outside_left.jpg" align="middle" width="300px" />
             <figcaption>Outside Left</figcaption>
           </td>
           <td>
-            <img src="./Images/4a/outside-street/outside_right.jpg" align="middle" width="300px" />
+            <img src="./Images/4a/outside/outside_right.jpg" align="middle" width="300px" />
             <figcaption>Outside Right</figcaption>
           </td>
           <td>
-            <img src="./Images/4a/outside-street/outside_left_canvas.jpg" align="middle" width="300px" />
+            <img src="./Images/4a/outside/outside_left_canvas.jpg" align="middle" width="300px" />
             <figcaption>Outside Left (Warped)</figcaption>
           </td>
           <td>
-            <img src="./Images/4a/outside-street/outside_mosaic_final.jpg" align="middle" width="300px" />
-            <figcaption>Outside Street Mosaic</figcaption>
+            <img src="./Images/4a/outside/outside_mosaic_final.jpg" align="middle" width="300px" />
+            <figcaption>Outside Mosaic</figcaption>
           </td>
         </tr>
         <tr align="center">
@@ -300,7 +318,9 @@
         Learnings
       </h3>
       <p>
-        The coolest thing I learned from this project was about homographies and the math behind them in order to recover and warp the points from one image into the perspective of another. I also learned how to debug by showing the intermediate images after each step.
+        The coolest thing I learned from this project was about homographies and the math behind them in order to
+        recover and warp the points from one image into the perspective of another. I also learned how to debug by
+        showing the intermediate images after each step.
       </p>
     </div>
 
@@ -314,7 +334,11 @@
 
       <h2 align="middle" id="4b">Overview</h2>
 
-      The second part of the project will automatically stitch together images into a mosaic by finding and matching feature descriptors. I used Harris corner detection to find the corners of the images and then used Adaptive Non-Maximal Suppression to get a better spatial distribution of the points. Finally, I used nearest neighbor to match up the image patches and then used RANSAC to find the homography matrix that best fits the points. I then used the homography matrix to warp the images and blend them together to create a seamless mosaic.
+      The second part of the project will automatically stitch together images into a mosaic by finding and matching
+      feature descriptors. I used Harris corner detection to find the corners of the images and then used Adaptive
+      Non-Maximal Suppression to get a better spatial distribution of the points. Finally, I used nearest neighbor to
+      match up the image patches and then used RANSAC to find the homography matrix that best fits the points. I then
+      used the homography matrix to warp the images and blend them together to create a seamless mosaic.
       <br><br>
     </div>
 
@@ -328,7 +352,12 @@
         Harris Interest Point Detector
       </h3>
       <p>
-        I used the <code class="highlighter-rouge">get_harris_corners</code> starter code to get the Harris points and identify corners within an image. This will be helpful in finding the feature points that we can use to match up the images. The Harris corner detection algorithm calculates the intensity gradients at a certain location which represent the rate of change in pixel intensities along the $x$ and $y$ directions and thus the edges and corners that have sharp intensity changes. I also filtered out the corners by setting a threshold on the corner response value and overlaid them on the images. Here are the results:
+        I used the <code class="highlighter-rouge">get_harris_corners</code> starter code to get the Harris points and
+        identify corners within an image. This will be helpful in finding the feature points that we can use to match up
+        the images. The Harris corner detection algorithm calculates the intensity gradients at a certain location which
+        represent the rate of change in pixel intensities along the $x$ and $y$ directions and thus the edges and
+        corners that have sharp intensity changes. I also filtered out the corners by setting a threshold on the corner
+        response value and overlaid them on the images. Here are the results:
       </p>
       <div align="middle"></div>
       <table>
@@ -352,19 +381,19 @@
         </tr>
         <tr align="center">
           <td>
-            <img src="./Images/4a/outside-street/outside_left.jpg" align="middle" width="400px" />
+            <img src="./Images/4a/outside/outside_left.jpg" align="middle" width="400px" />
             <figcaption>Outside Left (Original)</figcaption>
           </td>
           <td>
-            <img src="./Images/4b/outside-street/outside_left.png" align="middle" width="400px" />
+            <img src="./Images/4b/outside/outside_left.png" align="middle" width="400px" />
             <figcaption>Outside Left (Harris)</figcaption>
           </td>
           <td>
-            <img src="./Images/4a/outside-street/outside_right.jpg" align="middle" width="400px" />
+            <img src="./Images/4a/outside/outside_right.jpg" align="middle" width="400px" />
             <figcaption>Outside Right (Original)</figcaption>
           </td>
           <td>
-            <img src="./Images/4b/outside-street/outside_right.png" align="middle" width="400px" />
+            <img src="./Images/4b/outside/outside_right.png" align="middle" width="400px" />
             <figcaption>Outside Right (Harris)</figcaption>
           </td>
         </tr>
@@ -399,45 +428,47 @@
         ANMS Algorithm
       </h3>
       <p>
-        As shown above, there were a lot of different corner points. I wanted to distribute the points more evenly around the images. First, I found the distances between each pair of points from the two different images. Then, I sorted by the corner response value. For each point in the first image, I calculated the suppression radius using the following formula:
+        As shown above, there were a lot of different corner points. I wanted to distribute the points more evenly
+        around the images. First, I found the distances between each pair of points from the two different images. Then,
+        I sorted by the corner response value. For each point in the first image, I calculated the suppression radius
+        using the following formula:
 
-        $$ r_i = \min_j |x_i - x_j|, \text{ s.t. } f(x_i) < c_{\text{robust}} \cdot f(x_j)$$
-
-        Finally, I sorted the points by their suppression radius and selected the $n$ points with the largest radius. This way I could get a better spatial distribution of the points. Here are the results:
-      </p>
-      <div align="middle"></div>
-      <table>
-        <tr align="center">
-          <td>
-            <img src="./Images/4b/sink/sink_left_anms.png" align="middle" width="400px" />
-            <figcaption>Sink Left (ANMS)</figcaption>
-          </td>
-          <td>
-            <img src="./Images/4b/sink/sink_right_anms.png" align="middle" width="400px" />
-            <figcaption>Sink Right (ANMS)</figcaption>
-          </td>
-        </tr>
-        <tr align="center">
-          <td>
-            <img src="./Images/4b/outside-street/outside_left_anms.png" align="middle" width="400px" />
-            <figcaption>Outside Left (ANMS)</figcaption>
-          </td>
-          <td>
-            <img src="./Images/4b/outside-street/outside_right_anms.png" align="middle" width="400px" />
-            <figcaption>Outside Right (ANMS)</figcaption>
-          </td>
-        </tr>
-        <tr align="center">
-          <td>
-            <img src="./Images/4b/campanile/campanile_left_anms.png" align="middle" width="400px" />
-            <figcaption>Campanile Left (ANMS)</figcaption>
-          </td>
-          <td>
-            <img src="./Images/4b/campanile/campanile_right_anms.png" align="middle" width="400px" />
-            <figcaption>Campanile Right (ANMS)</figcaption>
-          </td>
-        </tr>
-      </table>
+        $$ r_i = \min_j |x_i - x_j|, \text{ s.t. } f(x_i) < c_{\text{robust}} \cdot f(x_j)$$ Finally, I sorted the
+          points by their suppression radius and selected the $n$ points with the largest radius. This way I could get a
+          better spatial distribution of the points. Here are the results: </p>
+          <div align="middle"></div>
+          <table>
+            <tr align="center">
+              <td>
+                <img src="./Images/4b/sink/sink_left_anms.png" align="middle" width="400px" />
+                <figcaption>Sink Left (ANMS)</figcaption>
+              </td>
+              <td>
+                <img src="./Images/4b/sink/sink_right_anms.png" align="middle" width="400px" />
+                <figcaption>Sink Right (ANMS)</figcaption>
+              </td>
+            </tr>
+            <tr align="center">
+              <td>
+                <img src="./Images/4b/outside/outside_left_anms.png" align="middle" width="400px" />
+                <figcaption>Outside Left (ANMS)</figcaption>
+              </td>
+              <td>
+                <img src="./Images/4b/outside/outside_right_anms.png" align="middle" width="400px" />
+                <figcaption>Outside Right (ANMS)</figcaption>
+              </td>
+            </tr>
+            <tr align="center">
+              <td>
+                <img src="./Images/4b/campanile/campanile_left_anms.png" align="middle" width="400px" />
+                <figcaption>Campanile Left (ANMS)</figcaption>
+              </td>
+              <td>
+                <img src="./Images/4b/campanile/campanile_right_anms.png" align="middle" width="400px" />
+                <figcaption>Campanile Right (ANMS)</figcaption>
+              </td>
+            </tr>
+          </table>
     </div>
 
     <br>
@@ -449,7 +480,9 @@
         Extracting Feature Descriptors
       </h3>
       <p>
-        For each of the ANMS points from before, I took a 40 by 40 patch centered at the point and then downsampled into 8 by 8 mini-patch. Afterwards, I normalized the mini-patch (0 mean and unit variance) and then flattened into a vector. Here are the results:
+        For each of the ANMS points from before, I took a 40 by 40 patch centered at the point and then downsampled into
+        8 by 8 mini-patch. Afterwards, I normalized the mini-patch (0 mean and unit variance) and then flattened into a
+        vector. Here are the results:
       </p>
       <div align="middle"></div>
       <table>
@@ -485,7 +518,13 @@
         Matching Feature Descriptors
       </h3>
       <p>
-        With the flattened feature descriptors, I would be able to find the best matches between the images. I followed along with the algorithm in this <a href="https://inst.eecs.berkeley.edu/~cs180/fa24/hw/proj4/Papers/MOPS.pdf">research paper</a>. First, I used the provided <code class="highlighter-rouge">dist2</code> function to calculate the SSD between each pair of points from image 1 and image 2. Then, I found the Lowe's score for each point in image 1 which is the ratio of 1-NN distance to 2-NN distance. If the Lowe's score we below a certain a threshold, I added the point and its 1-NN to the matches. Finally, I plotted each point in image 1 with its corresponding 1-NN in image 2. 
+        With the flattened feature descriptors, I would be able to find the best matches between the images. I followed
+        along with the algorithm in this <a
+          href="https://inst.eecs.berkeley.edu/~cs180/fa24/hw/proj4/Papers/MOPS.pdf">research paper</a>. First, I used
+        the provided <code class="highlighter-rouge">dist2</code> function to calculate the SSD between each pair of
+        points from image 1 and image 2. Then, I found the Lowe's score for each point in image 1 which is the ratio of
+        1-NN distance to 2-NN distance. If the Lowe's score we below a certain a threshold, I added the point and its
+        1-NN to the matches. Finally, I plotted each point in image 1 with its corresponding 1-NN in image 2.
         Here are the results:
       </p>
       <div align="middle"></div>
@@ -498,7 +537,7 @@
         </tr>
         <tr align="center">
           <td>
-            <img src="./Images/4b/outside-street/outside_matching_points.png" align="middle" width="400px" />
+            <img src="./Images/4b/outside/outside_matching_points.png" align="middle" width="400px" />
             <figcaption>Outside Matching Feature Descriptors</figcaption>
           </td>
         </tr>
@@ -520,41 +559,69 @@
         RANSAC
       </h3>
       <p>
-        As shown above in the matching feature descriptors, there were some points that were not matched correctly. I used the RANSAC algorithm to further improve the number of matches and find the best ones to compute the homography matrix. These are the following steps I took:
+        As shown above in the matching feature descriptors, there were some points that were not matched correctly. I
+        used the RANSAC algorithm to further improve the number of matches and find the best ones to compute the
+        homography matrix. These are the following steps I took:
 
-        <ol>
-          <li>Randomly select 4 pairs of points from the matches.</li>
-          <li>Compute the homography matrix using the 4 pairs of points.</li>
-          <li>Warp the points from image 1 to image 2 using the homography matrix.</li>
-          <li>Calculate the SSD between the warped points and the points in image 2.</li>
-          <li>Count the number of inliers where the SSD is below a certain threshold.</li>
-          <li>Repeat steps 1-5 for a certain number of iterations.</li>
-          <li>Recompute the approximate homography using the set of the largest inliers.</li>
-        </ol>
+      <ol>
+        <li>Randomly select 4 pairs of points from the matches.</li>
+        <li>Compute the homography matrix using the 4 pairs of points.</li>
+        <li>Warp the points from image 1 to image 2 using the homography matrix.</li>
+        <li>Calculate the SSD between the warped points and the points in image 2.</li>
+        <li>Count the number of inliers where the SSD is below a certain threshold.</li>
+        <li>Repeat steps 1-5 for a certain number of iterations.</li>
+        <li>Recompute the approximate homography using the set of the largest inliers.</li>
+      </ol>
+
+      I plotted the selected inliers onto their respective images and the warped left image into the right image's
+      perspective. Here are the results:
       </p>
       <div align="middle"></div>
       <table>
         <tr align="center">
           <td>
-            <img src="./Images/4b" align="middle" width="400px" />
-            <figcaption>Sink Matching Feature Descriptors</figcaption>
+            <img src="./Images/4b/sink/sink_left_subset.png" align="middle" width="400px" />
+            <figcaption>Sink Left Subset</figcaption>
+          </td>
+          <td>
+            <img src="./Images/4b/sink/sink_right_subset.png" align="middle" width="400px" />
+            <figcaption>Sink Right Subset</figcaption>
+          </td>
+          <td>
+            <img src="./Images/4b/sink/sink_left_warped_auto_stitched.jpg" align="middle" width="400px" />
+            <figcaption>Sink Left (Warped)</figcaption>
           </td>
         </tr>
         <tr align="center">
           <td>
-            <img src="./Images/4b/" align="middle" width="400px" />
-            <figcaption>Outside Matching Feature Descriptors</figcaption>
+            <img src="./Images/4b/outside/outside_left_subset.png" align="middle" width="400px" />
+            <figcaption>Outside Left Subset</figcaption>
+          </td>
+          <td>
+            <img src="./Images/4b/outside/outside_right_subset.png" align="middle" width="400px" />
+            <figcaption>Outside Right Subset</figcaption>
+          </td>
+          <td>
+            <img src="./Images/4b/outside/outside_left_warped_auto_stitched.jpg" align="middle" width="400px" />
+            <figcaption>Outside Left (Warped)</figcaption>
           </td>
         </tr>
         <tr align="center">
           <td>
-            <img src="./Images/4b/" align="middle" width="400px" />
-            <figcaption>Campanile Matching Feature Descriptors</figcaption>
+            <img src="./Images/4b/campanile/campanile_left_subset.png" align="middle" width="400px" />
+            <figcaption>Campanile Left Subset</figcaption>
+          </td>
+          <td>
+            <img src="./Images/4b/campanile/campanile_right_subset.png" align="middle" width="400px" />
+            <figcaption>Campanile Right Subset</figcaption>
+          </td>
+          <td>
+            <img src="./Images/4b/campanile/campanile_left_warped_auto_stitched.jpg" align="middle" width="400px" />
+            <figcaption>Campanile Left (Warped)</figcaption>
           </td>
         </tr>
       </table>
     </div>
-
     <br>
     <br>
 
@@ -565,7 +632,10 @@
         Mosaic Comparison
       </h3>
       <p>
-       Using the above 4-point RANSAC algorithm, I auto-stitched together the images to create a seamless mosaic without predefining the correspondences. I also compared them to Part A's mosaics where I manually created the correspondences. As shown below, the auto-stitched mosaics found better homographies as there are fewer artifacts and blurriness compared to the manual defined mosaics. Here are the results:
+        Using the above 4-point RANSAC algorithm, I auto-stitched together the images to create a seamless mosaic
+        without predefining the correspondences. I also compared them to Part A's mosaics where I manually created the
+        correspondences. As shown below, the auto-stitched mosaics found better homographies as there are fewer
+        artifacts and blurriness compared to the manual defined mosaics. Here are the results:
       </p>
       <div align="middle"></div>
       <table>
@@ -581,11 +651,11 @@
         </tr>
         <tr align="center">
           <td>
-            <img src="./Images/4a/outside-street/outside_mosaic_final.jpg" align="middle" width="400px" />
+            <img src="./Images/4a/outside/outside_mosaic_final.jpg" align="middle" width="400px" />
             <figcaption>Outside Mosaic (Predefined Points)</figcaption>
           </td>
           <td>
-            <img src="./Images/4b/outside-street/outside_mosaic_auto_stitched.jpg" align="middle" width="400px" />
+            <img src="./Images/4b/outside/outside_mosaic_auto_stitched.jpg" align="middle" width="400px" />
             <figcaption>Outside Mosaic (Auto-Stitched Points)</figcaption>
           </td>
         </tr>
@@ -611,7 +681,10 @@
         Learnings
       </h3>
       <p>
-        I learned a lot about finetuning and filtering out the Harris corners especially to get a better spatial distribution on the images. Throughout this process, I made sure to note down what order my points in whether as (row, col) or (y, x). This way when I'm plotting and calculating the homography matrix I would get the correct results. The coolest takeaway was finding the best matches to automatically stitch together the images.
+        I learned a lot about finetuning and filtering out the Harris corners especially to get a better spatial
+        distribution on the images. Throughout this process, I made sure to note down what order my points in whether as
+        (row, col) or (y, x). This way when I'm plotting and calculating the homography matrix I would get the correct
+        results. The coolest takeaway was finding the best matches to automatically stitch together the images.
       </p>
     </div>
 
