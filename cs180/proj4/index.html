@@ -11,7 +11,7 @@
   <script src="https://polyfill.io/v3/polyfill.min.js?features=es6"></script>
   <script id="MathJax-script" async src="https://cdn.jsdelivr.net/npm/mathjax@3/es5/tex-mml-chtml.js"></script>
 
-  <title>CS 180 Project 4: Image Warping and Mosaicing</title>
+  <title>CS 180 Project 4: (Auto)Stiching Photo Mosaics</title>
   <meta http-equiv="content-type" content="text/html; charset=utf-8" />
   <link href="https://fonts.googleapis.com/css?family=Open+Sans|Source+Sans+Pro" rel="stylesheet">
 
@@ -32,7 +32,7 @@
   <div class="content">
 
     <h1 align="middle">CS 180: Intro to Computer Vision and Computational Photography, Fall 2024</h1>
-    <h1 align="middle"><a href="https://ianhdong.github.io/cs180/proj4">Project 4: Image Warping and Mosaicing</a>
+    <h1 align="middle"><a href="#4a">Project 4A: Image Warping and Mosaicing</a>
     </h1>
     <h2 align="middle">Ian Dong</h2>
 
@@ -42,9 +42,9 @@
 
     <div class="bounding-box">
 
-      <h2 align="middle">Overview</h2>
+      <h2 align="middle" id="4a">Overview</h2>
 
-      This project explores how to create image mosaicing by taking multiple photographs and projective warping,
+      The first part of the project explores how to create image mosaicing by taking multiple photographs and projective warping,
       resampling, and compositioning them. I computed homographies to change the perspective of the images with the help
       of solving linear systems and inverting matrices. Finally, I used linear interpolation to fill in the warped image
       and then blended them together to create a seamless mosaic.
@@ -68,41 +68,41 @@
       <table>
         <tr align="center">
           <td>
-            <img src="./Images/macbook/macbook.jpg" align="middle" width="400px" />
+            <img src="./Images/4a/macbook/macbook.jpg" align="middle" width="400px" />
             <figcaption>Macbook (Original)</figcaption>
           </td>
           <td>
-            <img src="./Images/restaurant-sign/sign.jpg" align="middle" width="400px" />
+            <img src="./Images/4a/restaurant-sign/sign.jpg" align="middle" width="400px" />
             <figcaption>Restaurant Sign (Original)</figcaption>
           </td>
         </tr>
         <tr align="center">
           <td>
-            <img src="./Images/kitchen/sink_left.jpg" align="middle" width="400px" />
-            <figcaption>Kitchen Left</figcaption>
+            <img src="./Images/4a/sink/sink_left.jpg" align="middle" width="400px" />
+            <figcaption>Sink Left</figcaption>
           </td>
           <td>
-            <img src="./Images/kitchen/sink_right.jpg" align="middle" width="400px" />
-            <figcaption>Kitchen Right</figcaption>
+            <img src="./Images/4a/sink/sink_right.jpg" align="middle" width="400px" />
+            <figcaption>Sink Right</figcaption>
           </td>
         </tr>
         <tr align="center">
           <td>
-            <img src="./Images/outside-street/outside_left.jpg" align="middle" width="400px" />
+            <img src="./Images/4a/outside-street/outside_left.jpg" align="middle" width="400px" />
             <figcaption>Outside Street Left</figcaption>
           </td>
           <td>
-            <img src="./Images/outside-street/outside_right.jpg" align="middle" width="400px" />
+            <img src="./Images/4a/outside-street/outside_right.jpg" align="middle" width="400px" />
             <figcaption>Outside Street Right</figcaption>
           </td>
         </tr>
         <tr align="center">
           <td>
-            <img src="./Images/campanile/campanile_left.jpg" align="middle" width="400px" />
+            <img src="./Images/4a/campanile/campanile_left.jpg" align="middle" width="400px" />
             <figcaption>Campanile Left</figcaption>
           </td>
           <td>
-            <img src="./Images/campanile/campanile_right.jpg" align="middle" width="400px" />
+            <img src="./Images/4a/campanile/campanile_right.jpg" align="middle" width="400px" />
             <figcaption>Campanile Right</figcaption>
           </td>
         </tr>
@@ -203,21 +203,21 @@
       <table>
         <tr align="center">
           <td>
-            <img src="./Images/macbook/macbook.jpg" align="middle" width="400px" />
+            <img src="./Images/4a/macbook/macbook.jpg" align="middle" width="400px" />
             <figcaption>MacBook (Original)</figcaption>
           </td>
           <td>
-            <img src="./Images/macbook/macbook_warped.jpg" align="middle" width="400px" />
+            <img src="./Images/4a/macbook/macbook_warped.jpg" align="middle" width="400px" />
             <figcaption>MacBook (Rectified)</figcaption>
           </td>
         </tr>
         <tr align="center">
           <td>
-            <img src="./Images/restaurant-sign/sign.jpg" align="middle" width="400px" />
+            <img src="./Images/4a/restaurant-sign/sign.jpg" align="middle" width="400px" />
             <figcaption>Restaurant Sign (Original)</figcaption>
           </td>
           <td>
-            <img src="./Images/restaurant-sign/sign_warped.jpg" align="middle" width="400px" />
+            <img src="./Images/4a/restaurant-sign/sign_warped.jpg" align="middle" width="400px" />
             <figcaption>Restaurant Sign (Rectified)</figcaption>
           </td>
         </tr>
@@ -236,56 +236,141 @@
       <table>
         <tr align="center">
           <td>
-            <img src="./Images/kitchen/sink_left.jpg" align="middle" width="300px" />
-            <figcaption>Kitchen Left</figcaption>
+            <img src="./Images/4a/sink/sink_left.jpg" align="middle" width="300px" />
+            <figcaption>Sink Left</figcaption>
           </td>
           <td>
-            <img src="./Images/kitchen/sink_right.jpg" align="middle" width="300px" />
-            <figcaption>Kitchen Right</figcaption>
+            <img src="./Images/4a/sink/sink_right.jpg" align="middle" width="300px" />
+            <figcaption>Sink Right</figcaption>
           </td>
           <td>
-            <img src="./Images/kitchen/sink_left_canvas.jpg" align="middle" width="300px" />
-            <figcaption>Kitchen Left (Warped)</figcaption>
+            <img src="./Images/4a/sink/sink_left_canvas.jpg" align="middle" width="300px" />
+            <figcaption>Sink Left (Warped)</figcaption>
           </td>
           <td>
-            <img src="./Images/kitchen/sink_mosaic_final.jpg" align="middle" width="300px" />
-            <figcaption>Kitchen Mosaic</figcaption>
+            <img src="./Images/4a/sink/sink_mosaic_final.jpg" align="middle" width="300px" />
+            <figcaption>Sink Mosaic</figcaption>
           </td>
         </tr>
         <tr align="center">
           <td>
-            <img src="./Images/outside-street/outside_left.jpg" align="middle" width="300px" />
+            <img src="./Images/4a/outside-street/outside_left.jpg" align="middle" width="300px" />
             <figcaption>Outside Left</figcaption>
           </td>
           <td>
-            <img src="./Images/outside-street/outside_right.jpg" align="middle" width="300px" />
+            <img src="./Images/4a/outside-street/outside_right.jpg" align="middle" width="300px" />
             <figcaption>Outside Right</figcaption>
           </td>
           <td>
-            <img src="./Images/outside-street/outside_left_canvas.jpg" align="middle" width="300px" />
+            <img src="./Images/4a/outside-street/outside_left_canvas.jpg" align="middle" width="300px" />
             <figcaption>Outside Left (Warped)</figcaption>
           </td>
           <td>
-            <img src="./Images/outside-street/outside_mosaic_final.jpg" align="middle" width="300px" />
+            <img src="./Images/4a/outside-street/outside_mosaic_final.jpg" align="middle" width="300px" />
             <figcaption>Outside Street Mosaic</figcaption>
           </td>
         </tr>
         <tr align="center">
           <td>
-            <img src="./Images/campanile/campanile_left.jpg" align="middle" width="300px" />
+            <img src="./Images/4a/campanile/campanile_left.jpg" align="middle" width="300px" />
             <figcaption>Campanile Left</figcaption>
           </td>
           <td>
-            <img src="./Images/campanile/campanile_right.jpg" align="middle" width="300px" />
+            <img src="./Images/4a/campanile/campanile_right.jpg" align="middle" width="300px" />
             <figcaption>Campanile Right</figcaption>
           </td>
           <td>
-            <img src="./Images/campanile/campanile_left_canvas.jpg" align="middle" width="300px" />
+            <img src="./Images/4a/campanile/campanile_left_canvas.jpg" align="middle" width="300px" />
             <figcaption>Campanile Left (Warped)</figcaption>
           </td>
           <td>
-            <img src="./Images/campanile/campanile_mosaic_final.jpg" align="middle" width="300px" />
+            <img src="./Images/4a/campanile/campanile_mosaic_final.jpg" align="middle" width="300px" />
             <figcaption>Campanile Mosaic</figcaption>
+          </td>
+        </tr>
+      </table>
+    </div>
+
+    <br>
+    <br>
+
+    <h1 align="middle"><a href="#4b">Project 4B:Feature Matching for Auto-Stitching</a>
+    </h1>
+
+    <div class="bounding-box">
+
+      <h2 align="middle" id="4b">Overview</h2>
+
+      The second part of the project will automatically stitch together images into a mosaic by finding and matching feature descriptors. I used Harris corner detection to find the corners of the images and then used Adaptive Non-Maximal Suppression to get a better spatial distribution of the points. Finally, I used nearest neighbor to match up the image patches and then used RANSAC to find the homography matrix that best fits the points. I then used the homography matrix to warp the images and blend them together to create a seamless mosaic.
+      <br><br>
+    </div>
+
+    <br>
+    <br>
+
+    <h2 align="middle">Section I: Detecting Corner Features in an Image</h2>
+
+    <div class="bounding-box">
+      <h3 align="middle">
+        Harris Interest Point Detector
+      </h3>
+      <p>
+        I used the <code class="highlighter-rouge">get_harris_corners</code> starter code to get the Harris points and identify corners within an image. This will be helpful in finding the feature points that we can use to match up the images. The Harris corner detection algorithm calculates the intensity gradients at a certain location which represent the rate of change in pixel intensities along the $x$ and $y$ directions and thus the edges and corners that have sharp intensity changes. I also filtered out the corners by setting a threshold on the corner response value and overlaid them on the images. Here are the results:
+      </p>
+      <div align="middle"></div>
+      <table>
+        <tr align="center">
+          <td>
+            <img src="./Images/4a/sink/sink_left.jpg" align="middle" width="400px" />
+            <figcaption>Sink Left (Original)</figcaption>
+          </td>
+          <td>
+            <img src="./Images/4b/sink/sink_left.png" align="middle" width="400px" />
+            <figcaption>Sink Left (Harris)</figcaption>
+          </td>
+          <td>
+            <img src="./Images/4a/sink/sink_right.jpg" align="middle" width="400px" />
+            <figcaption>Sink Right (Original)</figcaption>
+          </td>
+          <td>
+            <img src="./Images/4b/sink/sink_right.png" align="middle" width="400px" />
+            <figcaption>Sink Right (Harris)</figcaption>
+          </td>
+        </tr>
+        <tr align="center">
+          <td>
+            <img src="./Images/4a/outside-street/outside_left.jpg" align="middle" width="400px" />
+            <figcaption>Outside Left (Original)</figcaption>
+          </td>
+          <td>
+            <img src="./Images/4b/outside-street/outside_left.png" align="middle" width="400px" />
+            <figcaption>Outside Left (Harris)</figcaption>
+          </td>
+          <td>
+            <img src="./Images/4a/outside-street/outside_right.jpg" align="middle" width="400px" />
+            <figcaption>Outside Right (Original)</figcaption>
+          </td>
+          <td>
+            <img src="./Images/4b/outside-street/outside_right.png" align="middle" width="400px" />
+            <figcaption>Outside Right (Harris)</figcaption>
+          </td>
+        </tr>
+        <tr align="center">
+          <td>
+            <img src="./Images/4a/campanile/campanile_left.jpg" align="middle" width="400px" />
+            <figcaption>Campanile Left (Original)</figcaption>
+          </td>
+          <td>
+            <img src="./Images/4b/campanile/campanile_left.png" align="middle" width="400px" />
+            <figcaption>Campanile Left (Harris)</figcaption>
+          </td>
+          <td>
+            <img src="./Images/4a/campanile/campanile_right.jpg" align="middle" width="400px" />
+            <figcaption>Campanile Right (Original)</figcaption>
+          </td>
+          <td>
+            <img src="./Images/4b/campanile/campanile_right.png" align="middle" width="400px" />
+            <figcaption>Campanile Right (Harris)</figcaption>
           </td>
         </tr>
       </table>
