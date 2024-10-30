@@ -426,6 +426,42 @@
         </tr>
       </table>
     </div>
+
+    <br>
+    <br>
+    <h2 align="middle">Section III: Extracting Feature Descriptors</h2>
+
+    <div class="bounding-box">
+      <h3 align="middle">
+        Extracting Feature Descriptors
+      </h3>
+      <p>
+        For each of the ANMS points from before, I took a 40 by 40 patch centered at the point and then downsampled into 8 by 8 mini-patch. Afterwards, I normalized the mini-patch (0 mean and unit variance) and then flattened into a vector. Here are the results:
+      </p>
+      <div align="middle"></div>
+      <table>
+        <tr align="center">
+          <td>
+            <img src="./Images/4b/feature-descriptor/fd1.png" align="middle" width="400px" />
+            <figcaption>40 x 40 Patch</figcaption>
+          </td>
+          <td>
+            <img src="./Images/4b/feature-descriptor/fd1_mini.png" align="middle" width="400px" />
+            <figcaption>8 x 8 Mini-Patch</figcaption>
+          </td>
+        </tr>
+        <tr align="center">
+          <td>
+            <img src="./Images/4b/feature-descriptor/fd2.png" align="middle" width="400px" />
+            <figcaption>40 x 40 Patch</figcaption>
+          </td>
+          <td>
+            <img src="./Images/4b/feature-descriptor/fd2_mini.png" align="middle" width="400px" />
+            <figcaption>8 x 8 Mini-Patch</figcaption>
+          </td>
+        </tr>
+      </table>
+    </div>
 </body>
 
 </html>
