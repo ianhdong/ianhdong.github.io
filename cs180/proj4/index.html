@@ -294,6 +294,19 @@
     <br>
     <br>
 
+    <h2 align="middle">Section V: Conclusion</h2>
+    <div class="bounding-box">
+      <h3 align="middle">
+        Learnings
+      </h3>
+      <p>
+        The coolest thing I learned from this project was about homographies and the math behind them in order to recover and warp the points from one image into the perspective of another. I also learned how to debug by showing the intermediate images after each step.
+      </p>
+    </div>
+
+    <br>
+    <br>
+
     <h1 align="middle"><a href="#4b">Project 4B:Feature Matching for Auto-Stitching</a>
     </h1>
 
@@ -497,6 +510,111 @@
         </tr>
       </table>
     </div>
+
+    <br>
+    <br>
+    <h2 align="middle">Section V: Running RANSAC</h2>
+
+    <div class="bounding-box">
+      <h3 align="middle">
+        RANSAC
+      </h3>
+      <p>
+        As shown above in the matching feature descriptors, there were some points that were not matched correctly. I used the RANSAC algorithm to further improve the number of matches and find the best ones to compute the homography matrix. These are the following steps I took:
+
+        <ol>
+          <li>Randomly select 4 pairs of points from the matches.</li>
+          <li>Compute the homography matrix using the 4 pairs of points.</li>
+          <li>Warp the points from image 1 to image 2 using the homography matrix.</li>
+          <li>Calculate the SSD between the warped points and the points in image 2.</li>
+          <li>Count the number of inliers where the SSD is below a certain threshold.</li>
+          <li>Repeat steps 1-5 for a certain number of iterations.</li>
+          <li>Recompute the approximate homography using the set of the largest inliers.</li>
+        </ol>
+      </p>
+      <div align="middle"></div>
+      <table>
+        <tr align="center">
+          <td>
+            <img src="./Images/4b" align="middle" width="400px" />
+            <figcaption>Sink Matching Feature Descriptors</figcaption>
+          </td>
+        </tr>
+        <tr align="center">
+          <td>
+            <img src="./Images/4b/" align="middle" width="400px" />
+            <figcaption>Outside Matching Feature Descriptors</figcaption>
+          </td>
+        </tr>
+        <tr align="center">
+          <td>
+            <img src="./Images/4b/" align="middle" width="400px" />
+            <figcaption>Campanile Matching Feature Descriptors</figcaption>
+          </td>
+        </tr>
+      </table>
+    </div>
+
+    <br>
+    <br>
+
+    <h2 align="middle">Section VI: Producing the Mosaic and Comparisons</h2>
+
+    <div class="bounding-box">
+      <h3 align="middle">
+        Mosaic Comparison
+      </h3>
+      <p>
+       Using the above 4-point RANSAC algorithm, I auto-stitched together the images to create a seamless mosaic without predefining the correspondences. I also compared them to Part A's mosaics where I manually created the correspondences. As shown below, the auto-stitched mosaics found better homographies as there are fewer artifacts and blurriness compared to the manual defined mosaics. Here are the results:
+      </p>
+      <div align="middle"></div>
+      <table>
+        <tr align="center">
+          <td>
+            <img src="./Images/4a/sink/sink_mosaic_final.jpg" align="middle" width="400px" />
+            <figcaption>Sink Mosaic (Predefined Points)</figcaption>
+          </td>
+          <td>
+            <img src="./Images/4b/sink/sink_mosaic_auto_stitched.jpg" align="middle" width="400px" />
+            <figcaption>Sink Mosaic (Auto-Stitched Points)</figcaption>
+          </td>
+        </tr>
+        <tr align="center">
+          <td>
+            <img src="./Images/4a/outside-street/outside_mosaic_final.jpg" align="middle" width="400px" />
+            <figcaption>Outside Mosaic (Predefined Points)</figcaption>
+          </td>
+          <td>
+            <img src="./Images/4b/outside-street/outside_mosaic_auto_stitched.jpg" align="middle" width="400px" />
+            <figcaption>Outside Mosaic (Auto-Stitched Points)</figcaption>
+          </td>
+        </tr>
+        <tr align="center">
+          <td>
+            <img src="./Images/4a/campanile/campanile_mosaic_final.jpg" align="middle" width="400px" />
+            <figcaption>Campanile Mosaic (Predefined Points)</figcaption>
+          </td>
+          <td>
+            <img src="./Images/4b/campanile/campanile_mosaic_auto_stitched.jpg" align="middle" width="400px" />
+            <figcaption>Campanile Mosaic (Auto-Stitched Points)</figcaption>
+          </td>
+        </tr>
+      </table>
+    </div>
+
+    <br>
+    <br>
+
+    <h2 align="middle">Section VII: Conclusion</h2>
+    <div class="bounding-box">
+      <h3 align="middle">
+        Learnings
+      </h3>
+      <p>
+        I learned a lot about finetuning and filtering out the Harris corners especially to get a better spatial distribution on the images. Throughout this process, I made sure to note down what order my points in whether as (row, col) or (y, x). This way when I'm plotting and calculating the homography matrix I would get the correct results. The coolest takeaway was finding the best matches to automatically stitch together the images.
+      </p>
+    </div>
+
 </body>
 
 </html>
