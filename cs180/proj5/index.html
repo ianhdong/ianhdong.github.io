@@ -134,7 +134,7 @@
         <br>
         <br>
 
-        <h2 align="middle">Section I: Sampling Loops</h2>
+        <h2 align="middle">Section I: Implementing the Forward Process</h2>
         <div class="bounding-box">
             <h3 align="middle">
                 Implementing the Forward Process
@@ -173,8 +173,10 @@
                 </tr>
             </table>
         </div>
-
+        
         <br>
+        <br>
+        <h2 align="middle">Section II: Classical Denoising</h2>
         <div class="bounding-box">
             <h3 align="middle">
                 Classical Denoising
@@ -213,8 +215,10 @@
                 </tr>
             </table>
         </div>
-
+        
         <br>
+        <br>
+        <h2 align="middle">Section III: One-Step Denoising</h2>
         <div class="bounding-box">
             <h3 align="middle">
                 One-Step Denoising
@@ -267,8 +271,10 @@
                 </tr>
             </table>
         </div>
-
+        
         <br>
+        <br>
+        <h2 align="middle">Section IV: Iterative Denoising</h2>
         <div class="bounding-box">
             <h3 align="middle">
                 Iterative Denoising
@@ -327,8 +333,10 @@
                 </tr>
             </table>
         </div>
-
+        
         <br>
+        <br>
+        <h2 align="middle">Section V: Diffusion Model Sampling</h2>
         <div class="bounding-box">
             <h3 align="middle">
                 Diffusion Model Sampling
@@ -357,6 +365,148 @@
                     <td>
                         <img src="./Images/5a/GeneratedImages/image5.png" align="middle" width="400px" />
                         <figcaption>Image 5</figcaption>
+                    </td>
+                </tr>
+            </table>
+        </div>
+
+        <br>
+        <br>
+        <h2 align="middle">Section VI: Classifier Free Guidance</h2>
+        <div class="bounding-box">
+            <h3 align="middle">
+                Classifier Free Guidance
+            </h3>
+            <p>
+                In the previous section, the generated images did not have great quality. I used classifier free guidance to greatly improve image quality. First, I computed both a noise estimate on a text prompt and an unconditional noise estimate. I let the new noise estimate be:
+                $$ \epsilon = \epsilon_u + \gamma(\epsilon_c - \epsilon_u)$$
+                where $\gamma$ helps to control the strength of CFG. Here are the results with the prompt = <i>a high quality photo</i>:
+            </p>
+            <table>
+                <tr align="center">
+                    <td>
+                        <img src="./Images/5a/GeneratedImages/cfg_image1.png" align="middle" width="400px" />
+                        <figcaption>CFG Image 1</figcaption>
+                    </td>
+                    <td>
+                        <img src="./Images/5a/GeneratedImages/cfg_image2.png" align="middle" width="400px" />
+                        <figcaption>CFG Image 2</figcaption>
+                    </td>
+                    <td>
+                        <img src="./Images/5a/GeneratedImages/cfg_image3.png" align="middle" width="400px" />
+                        <figcaption>CFG Image 3</figcaption>
+                    </td>
+                    <td>
+                        <img src="./Images/5a/GeneratedImages/cfg_image4.png" align="middle" width="400px" />
+                        <figcaption>CFG Image 4</figcaption>
+                    </td>
+                    <td>
+                        <img src="./Images/5a/GeneratedImages/cfg_image5.png" align="middle" width="400px" />
+                        <figcaption>CFG Image 5</figcaption>
+                    </td>
+                </tr>
+            </table>
+        </div>
+
+        <br>
+        <br>
+        <h2 align="middle">Section VII: Image to Image Translation</h2>
+        <div class="bounding-box">
+            <h3 align="middle">
+                Image to Image Translation
+            </h3>
+            <p>
+                In the previous sections, we can see that as we add noise we can make modifications to existing images. The greater the noise the more potential for edits. I took some original images, added noise to them, and then ran the forward process without any conditioning for a variety of starting indices. Here are the results:
+            </p>
+            <table>
+                <tr align="center">
+                    <td>
+                        <img src="./Images/5a/Edits/campanile_1.png" align="middle" width="400px" />
+                        <figcaption><code class="highlighter-rouge">i_start=1</code></figcaption>
+                    </td>
+                    <td>
+                        <img src="./Images/5a/Edits/campanile_3.png" align="middle" width="400px" />
+                        <figcaption><code class="highlighter-rouge">i_start=3</code></figcaption>
+                    </td>
+                    <td>
+                        <img src="./Images/5a/Edits/campanile_5.png" align="middle" width="400px" />
+                        <figcaption><code class="highlighter-rouge">i_start=5</code></figcaption>
+                    </td>
+                    <td>
+                        <img src="./Images/5a/Edits/campanile_7.png" align="middle" width="400px" />
+                        <figcaption><code class="highlighter-rouge">i_start=7</code></figcaption>
+                    </td>
+                    <td>
+                        <img src="./Images/5a/Edits/campanile_10.png" align="middle" width="400px" />
+                        <figcaption><code class="highlighter-rouge">i_start=10</code></figcaption>
+                    </td>
+                    <td>
+                        <img src="./Images/5a/Edits/campanile_20.png" align="middle" width="400px" />
+                        <figcaption><code class="highlighter-rouge">i_start=20</code></figcaption>
+                    </td>
+                    <td>
+                        <img src="./Images/5a/SamplingLoops/campanile.png" align="middle" width="400px" />
+                        <figcaption>Original</figcaption>
+                    </td>
+                </tr>
+                <tr align="center">
+                    <td>
+                        <img src="./Images/5a/Edits/doe_1.png" align="middle" width="400px" />
+                        <figcaption><code class="highlighter-rouge">i_start=1</code></figcaption>
+                    </td>
+                    <td>
+                        <img src="./Images/5a/Edits/doe_3.png" align="middle" width="400px" />
+                        <figcaption><code class="highlighter-rouge">i_start=3</code></figcaption>
+                    </td>
+                    <td>
+                        <img src="./Images/5a/Edits/doe_5.png" align="middle" width="400px" />
+                        <figcaption><code class="highlighter-rouge">i_start=5</code></figcaption>
+                    </td>
+                    <td>
+                        <img src="./Images/5a/Edits/doe_7.png" align="middle" width="400px" />
+                        <figcaption><code class="highlighter-rouge">i_start=7</code></figcaption>
+                    </td>
+                    <td>
+                        <img src="./Images/5a/Edits/doe_10.png" align="middle" width="400px" />
+                        <figcaption><code class="highlighter-rouge">i_start=10</code></figcaption>
+                    </td>
+                    <td>
+                        <img src="./Images/5a/Edits/doe_20.png" align="middle" width="400px" />
+                        <figcaption><code class="highlighter-rouge">i_start=20</code></figcaption>
+                    </td>
+                    <td>
+                        <img src="./Images/5a/Edits/doe.png" align="middle" width="400px" />
+                        <figcaption>Original</figcaption>
+                    </td>
+                </tr>
+                <tr align="center">
+                    <td>
+                        <img src="./Images/5a/Edits/moffitt_1.png" align="middle" width="400px" />
+                        <figcaption><code class="highlighter-rouge">i_start=1</code></figcaption>
+                    </td>
+                    <td>
+                        <img src="./Images/5a/Edits/moffitt_3.png" align="middle" width="400px" />
+                        <figcaption><code class="highlighter-rouge">i_start=3</code></figcaption>
+                    </td>
+                    <td>
+                        <img src="./Images/5a/Edits/moffitt_5.png" align="middle" width="400px" />
+                        <figcaption><code class="highlighter-rouge">i_start=5</code></figcaption>
+                    </td>
+                    <td>
+                        <img src="./Images/5a/Edits/moffitt_7.png" align="middle" width="400px" />
+                        <figcaption><code class="highlighter-rouge">i_start=7</code></figcaption>
+                    </td>
+                    <td>
+                        <img src="./Images/5a/Edits/moffitt_10.png" align="middle" width="400px" />
+                        <figcaption><code class="highlighter-rouge">i_start=10</code></figcaption>
+                    </td>
+                    <td>
+                        <img src="./Images/5a/Edits/moffitt_20.png" align="middle" width="400px" />
+                        <figcaption><code class="highlighter-rouge">i_start=20</code></figcaption>
+                    </td>
+                    <td>
+                        <img src="./Images/5a/Edits/moffitt.png" align="middle" width="400px" />
+                        <figcaption>Original</figcaption>
                     </td>
                 </tr>
             </table>
