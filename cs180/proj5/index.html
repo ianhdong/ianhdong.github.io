@@ -724,7 +724,7 @@
             <table>
                 <tr align="center">
                     <td>
-                        <img src="./Images/5a/Edits/doe_mountain_1.png" align="middle" width="400px" />
+                        <img src="./Images/5a/Edits/campanile_rocket_1.png" align="middle" width="400px" />
                         <figcaption><code class="highlighter-rouge">i_start=1</code></figcaption>
                     </td>
                     <td>
@@ -943,7 +943,6 @@
                 hybridization of images. In this part, I implemented a single-step denoising UNet to denoise images. I
                 used the following architecture for the UNet:
             </p>
-            <div align="middle"></div>
             <table>
                 <tr align="center">
                     <td>
@@ -1040,7 +1039,8 @@
                 Out-of-Distribution Testing
             </h3>
             <p>
-                Once the model has been trained, I tested the denoising UNet on noisy samples from the test dataset. I kept the same image but varied the noise added to it. Here are the results:
+                Once the model has been trained, I tested the denoising UNet on noisy samples from the test dataset. I
+                kept the same image but varied the noise added to it. Here are the results:
             </p>
             <div align="middle"></div>
             <table>
@@ -1060,56 +1060,59 @@
 
         <div class="bounding-box">
             <h3 align="middle">
-                ANMS Algorithm
+                Adding Time Conditioning to UNet
             </h3>
             <p>
-                As shown above, there were a lot of different corner points. I wanted to distribute the points more
-                evenly
-                around the images. First, I found the distances between each pair of points from the two different
-                images. Then,
-                I sorted by the corner response value. For each point in the first image, I calculated the suppression
-                radius
-                using the following formula:
+                In this section, I added time conditioning to the previous UNet model that can iteratively denoise an
+                image. The small change to the problem is that now I want to use the UNet to predict the added noise
+                $\epsilon$ instead of the clean image $x$. The equation for the loss function is as follows:
+                $$L = \mathbb{E}_{\epsilon,z} \|\epsilon_{\theta}(z) - \epsilon\|^2$$.
 
-                $$ r_i = \min_j |x_i - x_j|, \text{ s.t. } f(x_i) < c_{\text{robust}} \cdot f(x_j)$$ Finally, I sorted
-                    the points by their suppression radius and selected the $n$ points with the largest radius. This way
-                    I could get a better spatial distribution of the points. Here are the results: </p>
-                    <div align="middle"></div>
-                    <table>
-                        <tr align="center">
-                            <td>
-                                <img src="./Images/4b/sink/sink_left_anms.png" align="middle" width="400px" />
-                                <figcaption>Sink Left (ANMS)</figcaption>
-                            </td>
-                            <td>
-                                <img src="./Images/4b/sink/sink_right_anms.png" align="middle" width="400px" />
-                                <figcaption>Sink Right (ANMS)</figcaption>
-                            </td>
-                        </tr>
-                        <tr align="center">
-                            <td>
-                                <img src="./Images/4b/outside/outside_left_anms.png" align="middle" width="400px" />
-                                <figcaption>Outside Left (ANMS)</figcaption>
-                            </td>
-                            <td>
-                                <img src="./Images/4b/outside/outside_right_anms.png" align="middle" width="400px" />
-                                <figcaption>Outside Right (ANMS)</figcaption>
-                            </td>
-                        </tr>
-                        <tr align="center">
-                            <td>
-                                <img src="./Images/4b/campanile/campanile_left_anms.png" align="middle" width="400px" />
-                                <figcaption>Campanile Left (ANMS)</figcaption>
-                            </td>
-                            <td>
-                                <img src="./Images/4b/campanile/campanile_right_anms.png" align="middle"
-                                    width="400px" />
-                                <figcaption>Campanile Right (ANMS)</figcaption>
-                            </td>
-                        </tr>
-                    </table>
+                To iteratively denoise an image, I needed to generate noisy images $x-t$ from $x_0$ using the following
+                equation:
+
+                $$ x_t = \sqrt{\bar\alpha_t} x_0 + \sqrt{1 - \bar\alpha_t} \epsilon
+                \quad \text{where}~ \epsilon \sim N(0, 1)$$
+
+                Intuitively, when $t = 0$, I should get back the denoised image while when $t = T$ it should be a pure
+                noise image. I also used the DDPM to build the list of $\bar{\alpha}$ values to use for the training
+                process.
+
+            <ul>
+                <li>
+                    $\beta$ is a list of length $T = 300$ equally spaced between 0.0001 and 0.02
+                </li>
+                <li>
+                    $\alpha_t = 1 - \beta_t$
+                </li>
+                <li>
+                    $\bar{\alpha}_t$ is a cumulative product of $\alpha_t$ for $t \in \{1, \cdots, T\}$
+                </li>
+            </ul>
+
+            Finally, I conditioned a single UNet on timestep $t$. I used the following architecture for the time
+            conditioned UNet:
+            </p>
+
+            <table>
+                <tr align="center">
+                    <td>
+                        <img src="./Images/5b/architecture/time_conditioned_unet.png" align="middle" />
+                        <figcaption>Time Conditioned UNet Architecture</figcaption>
+                    </td>
+                    <td>
+                        <img src="./Images/5b/architecture/time_conditioned_unet_ops.png" align="middle" />
+                        <figcaption>FCBlock</figcaption>
+                    </td>
+                </tr>
+            </table>
+            <br>
+            <p>
+                I followed along with the standard tensor operations and defined them within the notebook and then used
+                the UNet architecture to create the necessary layers with downsampling and upsampling blocks to build
+                out skip connections. I embedded the time conditioning by normalizing $t$ and adding to the unflatten and up sample blocks.
+            </p>
         </div>
-
 </body>
 
 </html>
