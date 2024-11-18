@@ -889,14 +889,7 @@
 
             <h2 align="middle" id="5b">Overview</h2>
 
-            The second part of the project will automatically stitch together images into a mosaic by finding and
-            matching
-            feature descriptors. I used Harris corner detection to find the corners of the images and then used Adaptive
-            Non-Maximal Suppression to get a better spatial distribution of the points. Finally, I used nearest neighbor
-            to
-            match up the image patches and then used RANSAC to find the homography matrix that best fits the points. I
-            then
-            used the homography matrix to warp the images and blend them together to create a seamless mosaic.
+            The second part of this project focuses on building diffusion models from scratch to use on the MNIST dataset. I implemented a single-step denoising UNet and added time and class conditioning to iteratively denoise an image and get better results.
             <br><br>
         </div>
 
