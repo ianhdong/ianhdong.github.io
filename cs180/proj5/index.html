@@ -788,6 +788,96 @@
             </table>
         </div>
 
+        <br>
+        <br>
+        <h2 align="middle">Section VIII: Visual Anagrams</h2>
+        <div class="bounding-box">
+            <h3 align="middle">
+                Visual Anagrams
+            </h3>
+            <p>
+                In this section, I created an image what would look like a certain prompt but when flipped upside down it will look like a completely different prompt. To achieve this, I needed to take in two different prompts and calculate their respective estimated noise. These were the following equations I used:
+
+                $$
+                    \begin{align*}
+                        \epsilon_1 &= \text{UNet}(x_t, t, p_1) \\
+                        \epsilon_2 &= \text{flip}(\text{UNet}(\text{flip}(x_t), t, p_2)) \\
+                        \epsilon &= (\epsilon_1 + \epsilon_2) / 2
+                    \end{align*}
+                $$
+                By flipping the image and running the UNet on it, I am able to apply a reverse diffusion step to generate image on the opposite direction. Here are the results:
+            </p>
+            <table>
+                <tr align="center">
+                    <td>
+                        <img src="./Images/5a/Edits/old_man_campfire.png" align="middle" width="400px" />
+                        <figcaption><i>"An Oil Painting of an Old Man"</i></figcaption>
+                    </td>
+                    <td>
+                        <img src="./Images/5a/Edits/campfire_old_man.png" align="middle" width="400px" />
+                        <figcaption><i>"An Oil Painting of People Around a Campfire</i></figcaption>
+                    </td>
+                </tr>
+                <tr align="center">
+                    <td>
+                        <img src="./Images/5a/Edits/mountain_coast.png" align="middle" width="400px" />
+                        <figcaption><i>"An Oil Painting of a Snowy Mountain Village</i></figcaption>
+                    </td>
+                    <td>
+                        <img src="./Images/5a/Edits/coast_mountain.png" align="middle" width="400px" />
+                        <figcaption><i>"A Photo of the Amalfi Coast"</i></figcaption>
+                    </td>
+                </tr>
+                <tr align="center">
+                    <td>
+                        <img src="./Images/5a/Edits/man_dog.png" align="middle" width="400px" />
+                        <figcaption><i>"An Photo of a Man"</i></figcaption>
+                    </td>
+                    <td>
+                        <img src="./Images/5a/Edits/dog_man.png" align="middle" width="400px" />
+                        <figcaption><i>"A Photo of a Dog"</i></figcaption>
+                    </td>
+                </tr>
+            </table>
+        </div>
+
+        <br>
+        <br>
+        <h2 align="middle">Section IX: Hybrid Images</h2>
+        <div class="bounding-box">
+            <h3 align="middle">
+                Hybrid Images
+            </h3>
+            <p>
+                In this section, I implemented factorized diffusion to create hybrid images similar to project 2. I would take in two different prompts and then passed in the estimated noises into a low-pass filter and a high-pass filter. Afterwards, I used this as the final noise estimate. For the low-pass and high-pass filters, I simply used a Gaussian filter with a kernel size of 33 and sigma of 2. These were the following equations I used:
+
+                $$
+                    \begin{align*}
+                        \epsilon_1 &= \text{UNet}(x_t, t, p_1) \\
+                        \epsilon_2 &= \text{UNet}(x_t, t, p_2) \\
+                        \epsilon &= f_\text{low pass}(\epsilon_1) + f_\text{high pass}(\epsilon_2)
+                    \end{align*}
+                $$
+                Here are the results:
+            </p>
+            <table>
+                <tr align="center">
+                    <td>
+                        <img src="./Images/5a/Edits/hybrid_skull_waterfall.png" align="middle" width="400px" />
+                        <figcaption><i>"Hybrid of Skull and Waterfall"</i></figcaption>
+                    </td>
+                    <td>
+                        <img src="./Images/5a/Edits/hybrid_mountain_man.png" align="middle" width="400px" />
+                        <figcaption><i>"Hybrid of Snowy Mountain and Old Man</i></figcaption>
+                    </td>
+                    <td>
+                        <img src="./Images/5a/Edits/hybrid_skull_dog.png" align="middle" width="400px" />
+                        <figcaption><i>"Hybrid of Skull and Dog</i></figcaption>
+                    </td>
+                </tr>
+            </table>
+        </div>
+
 
         <br>
         <br>
