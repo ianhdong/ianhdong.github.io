@@ -615,6 +615,181 @@
         </div>
 
         <br>
+        <div class="bounding-box">
+            <h3 align="middle">
+                Inpainting
+            </h3>
+            <p>
+                I used the same approach above to implement inpainting of images. Given an original image, $x_\text{orig}$ and a binary mask $m$, I can generate a new image that that retains the original content where $m = 0$, while generating new content in the regions where $m = 1$. I used the following expression to get the new image:
+                $$x_{t} \leftarrow \mathbf{m}x_{t} + (1 - \mathbf{m})\text{forward}(x_{\text{orig}}, t)$$
+                This helps to leave everything within the mask region untouched while only denoising and replacing everything outside of it with new content. Here are the results:
+            </p>
+            <table>
+                <tr align="center">
+                    <td>
+                        <img src="./Images/5a/SamplingLoops/campanile.png" align="middle" width="400px" />
+                        <figcaption>Campanile</figcaption>
+                    </td>
+                    <td>
+                        <img src="./Images/5a/Edits/campanile_mask.png" align="middle" width="400px" />
+                        <figcaption>Mask</figcaption>
+                    </td>
+                    <td>
+                        <img src="./Images/5a/Edits/campanile_to_replace.png" align="middle" width="400px" />
+                        <figcaption>To Replace</figcaption>
+                    </td>
+                    <td>
+                        <img src="./Images/5a/Edits/campanile_inpainted.png" align="middle" width="400px" />
+                        <figcaption>Campanile Inpainted</figcaption>
+                    </td>
+                </tr>
+                <tr align="center">
+                    <td>
+                        <img src="./Images/5a/Edits/doe.png" align="middle" width="400px" />
+                        <figcaption>Doe Library</figcaption>
+                    </td>
+                    <td>
+                        <img src="./Images/5a/Edits/doe_library_mask.png" align="middle" width="400px" />
+                        <figcaption>Mask</figcaption>
+                    </td>
+                    <td>
+                        <img src="./Images/5a/Edits/doe_to_replace.png" align="middle" width="400px" />
+                        <figcaption>To Replace</figcaption>
+                    </td>
+                    <td>
+                        <img src="./Images/5a/Edits/doe_library_inpainted.png" align="middle" width="400px" />
+                        <figcaption>Doe Library Inpainted</figcaption>
+                    </td>
+                </tr>
+                <tr align="center">
+                    <td>
+                        <img src="./Images/5a/Edits/moffitt.png" align="middle" width="400px" />
+                        <figcaption>Moffitt Library</figcaption>
+                    </td>
+                    <td>
+                        <img src="./Images/5a/Edits/moffitt_mask.png" align="middle" width="400px" />
+                        <figcaption>Mask</figcaption>
+                    </td>
+                    <td>
+                        <img src="./Images/5a/Edits/moffitt_to_replace.png" align="middle" width="400px" />
+                        <figcaption>To Replace</figcaption>
+                    </td>
+                    <td>
+                        <img src="./Images/5a/Edits/moffitt_inpainted.png" align="middle" width="400px" />
+                        <figcaption>Moffitt Inpainted</figcaption>
+                    </td>
+                </tr>
+            </table>
+
+            <p>
+                In the first image, I made it so that the Campanile would look more like a lighthouse. Then I changed the Doe Library to look more like an oil painting by replacing the left side with a mountainous background. Finally, for Moffitt Library, I replaced the building with a cool looking red shed and a nice green scenery.
+            </p>
+        </div>
+
+        <br>
+        <div class="bounding-box">
+            <h3 align="middle">
+                Text-Conditional Image-to-image Translation
+            </h3>
+            <p>
+                Afterwards, I followed the same procedure as above but instead will guide the projection using a text prompt. This means that it is no longer a pure "projection to the natural image manifold" anymore but also adds control using language. I changed the prompt from <i>a high quality photo</i> to <i>a rocket ship</i> for the Campanile image, <i>an oil painting of a snowy mountain village</i> for the Doe Library image, and finally <i>a lithograph of waterfalls</i> for the Moffitt Library image. Here are the results:
+            </p>
+            <table>
+                <tr align="center">
+                    <td>
+                        <img src="./Images/5a/Edits/doe_mountain_1.png" align="middle" width="400px" />
+                        <figcaption><code class="highlighter-rouge">i_start=1</code></figcaption>
+                    </td>
+                    <td>
+                        <img src="./Images/5a/Edits/campanile_rocket_3.png" align="middle" width="400px" />
+                        <figcaption><code class="highlighter-rouge">i_start=3</code></figcaption>
+                    </td>
+                    <td>
+                        <img src="./Images/5a/Edits/campanile_rocket_5.png" align="middle" width="400px" />
+                        <figcaption><code class="highlighter-rouge">i_start=5</code></figcaption>
+                    </td>
+                    <td>
+                        <img src="./Images/5a/Edits/campanile_rocket_7.png" align="middle" width="400px" />
+                        <figcaption><code class="highlighter-rouge">i_start=7</code></figcaption>
+                    </td>
+                    <td>
+                        <img src="./Images/5a/Edits/campanile_rocket_10.png" align="middle" width="400px" />
+                        <figcaption><code class="highlighter-rouge">i_start=10</code></figcaption>
+                    </td>
+                    <td>
+                        <img src="./Images/5a/Edits/campanile_rocket_20.png" align="middle" width="400px" />
+                        <figcaption><code class="highlighter-rouge">i_start=20</code></figcaption>
+                    </td>
+                    <td>
+                        <img src="./Images/5a/SamplingLoops/campanile.png" align="middle" width="400px" />
+                        <figcaption>Original</figcaption>
+                    </td>
+                </tr>
+                <tr align="center">
+                    <td>
+                        <img src="./Images/5a/Edits/doe_mountain_1.png" align="middle" width="400px" />
+                        <figcaption><code class="highlighter-rouge">i_start=1</code></figcaption>
+                    </td>
+                    <td>
+                        <img src="./Images/5a/Edits/doe_mountain_3.png" align="middle" width="400px" />
+                        <figcaption><code class="highlighter-rouge">i_start=3</code></figcaption>
+                    </td>
+                    <td>
+                        <img src="./Images/5a/Edits/doe_mountain_5.png" align="middle" width="400px" />
+                        <figcaption><code class="highlighter-rouge">i_start=5</code></figcaption>
+                    </td>
+                    <td>
+                        <img src="./Images/5a/Edits/doe_mountain_7.png" align="middle" width="400px" />
+                        <figcaption><code class="highlighter-rouge">i_start=7</code></figcaption>
+                    </td>
+                    <td>
+                        <img src="./Images/5a/Edits/doe_mountain_10.png" align="middle" width="400px" />
+                        <figcaption><code class="highlighter-rouge">i_start=10</code></figcaption>
+                    </td>
+                    <td>
+                        <img src="./Images/5a/Edits/doe_mountain_20.png" align="middle" width="400px" />
+                        <figcaption><code class="highlighter-rouge">i_start=20</code></figcaption>
+                    </td>
+                    <td>
+                        <img src="./Images/5a/Edits/doe.png" align="middle" width="400px" />
+                        <figcaption>Original</figcaption>
+                    </td>
+                </tr>
+                <tr align="center">
+                    <td>
+                        <img src="./Images/5a/Edits/moffitt_waterfall_1.png" align="middle" width="400px" />
+                        <figcaption><code class="highlighter-rouge">i_start=1</code></figcaption>
+                    </td>
+                    <td>
+                        <img src="./Images/5a/Edits/moffitt_waterfall_3.png" align="middle" width="400px" />
+                        <figcaption><code class="highlighter-rouge">i_start=3</code></figcaption>
+                    </td>
+                    <td>
+                        <img src="./Images/5a/Edits/moffitt_waterfall_5.png" align="middle" width="400px" />
+                        <figcaption><code class="highlighter-rouge">i_start=5</code></figcaption>
+                    </td>
+                    <td>
+                        <img src="./Images/5a/Edits/moffitt_waterfall_7.png" align="middle" width="400px" />
+                        <figcaption><code class="highlighter-rouge">i_start=7</code></figcaption>
+                    </td>
+                    <td>
+                        <img src="./Images/5a/Edits/moffitt_waterfall_10.png" align="middle" width="400px" />
+                        <figcaption><code class="highlighter-rouge">i_start=10</code></figcaption>
+                    </td>
+                    <td>
+                        <img src="./Images/5a/Edits/moffitt_waterfall_20.png" align="middle" width="400px" />
+                        <figcaption><code class="highlighter-rouge">i_start=20</code></figcaption>
+                    </td>
+                    <td>
+                        <img src="./Images/5a/Edits/moffitt.png" align="middle" width="400px" />
+                        <figcaption>Original</figcaption>
+                    </td>
+                </tr>
+            </table>
+        </div>
+
+
+        <br>
         <br>
 
         <h1 align="middle"><a href="#4b">Project 4B:Feature Matching for Auto-Stitching</a>
