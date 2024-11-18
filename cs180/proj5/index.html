@@ -1090,6 +1090,18 @@
                 </li>
             </ul>
 
+            I replaced the unflatten and upsample blocks with the following:
+
+            <ul>
+                <li>
+                    <code>unflatten = unflatten + t1</code>
+                </li>
+                <li>
+                    <code>upsample = upsample + t2</code>
+                </li>
+            </ul>
+            where <code>t1, t2</code> are the results from passing the timestep through the FCBlocks.
+
             Finally, I conditioned a single UNet on timestep $t$. I used the following architecture for the time
             conditioned UNet:
             </p>
@@ -1121,17 +1133,22 @@
                 Training the UNet
             </h3>
             <p>
-                To train this model, I took the clean images, uniformly sampled to create the timesteps $t$, used the $\bar{\alpha}$ for the timesteps to get the noisy images, and finally trained with the UNet model. The model would try to return the expected noise from the image. Afterwards, I calculated the MSE loss between the expected noise and the random pure noise I had generated. By minimizing this loss, I was able to train the model to denoise images. The hyperparameters and other architecture that I used were as follows:
+                To train this model, I took the clean images, uniformly sampled to create the timesteps $t$, used the
+                $\bar{\alpha}$ for the timesteps to get the noisy images, and finally trained with the UNet model. The
+                model would try to return the expected noise from the image. Afterwards, I calculated the MSE loss
+                between the expected noise and the random pure noise I had generated. By minimizing this loss, I was
+                able to train the model to denoise images. The hyperparameters and other architecture that I used were
+                as follows:
 
-                <ul>
-                    <li>Batch Size: 128</li>
-                    <li>Hidden Dim: 64</li>
-                    <li>Learning Rate: 1e-3</li>
-                    <li>Optimizer: Adam</li>
-                    <li>Scheduler Gamma: $0.1^{(1 / \text{epochs})}$</li>
-                    <li>Epochs: 20</li>
-                    <li>Loss Function: MSE Loss</li>
-                </ul>
+            <ul>
+                <li>Batch Size: 128</li>
+                <li>Hidden Dim: 64</li>
+                <li>Learning Rate: 1e-3</li>
+                <li>Optimizer: Adam</li>
+                <li>Scheduler Gamma: $0.1^{(1 / \text{epochs})}$</li>
+                <li>Epochs: 20</li>
+                <li>Loss Function: MSE Loss</li>
+            </ul>
             </p>
 
             <table>
@@ -1146,9 +1163,8 @@
                     </td>
                 </tr>
             </table>
-            <br>
             <p>
-                I had trained directly with the time conditioned UNet by following along with the algorithm below: 
+                I had trained directly with the time conditioned UNet by following along with the algorithm below:
             </p>
             <table>
                 <tr align="center">
@@ -1157,7 +1173,6 @@
                     </td>
                 </tr>
             </table>
-            <br>
             <p>
                 Here is a training loss
                 curve plot during the entire process:
@@ -1176,7 +1191,7 @@
                 Sampling from the UNet
             </h3>
             <p>
-                I had also sampled directly from the time conditioned UNet by following along with the algorithm below: 
+                I had also sampled directly from the time conditioned UNet by following along with the algorithm below:
             </p>
 
             <table>
@@ -1186,7 +1201,6 @@
                     </td>
                 </tr>
             </table>
-            <br>
             <p>
                 Here are some sampling results for the time conditioned UNet model:
             </p>
@@ -1213,6 +1227,115 @@
                 </tr>
             </table>
         </div>
+
+        <br>
+
+        <div class="bounding-box">
+            <h3 align="middle">
+                Adding Class-Conditioning to UNet
+            </h3>
+            <p>
+                To improve results and allow for more control over the image generation, I added class conditioning to
+                the previous UNet for the digit class 0-9. This included adding 2 more FCBlocks and a one-hot encoded
+                vector $c$ for each of the datapoints instead of a single scalar. Since I don't want the model to
+                overfit on the classes, I made sure to drop the one-ho
+                t encoded vector with a probability of 0.1. I replaced the unflatten and upsample blocks with the
+                following:
+
+            <ul>
+                <li>
+                    <code>unflatten = c1 * unflatten + t1</code>
+                </li>
+                <li>
+                    <code>upsample = c2 * upsample + t2</code>
+                </li>
+            </ul>
+            where <code>c1, c2</code> are the results from passing the one-hot encoded vector through the FCBlocks and
+            <code>t1, t2</code> are the results from passing the timestep through the FCBlocks.
+
+            Finally, I conditioned a single UNet on timestep $t$.
+            <p>
+                I followed along with the standard tensor operations and defined them within the notebook and then used
+                the UNet architecture to create the necessary layers with downsampling and upsampling blocks to build
+                out skip connections. I embedded the time conditioning by normalizing $t$ and adding to the unflatten
+                and up sample blocks and class conditioning by adding the one-hot encoded vector to the unflatten and up
+                sample blocks.
+            </p>
+            <p>
+                Compared to the previous time conditioned UNet's training algorithm, the only main difference being the addition of the conditioning vector 
+                $c$
+                 and periodically performing unconditional generation.
+            </p>
+
+            <table>
+                <tr align="center">
+                    <td>
+                        <img src="./Images/5b/algorithms/class_cond_algo1.png" align="middle" />
+                    </td>
+                </tr>
+            </table>
+
+            <p>
+                Here is a training loss curve plot during the entire process:
+            </p>
+
+            <table>
+                <tr align="center">
+                    <td>
+                        <img src="./Images/5b/results/class_conditioned_training_loss.png" align="middle" />
+                    </td>
+                </tr>
+            </table>
+        </div>
+
+        <br>
+        <div class="bounding-box">
+            <h3 align="middle">
+                Sampling from the Class-Conditioned UNet
+            </h3>
+            <p>
+                I had also sampled directly from the class conditioned UNet by following along with the algorithm below:
+            </p>
+            <table>
+                <tr align="center">
+                    <td>
+                        <img src="./Images/5b/algorithms/class_cond_algo2.png" align="middle" />
+                    </td>
+                </tr>
+            </table>
+            <p>
+                Here are some sampling results for the class conditioned UNet model with classifier-free guidance of $\gamma = 5.0$:
+            </p>
+
+            <table>
+                <tr align="center">
+                    <td>
+                        <img src="./Images/5b/results/class_conditioned_epoch1.png" align="middle" />
+                    </td>
+                </tr>
+                <tr align="center">
+                    <td>
+                        <img src="./Images/5b/results/class_conditioned_epoch5.png" align="middle" />
+                    </td>
+                </tr>
+                <tr align="center">
+                    <td>
+                        <img src="./Images/5b/results/class_conditioned_epoch10.png" align="middle" />
+                    </td>
+                </tr>
+                <tr align="center">
+                    <td>
+                        <img src="./Images/5b/results/class_conditioned_epoch15.png" align="middle" />
+                    </td>
+                </tr>
+                <tr align="center">
+                    <td>
+                        <img src="./Images/5b/results/class_conditioned_epoch20.png" align="middle" />
+                    </td>
+                </tr>
+            </table>
+        </div>
+
 </body>
 
 </html>
