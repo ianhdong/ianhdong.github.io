@@ -1024,10 +1024,10 @@
             <table>
                 <tr align="center">
                     <td>
-                        <img src="./Images/5b/results/unet_epoch_1.png" align="middle" />
+                        <img src="./Images/5b/results/unet_epoch1.png" align="middle" />
                     </td>
                     <td>
-                        <img src="./Images/5b/results/unet_epoch_5.png" align="middle" />
+                        <img src="./Images/5b/results/unet_epoch5.png" align="middle" />
                     </td>
                 </tr>
             </table>
@@ -1110,8 +1110,108 @@
             <p>
                 I followed along with the standard tensor operations and defined them within the notebook and then used
                 the UNet architecture to create the necessary layers with downsampling and upsampling blocks to build
-                out skip connections. I embedded the time conditioning by normalizing $t$ and adding to the unflatten and up sample blocks.
+                out skip connections. I embedded the time conditioning by normalizing $t$ and adding to the unflatten
+                and up sample blocks.
             </p>
+        </div>
+
+        <br>
+        <div class="bounding-box">
+            <h3 align="middle">
+                Training the UNet
+            </h3>
+            <p>
+                To train this model, I took the clean images, uniformly sampled to create the timesteps $t$, used the $\bar{\alpha}$ for the timesteps to get the noisy images, and finally trained with the UNet model. The model would try to return the expected noise from the image. Afterwards, I calculated the MSE loss between the expected noise and the random pure noise I had generated. By minimizing this loss, I was able to train the model to denoise images. The hyperparameters and other architecture that I used were as follows:
+
+                <ul>
+                    <li>Batch Size: 128</li>
+                    <li>Hidden Dim: 64</li>
+                    <li>Learning Rate: 1e-3</li>
+                    <li>Optimizer: Adam</li>
+                    <li>Scheduler Gamma: $0.1^{(1 / \text{epochs})}$</li>
+                    <li>Epochs: 20</li>
+                    <li>Loss Function: MSE Loss</li>
+                </ul>
+            </p>
+
+            <table>
+                <tr align="center">
+                    <td>
+                        <img src="./Images/5b/architecture/time_conditioned_unet.png" align="middle" />
+                        <figcaption>Time Conditioned UNet Architecture</figcaption>
+                    </td>
+                    <td>
+                        <img src="./Images/5b/architecture/time_conditioned_unet_ops.png" align="middle" />
+                        <figcaption>FCBlock</figcaption>
+                    </td>
+                </tr>
+            </table>
+            <br>
+            <p>
+                I had trained directly with the time conditioned UNet by following along with the algorithm below: 
+            </p>
+            <table>
+                <tr align="center">
+                    <td>
+                        <img src="./Images/5b/algorithms/time_cond_algo1.png" align="middle" />
+                    </td>
+                </tr>
+            </table>
+            <br>
+            <p>
+                Here is a training loss
+                curve plot during the entire process:
+            </p>
+            <table>
+                <tr align="center">
+                    <td>
+                        <img src="./Images/5b/results/time_conditioned_training_loss.png" align="middle" />
+                    </td>
+                </tr>
+            </table>
+        </div>
+        <br>
+        <div class="bounding-box">
+            <h3 align="middle">
+                Sampling from the UNet
+            </h3>
+            <p>
+                I had also sampled directly from the time conditioned UNet by following along with the algorithm below: 
+            </p>
+
+            <table>
+                <tr align="center">
+                    <td>
+                        <img src="./Images/5b/algorithms/time_cond_algo2.png" align="middle" />
+                    </td>
+                </tr>
+            </table>
+            <br>
+            <p>
+                Here are some sampling results for the time conditioned UNet model:
+            </p>
+            <table>
+                <tr align="center">
+                    <td>
+                        <img src="./Images/5b/results/time_conditioned_epoch5.png" align="middle" />
+                    </td>
+                </tr>
+                <tr align="center">
+                    <td>
+                        <img src="./Images/5b/results/time_conditioned_epoch10.png" align="middle" />
+                    </td>
+                </tr>
+                <tr align="center">
+                    <td>
+                        <img src="./Images/5b/results/time_conditioned_epoch15.png" align="middle" />
+                    </td>
+                </tr>
+                <tr align="center">
+                    <td>
+                        <img src="./Images/5b/results/time_conditioned_epoch20.png" align="middle" />
+                    </td>
+                </tr>
+            </table>
         </div>
 </body>
 
