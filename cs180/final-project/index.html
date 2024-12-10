@@ -96,48 +96,47 @@
         <br>
         <br>
 
-        <h2 align="middle">Section II: Implementing the Forward Process</h2>
+        <h2 align="middle">Section II: Aperture Adjustment</h2>
         <div class="bounding-box">
             <h3 align="middle">
                 Aperture Adjustment
             </h3>
             <p>
-                In this section, I implemented the forward process of the diffusion model to gradually add more noise to
-                a clean image. The forward process is defined by:
-
-                $$ q(x_{t} | x_{0}) = \mathcal{N}(X_{t}, \sqrt{\overline{\alpha}}x_{0}, (1 -
-                \overline{\alpha}_{t})\mathbf{I})$$ which is equivalent to:
-
-                $$x_{t} = \sqrt{\overline{\alpha}_{t}}x_{0} + \sqrt{1 - \overline{\alpha}_{t}} \epsilon \quad
-                \text{where } \epsilon \sim \mathcal{N}(0, 1).$$ I sampled from a Gaussian distribution to add more
-                noise to the original image. Here are the results:
+                In this section, I simulated changing the aperture which affects the focused image regions. While maintaining the same $c$ value, I varied the radius away from the center and used only those images within the circle for my final averaged image. Although I used fewer images compared to before, the resulting image was more focused in the center. Here are some of the images and gif with varying radii. 
             </p>
 
             <table>
                 <tr align="center">
                     <td>
-                        <img src="./Images/5a/SamplingLoops/campanile.png" align="middle" width="400px" />
-                        <figcaption>Campanile</figcaption>
+                        <img src="./Images/light-field/aperture-adjustment/aperture-adjustment-2.png" align="middle" width="400px" />
+                        <figcaption>Radius = 2</figcaption>
                     </td>
                     <td>
-                        <img src="./Images/5a/SamplingLoops/noisy_image_250.png" align="middle" width="400px" />
-                        <figcaption>Noise Level = 250</figcaption>
+                        <img src="./Images/light-field/aperture-adjustment/aperture-adjustment-6.png" align="middle" width="400px" />
+                        <figcaption>Radius = 6</figcaption>
                     </td>
+                </tr>
+            </table>
+            <table>
+                <tr align="center">
                     <td>
-                        <img src="./Images/5a/SamplingLoops/noisy_image_500.png" align="middle" width="400px" />
-                        <figcaption>Noise Level = 500</figcaption>
+                        <img src="./Images/light-field/aperture-adjustment/aperture_adjustment.gif" align="middle" width="400px" />
+                        <figcaption>Gif for Varying Radius</figcaption>
                     </td>
-                    <td>
-                        <img src="./Images/5a/SamplingLoops/noisy_image_750.png" align="middle" width="400px" />
-                        <figcaption>Noise Level = 750</figcaption>
-                    </td>
-
                 </tr>
             </table>
         </div>
-
         <br>
         <br>
+        <h2 align="middle">Section III: Summary</h2>
+        <div class="bounding-box">
+            <h3 align="middle">
+                Learnings
+            </h3>
+            <p>
+                It was very interesting to see how I could simulate the effects of a Lytro camera using real lightfield data. I learned how to shift and average images to achieve the desired effects and how to vary the shift to get different results. I also learned how to simulate changing the aperture to focus on different parts of the image.
+            </p>
+        </div>
 
         <h1 align="middle"><a href="#5b">Project 5B: Diffusion Models from Scratch</a>
         </h1>
