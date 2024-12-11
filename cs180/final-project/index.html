@@ -59,9 +59,14 @@
                 Depth Refocusing
             </h3>
             <p>
-                For this part of the project, I took in all of the images and found the center one as the reference image. The naive method would be to simply average these images without any shifting. This, however, will produce an image which is sharp around the far-away objects but blurry around the nearby ones. To address this, I shifted the images appropriately around the reference image and then used a constant to vary this shift. This is the following equation I used:
+                For this part of the project, I took in all of the images and found the center one as the reference
+                image. The naive method would be to simply average these images without any shifting. This, however,
+                will produce an image which is sharp around the far-away objects but blurry around the nearby ones. To
+                address this, I shifted the images appropriately around the reference image and then used a constant to
+                vary this shift. This is the following equation I used:
 
-                $$ \text{(shift_x, shift_y)} = c \cdot (\text{(reference_x, reference_y)} - \text{(center_x, center_y)})$$
+                $$ \text{(shift_x, shift_y)} = c \cdot (\text{(reference_x, reference_y)} - \text{(center_x,
+                center_y)})$$
 
                 Here are some images and gif with varying levels of $c$.
             </p>
@@ -69,11 +74,13 @@
             <table>
                 <tr align="center">
                     <td>
-                        <img src="./Images/light-field/depth-refocusing/depth-refocus-0.15.png" align="middle" width="400px" />
+                        <img src="./Images/light-field/depth-refocusing/depth-refocus-0.15.png" align="middle"
+                            width="400px" />
                         <figcaption>$c = 0.15$</figcaption>
                     </td>
                     <td>
-                        <img src="./Images/light-field/depth-refocusing/depth-refocus-0.5.png" align="middle" width="400px" />
+                        <img src="./Images/light-field/depth-refocusing/depth-refocus-0.5.png" align="middle"
+                            width="400px" />
                         <figcaption>$c = 0.5$</figcaption>
                     </td>
                 </tr>
@@ -82,14 +89,17 @@
             <table>
                 <tr align="center">
                     <td>
-                        <img src="./Images/light-field/depth-refocusing/depth_refocusing.gif" align="middle" width="400px" />
+                        <img src="./Images/light-field/depth-refocusing/depth_refocusing.gif" align="middle"
+                            width="400px" />
                         <figcaption>Gif for $c \in [-0.5, 0.5]$</figcaption>
                     </td>
                 </tr>
             </table>
 
             <p>
-                As shown in the gif, the depth gets refocused on different parts of the image based on the value of $c$. The far-away objects become blurry when $c$ is negative and the nearby objects become blurry when $c$ is positive.
+                As shown in the gif, the depth gets refocused on different parts of the image based on the value of $c$.
+                The far-away objects become blurry when $c$ is negative and the nearby objects become blurry when $c$ is
+                positive.
             </p>
         </div>
 
@@ -102,17 +112,22 @@
                 Aperture Adjustment
             </h3>
             <p>
-                In this section, I simulated changing the aperture which affects the focused image regions. While maintaining the same $c$ value, I varied the radius away from the center and used only those images within the circle for my final averaged image. Although I used fewer images compared to before, the resulting image was more focused in the center. Here are some of the images and gif with varying radii. 
+                In this section, I simulated changing the aperture which affects the focused image regions. While
+                maintaining the same $c$ value, I varied the radius away from the center and used only those images
+                within the circle for my final averaged image. Although I used fewer images compared to before, the
+                resulting image was more focused in the center. Here are some of the images and gif with varying radii.
             </p>
 
             <table>
                 <tr align="center">
                     <td>
-                        <img src="./Images/light-field/aperture-adjustment/aperture-adjustment-2.png" align="middle" width="400px" />
+                        <img src="./Images/light-field/aperture-adjustment/aperture-adjustment-2.png" align="middle"
+                            width="400px" />
                         <figcaption>Radius = 2</figcaption>
                     </td>
                     <td>
-                        <img src="./Images/light-field/aperture-adjustment/aperture-adjustment-6.png" align="middle" width="400px" />
+                        <img src="./Images/light-field/aperture-adjustment/aperture-adjustment-6.png" align="middle"
+                            width="400px" />
                         <figcaption>Radius = 6</figcaption>
                     </td>
                 </tr>
@@ -120,7 +135,8 @@
             <table>
                 <tr align="center">
                     <td>
-                        <img src="./Images/light-field/aperture-adjustment/aperture_adjustment.gif" align="middle" width="400px" />
+                        <img src="./Images/light-field/aperture-adjustment/aperture_adjustment.gif" align="middle"
+                            width="400px" />
                         <figcaption>Gif for Varying Radius</figcaption>
                     </td>
                 </tr>
@@ -134,446 +150,99 @@
                 Learnings
             </h3>
             <p>
-                It was very interesting to see how I could simulate the effects of a Lytro camera using real lightfield data. I learned how to shift and average images to achieve the desired effects and how to vary the shift to get different results. I also learned how to simulate changing the aperture to focus on different parts of the image.
+                It was very interesting to see how I could simulate the effects of a Lytro camera using real lightfield
+                data. I learned how to shift and average images to achieve the desired effects and how to vary the shift
+                to get different results. I also learned how to simulate changing the aperture to focus on different
+                parts of the image.
             </p>
         </div>
+        <br>
+        <br>
 
-        <h1 align="middle"><a href="#5b">Project 5B: Diffusion Models from Scratch</a>
+        <h1 align="middle"><a href="#gradient-domain-fusion">Final Project: Gradient Domain Fusion</a>
         </h1>
 
         <div class="bounding-box">
 
-            <h2 align="middle" id="5b">Overview</h2>
+            <h2 align="middle" id="gradient-domain-fusion">Overview</h2>
 
-            The second part of this project focuses on building diffusion models from scratch to use on the MNIST
-            dataset. I implemented a single-step denoising UNet and added time and class conditioning to iteratively
-            denoise an image and get better results.
+            The second project that I worked on explored gradient-domain processing and how it can be used to seamlessly
+            blend an object or texture from a source image into a target image. I used the Poisson blending algorithm to
+            achieve this effect. The images below show the source and target images as well as the final blended image.
             <br><br>
         </div>
 
         <br>
         <br>
 
-        <h2 align="middle">Section I: Training a Single-Step Denoising UNet</h2>
+        <h2 align="middle">Section I: Toy Problem</h2>
 
         <div class="bounding-box">
             <h3 align="middle">
-                Implementing the UNet
+                Toy Problem
             </h3>
             <p>
-                In the part A, I had tested out the diffusion model to implement loop sampling, inpainting, and
-                hybridization of images. In this part, I implemented a single-step denoising UNet to denoise images. I
-                used the following architecture for the UNet:
+                In the first part of the project, I found the best pixels to reconstruct a toy problem. The insight is
+                that we care much more about the gradient of an image instead of the overall intensity. This means we
+                can set up the problem as finding values for the target pixels that maximally preserve the gradient of
+                the source region without changing any of the background pixels. I formulated this objective as a least
+                squares problem and tried to minimize the following three objectives.
+
+                $$
+                \begin{align*}
+                (v(x + 1, y) - v(x, y) &- ((s(x + 1, y) - s(x, y))))^2 \\
+                (v(x, y + 1) - v(x, y) &- ((s(x, y + 1) - s(x, y))))^2 \\
+                (v(1, 1) &- s(1, 1))^2
+                \end{align*}
+                $$
+                where $x$ and $y$ are the gradients from an image $s$ and $v$ is the reconstructed resulting image. For
+                the toy problem, I was able to solve this least squares problem to recover the original image.
             </p>
             <table>
                 <tr align="center">
                     <td>
-                        <img src="./Images/5b/architecture/unet.png" align="middle" />
-                        <figcaption>UNet Architecture</figcaption>
+                        <img src="./Images/gradient-domain-fusion/toy-problem/toy-original.png" align="middle" />
+                        <figcaption>Toy Story (Original)</figcaption>
                     </td>
                     <td>
-                        <img src="./Images/5b/architecture/unet_ops.png" align="middle" />
-                        <figcaption>Standard Tensor Operations</figcaption>
+                        <img src="./Images/gradient-domain-fusion/toy-problem/toy-reconstructed.png" align="middle" />
+                        <figcaption>Toy Story (Reconstructed)</figcaption>
                     </td>
                 </tr>
             </table>
             <br>
             <p>
-                I followed along with the standard tensor operations and defined them within the notebook and then used
-                the UNet architecture to create the necessary layers with downsampling and upsampling blocks to build
-                out skip connections.
+                As shown above, the reconstructed image is very similar to the original image. Both are a bit grainy
+                because they were small and blown up to be easily viewed.
             </p>
         </div>
 
         <br>
+        <br>
+
+        <h2 align="middle">Section II: Poisson Blending</h2>
+
         <div class="bounding-box">
             <h3 align="middle">
-                Using the UNet to Train a Denoiser
+                Poisson Blending
             </h3>
             <p>
-                In this section, I am trying to solve the following denoising problem: Given a noisy image $z$, I am
-                tring to train a denoiser $D_\theta$ such that it can map $z$ to a clean image $x$. I used the following
-                loss function to train the denoiser:
-                $$ L = \mathbb{E}_{z,x} \|D_{\theta}(z) - x\|^2.$$
-                For each training batch, I will generate $z$ with the following process:
-
-                $$ z = x + \sigma \epsilon,\quad \text{where }\epsilon \sim N(0, I)$$
-                To train this model, I took the clean images, added noise to them, and then passed them into the UNet
-                model. The model would try to return the denoised images. Afterwards, I calculated the MSE loss between
-                the denoised images and the original images. By minimizing this loss, I was able to train the model to
-                denoise images. The hyperparameters and other architecture that I used were as follows:
-
-            <ul>
-                <li>Batch Size: 256</li>
-                <li>Hidden Dim: 128</li>
-                <li>$\sigma:$ 0.5</li>
-                <li>Learning Rate: 1e-4</li>
-                <li>Optimizer: Adam</li>
-                <li>Epochs: 5</li>
-                <li>Loss Function: MSE Loss</li>
-            </ul>
+                For the next part, I worked on Poisson blending. This was very similar to the above toy problem but instead focused on the pixels inside of the mask. 
             </p>
-            <p>
-                Here is the visualization of the noising process where $\sigma = [0.0,
-                0.2, 0.4, 0.5, 0.6, 0.8, 1.0]$
-            </p>
-            <div align="middle"></div>
             <table>
                 <tr align="center">
                     <td>
-                        <img src="./Images/5b/results/noising_process.png" align="middle" />
-                        <figcaption>Noising Processes for Varying $\sigma$</figcaption>
+                        <img src="./Images/gradient-domain-fusion/toy-problem/toy-original.png" align="middle" />
+                        <figcaption>Toy Story (Original)</figcaption>
+                    </td>
+                    <td>
+                        <img src="./Images/gradient-domain-fusion/toy-problem/toy-reconstructed.png" align="middle" />
+                        <figcaption>Toy Story (Reconstructed)</figcaption>
                     </td>
                 </tr>
             </table>
             <br>
-            <p>
-                I had trained the model for 5 epochs over the entire MNIST training dataset. Here is a training loss
-                curve plot during the entire process:
-            </p>
-            <table>
-                <tr align="center">
-                    <td>
-                        <img src="./Images/5b/results/unet_training_loss.png" align="middle" />
-                    </td>
-                </tr>
-            </table>
-            <br>
-
-            <p>
-                Here are sample results after the 1st and 5th epoch:
-            </p>
-            <table>
-                <tr align="center">
-                    <td>
-                        <img src="./Images/5b/results/unet_epoch1.png" align="middle" />
-                    </td>
-                    <td>
-                        <img src="./Images/5b/results/unet_epoch5.png" align="middle" />
-                    </td>
-                </tr>
-            </table>
         </div>
-
-        <br>
-        <div class="bounding-box">
-            <h3 align="middle">
-                Out-of-Distribution Testing
-            </h3>
-            <p>
-                Once the model has been trained, I tested the denoising UNet on noisy samples from the test dataset. I
-                kept the same image but varied the noise added to it. Here are the results:
-            </p>
-            <div align="middle"></div>
-            <table>
-                <tr align="center">
-                    <td>
-                        <img src="./Images/5b/results/out_of_distribution_testing.png" align="middle" />
-                        <figcaption>Denoising Results for Varying $\sigma$</figcaption>
-                    </td>
-                </tr>
-            </table>
-        </div>
-
-        <br>
-        <br>
-
-        <h2 align="middle">Section II: Training a Diffusion Model</h2>
-
-        <div class="bounding-box">
-            <h3 align="middle">
-                Adding Time Conditioning to UNet
-            </h3>
-            <p>
-                In this section, I added time conditioning to the previous UNet model that can iteratively denoise an
-                image. The small change to the problem is that now I want to use the UNet to predict the added noise
-                $\epsilon$ instead of the clean image $x$. The equation for the loss function is as follows:
-                $$L = \mathbb{E}_{\epsilon,z} \|\epsilon_{\theta}(z) - \epsilon\|^2$$.
-
-                To iteratively denoise an image, I needed to generate noisy images $x-t$ from $x_0$ using the following
-                equation:
-
-                $$ x_t = \sqrt{\bar\alpha_t} x_0 + \sqrt{1 - \bar\alpha_t} \epsilon
-                \quad \text{where}~ \epsilon \sim N(0, 1)$$
-
-                Intuitively, when $t = 0$, I should get back the denoised image while when $t = T$ it should be a pure
-                noise image. I also used the DDPM to build the list of $\bar{\alpha}$ values to use for the training
-                process.
-
-            <ul>
-                <li>
-                    $\beta$ is a list of length $T = 300$ equally spaced between 0.0001 and 0.02
-                </li>
-                <li>
-                    $\alpha_t = 1 - \beta_t$
-                </li>
-                <li>
-                    $\bar{\alpha}_t$ is a cumulative product of $\alpha_t$ for $t \in \{1, \cdots, T\}$
-                </li>
-            </ul>
-
-            I replaced the unflatten and upsample blocks with the following:
-
-            <ul>
-                <li>
-                    <code>unflatten = unflatten + t1</code>
-                </li>
-                <li>
-                    <code>upsample = upsample + t2</code>
-                </li>
-            </ul>
-            where <code>t1, t2</code> are the results from passing the timestep through the FCBlocks.
-
-            Finally, I conditioned a single UNet on timestep $t$. I used the following architecture for the time
-            conditioned UNet:
-            </p>
-
-            <table>
-                <tr align="center">
-                    <td>
-                        <img src="./Images/5b/architecture/time_conditioned_unet.png" align="middle" />
-                        <figcaption>Time Conditioned UNet Architecture</figcaption>
-                    </td>
-                    <td>
-                        <img src="./Images/5b/architecture/time_conditioned_unet_ops.png" align="middle" />
-                        <figcaption>FCBlock</figcaption>
-                    </td>
-                </tr>
-            </table>
-            <br>
-            <p>
-                I followed along with the standard tensor operations and defined them within the notebook and then used
-                the UNet architecture to create the necessary layers with downsampling and upsampling blocks to build
-                out skip connections. I embedded the time conditioning by normalizing $t$ and adding to the unflatten
-                and up sample blocks.
-            </p>
-        </div>
-
-        <br>
-        <div class="bounding-box">
-            <h3 align="middle">
-                Training the UNet
-            </h3>
-            <p>
-                To train this model, I took the clean images, uniformly sampled to create the timesteps $t$, used the
-                $\bar{\alpha}$ for the timesteps to get the noisy images, and finally trained with the UNet model. The
-                model would try to return the expected noise from the image. Afterwards, I calculated the MSE loss
-                between the expected noise and the random pure noise I had generated. By minimizing this loss, I was
-                able to train the model to denoise images. The hyperparameters and other architecture that I used were
-                as follows:
-
-            <ul>
-                <li>Batch Size: 128</li>
-                <li>Hidden Dim: 64</li>
-                <li>Learning Rate: 1e-3</li>
-                <li>Optimizer: Adam</li>
-                <li>Scheduler Gamma: $0.1^{(1 / \text{epochs})}$</li>
-                <li>Epochs: 20</li>
-                <li>Loss Function: MSE Loss</li>
-            </ul>
-            </p>
-
-            <table>
-                <tr align="center">
-                    <td>
-                        <img src="./Images/5b/architecture/time_conditioned_unet.png" align="middle" />
-                        <figcaption>Time Conditioned UNet Architecture</figcaption>
-                    </td>
-                    <td>
-                        <img src="./Images/5b/architecture/time_conditioned_unet_ops.png" align="middle" />
-                        <figcaption>FCBlock</figcaption>
-                    </td>
-                </tr>
-            </table>
-            <p>
-                I had trained directly with the time conditioned UNet by following along with the algorithm below:
-            </p>
-            <table>
-                <tr align="center">
-                    <td>
-                        <img src="./Images/5b/algorithms/time_cond_algo1.png" align="middle" />
-                    </td>
-                </tr>
-            </table>
-            <p>
-                Here is a training loss
-                curve plot during the entire process:
-            </p>
-            <table>
-                <tr align="center">
-                    <td>
-                        <img src="./Images/5b/results/time_conditioned_training_loss.png" align="middle" />
-                    </td>
-                </tr>
-            </table>
-        </div>
-        <br>
-        <div class="bounding-box">
-            <h3 align="middle">
-                Sampling from the UNet
-            </h3>
-            <p>
-                I had also sampled directly from the time conditioned UNet by following along with the algorithm below:
-            </p>
-
-            <table>
-                <tr align="center">
-                    <td>
-                        <img src="./Images/5b/algorithms/time_cond_algo2.png" align="middle" />
-                    </td>
-                </tr>
-            </table>
-            <p>
-                Here are some sampling results for the time conditioned UNet model:
-            </p>
-            <table>
-                <tr align="center">
-                    <td>
-                        <img src="./Images/5b/results/time_conditioned_epoch5.png" align="middle" />
-                    </td>
-                </tr>
-                <tr align="center">
-                    <td>
-                        <img src="./Images/5b/results/time_conditioned_epoch10.png" align="middle" />
-                    </td>
-                </tr>
-                <tr align="center">
-                    <td>
-                        <img src="./Images/5b/results/time_conditioned_epoch15.png" align="middle" />
-                    </td>
-                </tr>
-                <tr align="center">
-                    <td>
-                        <img src="./Images/5b/results/time_conditioned_epoch20.png" align="middle" />
-                    </td>
-                </tr>
-            </table>
-        </div>
-
-        <br>
-
-        <div class="bounding-box">
-            <h3 align="middle">
-                Adding Class-Conditioning to UNet
-            </h3>
-            <p>
-                To improve results and allow for more control over the image generation, I added class conditioning to
-                the previous UNet for the digit class 0-9. This included adding 2 more FCBlocks and a one-hot encoded
-                vector $c$ for each of the datapoints instead of a single scalar. Since I don't want the model to
-                overfit on the classes, I made sure to drop the one-ho
-                t encoded vector with a probability of 0.1. I replaced the unflatten and upsample blocks with the
-                following:
-
-            <ul>
-                <li>
-                    <code>unflatten = c1 * unflatten + t1</code>
-                </li>
-                <li>
-                    <code>upsample = c2 * upsample + t2</code>
-                </li>
-            </ul>
-            where <code>c1, c2</code> are the results from passing the one-hot encoded vector through the FCBlocks and
-            <code>t1, t2</code> are the results from passing the timestep through the FCBlocks.
-
-            Finally, I conditioned a single UNet on timestep $t$.
-            <p>
-                I followed along with the standard tensor operations and defined them within the notebook and then used
-                the UNet architecture to create the necessary layers with downsampling and upsampling blocks to build
-                out skip connections. I embedded the time conditioning by normalizing $t$ and adding to the unflatten
-                and up sample blocks and class conditioning by adding the one-hot encoded vector to the unflatten and up
-                sample blocks.
-            </p>
-            <p>
-                Compared to the previous time conditioned UNet's training algorithm, the only main difference being the
-                addition of the conditioning vector
-                $c$
-                and periodically performing unconditional generation.
-            </p>
-
-            <table>
-                <tr align="center">
-                    <td>
-                        <img src="./Images/5b/algorithms/class_cond_algo1.png" align="middle" />
-                    </td>
-                </tr>
-            </table>
-
-            <p>
-                Here is a training loss curve plot during the entire process:
-            </p>
-
-            <table>
-                <tr align="center">
-                    <td>
-                        <img src="./Images/5b/results/class_conditioned_training_loss.png" align="middle" />
-                    </td>
-                </tr>
-            </table>
-        </div>
-
-        <br>
-        <div class="bounding-box">
-            <h3 align="middle">
-                Sampling from the Class-Conditioned UNet
-            </h3>
-            <p>
-                I had also sampled directly from the class conditioned UNet by following along with the algorithm below:
-            </p>
-            <table>
-                <tr align="center">
-                    <td>
-                        <img src="./Images/5b/algorithms/class_cond_algo2.png" align="middle" />
-                    </td>
-                </tr>
-            </table>
-            <p>
-                Here are some sampling results for the class conditioned UNet model with classifier-free guidance of
-                $\gamma = 5.0$:
-            </p>
-
-            <table>
-                <tr align="center">
-                    <td>
-                        <img src="./Images/5b/results/class_conditioned_epoch1.png" align="middle" />
-                    </td>
-                </tr>
-                <tr align="center">
-                    <td>
-                        <img src="./Images/5b/results/class_conditioned_epoch5.png" align="middle" />
-                    </td>
-                </tr>
-                <tr align="center">
-                    <td>
-                        <img src="./Images/5b/results/class_conditioned_epoch10.png" align="middle" />
-                    </td>
-                </tr>
-                <tr align="center">
-                    <td>
-                        <img src="./Images/5b/results/class_conditioned_epoch15.png" align="middle" />
-                    </td>
-                </tr>
-                <tr align="center">
-                    <td>
-                        <img src="./Images/5b/results/class_conditioned_epoch20.png" align="middle" />
-                    </td>
-                </tr>
-            </table>
-        </div>
-
-        <br>
-        <br>
-        <h2 align="middle">Section III: Conclusion</h2>
-        <div class="bounding-box">
-            <h3 align="middle">
-                Learnings
-            </h3>
-            <p>
-                The coolest thing I learned from this project was how to build my own diffusion model with each of the
-                components and how to connect them properly. I learned the importance of having correct tensor shapes so
-                that the model can properly train on the images.
-            </p>
-        </div>
-
 </body>
 
 </html>
