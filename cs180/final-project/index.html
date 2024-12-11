@@ -65,8 +65,7 @@
                 address this, I shifted the images appropriately around the reference image and then used a constant to
                 vary this shift. This is the following equation I used:
 
-                $$ \text{(shift_x, shift_y)} = c \cdot (\text{(reference_x, reference_y)} - \text{(center_x,
-                center_y)})$$
+                $$ \text{(shift_x, shift_y)} = c \cdot (\text{(reference_x, reference_y)} - \text{(center_x, center_y)})$$
 
                 Here are some images and gif with varying levels of $c$.
             </p>
@@ -141,6 +140,10 @@
                     </td>
                 </tr>
             </table>
+            <br>
+            <p>
+                As shown in the gif, the center pieces of the image are in focus while the outer pieces shift in their blurriness. This demonstrates the effect of changing the aperture.
+            </p>
         </div>
         <br>
         <br>
@@ -227,7 +230,73 @@
                 Poisson Blending
             </h3>
             <p>
-                For the next part, I worked on Poisson blending. This was very similar to the above toy problem but instead focused on the pixels inside of the mask. 
+                For the next part, I worked on Poisson blending. This was very similar to the above toy problem but instead focused on the pixels inside of the mask. First, I chose an image to put into the foreground of my original image. Since the interactive drawing tool wasn't quite working, I manually created the mask to what I wanted the final image to look like. I also passed in the original image because I wanted to make sure that the background of the final image was the same as the original image outside of where I placing the mask. Let $f$ be the final image, $t$ be the background image, and $s$ be the foreground image where we are trying to place $s$ into $t$ to create $f$. There were three types of equations to solve:
+                <ul>
+                    <li>
+                        If the pixel in the final image $f$ is outside of the mask, take the pixel from the target image $t$.
+                        <ul>
+                            <li>
+                                $f[i, j] = t[i, j]$
+                            </li>
+                        </ul>
+                    </li>
+
+                    <li>
+                        If the pixel and its four neighbors in the final image $f$ are all inside of the mask, try to match the gradients in $f$ with the gradients in the source image $s$.
+                        <ul>
+                            <li>
+                                $f[i, j] - f[i - 1, j] = s[i, j] - s[i - 1, j]$
+                            </li>
+                            <li>
+                                $f[i, j] - f[i + 1, j] = s[i, j] - s[i + 1, j]$
+                            </li>
+                            <li>
+                                $f[i, j] - f[i, j - 1] = s[i, j] - s[i, j - 1]$
+                            </li>
+                            <li>
+                                $f[i, j] - f[i, j + 1] = s[i, j] - s[i, j + 1]$
+                            </li>
+                        </ul>
+                    </li>
+
+                    <li>
+                        If the pixel and its four neighbors in the final image $f$ are all inside of the mask, try to match the gradients in $f$ with the gradients in the source image $s$.
+                        <ul>
+                            <li>
+                                $f[i, j] - f[i - 1, j] = s[i, j] - s[i - 1, j]$
+                            </li>
+                            <li>
+                                $f[i, j] - f[i + 1, j] = s[i, j] - s[i + 1, j]$
+                            </li>
+                            <li>
+                                $f[i, j] - f[i, j - 1] = s[i, j] - s[i, j - 1]$
+                            </li>
+                            <li>
+                                $f[i, j] - f[i, j + 1] = s[i, j] - s[i, j + 1]$
+                            </li>
+                        </ul>
+                    </li>
+
+                    <li>
+                        If the pixel and its four neighbors in the final image $f$ are not all inside of the mask, try to match the gradients for $f$ and $t$ with the gradients in $s$
+                        <ul>
+                            <li>
+                                $f[i, j] - t[i - 1, j] = s[i, j] - s[i - 1, j]$
+                            </li>
+                            <li>
+                                $f[i, j] - t[i + 1, j] = s[i, j] - s[i + 1, j]$
+                            </li>
+                            <li>
+                                $f[i, j] - t[i, j - 1] = s[i, j] - s[i, j - 1]$
+                            </li>
+                            <li>
+                                $f[i, j] - t[i, j + 1] = s[i, j] - s[i, j + 1]$
+                            </li>
+                        </ul>
+                    </li>
+
+                </ul>
+        
             </p>
             <table>
                 <tr align="center">
