@@ -65,7 +65,8 @@
                 address this, I shifted the images appropriately around the reference image and then used a constant to
                 vary this shift. This is the following equation I used:
 
-                $$ \text{(shift_x, shift_y)} = c \cdot (\text{(reference_x, reference_y)} - \text{(center_x, center_y)})$$
+                $$ \text{(shift_x, shift_y)} = c \cdot (\text{(reference_x, reference_y)} - \text{(center_x,
+                center_y)})$$
 
                 Here are some images and gif with varying levels of $c$.
             </p>
@@ -142,7 +143,8 @@
             </table>
             <br>
             <p>
-                As shown in the gif, the center pieces of the image are in focus while the outer pieces shift in their blurriness. This demonstrates the effect of changing the aperture.
+                As shown in the gif, the center pieces of the image are in focus while the outer pieces shift in their
+                blurriness. This demonstrates the effect of changing the aperture.
             </p>
         </div>
         <br>
@@ -198,7 +200,8 @@
                 (v(1, 1) &- s(1, 1))^2
                 \end{align*}
                 $$
-                where $x$ and $y$ are the gradients from an image $s$ and $v$ is the reconstructed resulting image. For
+                where $x$ and $y$ are the gradients from an image $s$ and $v$ is the reconstructed resulting image. I
+                had some optimization by using a sparse matrix to reduce the time needed to solve the problem. For
                 the toy problem, I was able to solve this least squares problem to recover the original image.
             </p>
             <table>
@@ -230,83 +233,104 @@
                 Poisson Blending
             </h3>
             <p>
-                For the next part, I worked on Poisson blending. This was very similar to the above toy problem but instead focused on the pixels inside of the mask. First, I chose an image to put into the foreground of my original image. Since the interactive drawing tool wasn't quite working, I manually created the mask to what I wanted the final image to look like. I also passed in the original image because I wanted to make sure that the background of the final image was the same as the original image outside of where I placing the mask. Let $f$ be the final image, $t$ be the background image, and $s$ be the foreground image where we are trying to place $s$ into $t$ to create $f$. There were three types of equations to solve:
-                <ul>
-                    <li>
-                        If the pixel in the final image $f$ is outside of the mask, take the pixel from the target image $t$.
-                        <ul>
-                            <li>
-                                $f[i, j] = t[i, j]$
-                            </li>
-                        </ul>
-                    </li>
+                For the next part, I worked on Poisson blending. This was very similar to the above toy problem but
+                instead focused on the pixels inside of the mask. First, I chose an image to put into the foreground of
+                my original image. Since the interactive drawing tool wasn't quite working, I manually created the mask
+                to what I wanted the final image to look like. I also passed in the original image because I wanted to
+                make sure that the background of the final image was the same as the original image outside of where I
+                placing the mask. Let $f$ be the final image, $t$ be the background image, and $s$ be the foreground
+                image where we are trying to place $s$ into $t$ to create $f$. There were three types of equations to
+                solve:
+            <ul>
+                <li>
+                    If the pixel in the final image $f$ is outside of the mask, take the pixel from the target image
+                    $t$.
+                    <ul>
+                        <li>
+                            $f[i, j] = t[i, j]$
+                        </li>
+                    </ul>
+                </li>
 
-                    <li>
-                        If the pixel and its four neighbors in the final image $f$ are all inside of the mask, try to match the gradients in $f$ with the gradients in the source image $s$.
-                        <ul>
-                            <li>
-                                $f[i, j] - f[i - 1, j] = s[i, j] - s[i - 1, j]$
-                            </li>
-                            <li>
-                                $f[i, j] - f[i + 1, j] = s[i, j] - s[i + 1, j]$
-                            </li>
-                            <li>
-                                $f[i, j] - f[i, j - 1] = s[i, j] - s[i, j - 1]$
-                            </li>
-                            <li>
-                                $f[i, j] - f[i, j + 1] = s[i, j] - s[i, j + 1]$
-                            </li>
-                        </ul>
-                    </li>
+                <li>
+                    If the pixel and its four neighbors in the final image $f$ are all inside of the mask, try to match
+                    the gradients in $f$ with the gradients in the source image $s$.
+                    <ul>
+                        <li>
+                            $f[i, j] - f[i - 1, j] = s[i, j] - s[i - 1, j]$
+                        </li>
+                        <li>
+                            $f[i, j] - f[i + 1, j] = s[i, j] - s[i + 1, j]$
+                        </li>
+                        <li>
+                            $f[i, j] - f[i, j - 1] = s[i, j] - s[i, j - 1]$
+                        </li>
+                        <li>
+                            $f[i, j] - f[i, j + 1] = s[i, j] - s[i, j + 1]$
+                        </li>
+                    </ul>
+                </li>
 
-                    <li>
-                        If the pixel and its four neighbors in the final image $f$ are all inside of the mask, try to match the gradients in $f$ with the gradients in the source image $s$.
-                        <ul>
-                            <li>
-                                $f[i, j] - f[i - 1, j] = s[i, j] - s[i - 1, j]$
-                            </li>
-                            <li>
-                                $f[i, j] - f[i + 1, j] = s[i, j] - s[i + 1, j]$
-                            </li>
-                            <li>
-                                $f[i, j] - f[i, j - 1] = s[i, j] - s[i, j - 1]$
-                            </li>
-                            <li>
-                                $f[i, j] - f[i, j + 1] = s[i, j] - s[i, j + 1]$
-                            </li>
-                        </ul>
-                    </li>
+                <li>
+                    If the pixel and its four neighbors in the final image $f$ are all inside of the mask, try to match
+                    the gradients in $f$ with the gradients in the source image $s$.
+                    <ul>
+                        <li>
+                            $f[i, j] - f[i - 1, j] = s[i, j] - s[i - 1, j]$
+                        </li>
+                        <li>
+                            $f[i, j] - f[i + 1, j] = s[i, j] - s[i + 1, j]$
+                        </li>
+                        <li>
+                            $f[i, j] - f[i, j - 1] = s[i, j] - s[i, j - 1]$
+                        </li>
+                        <li>
+                            $f[i, j] - f[i, j + 1] = s[i, j] - s[i, j + 1]$
+                        </li>
+                    </ul>
+                </li>
 
-                    <li>
-                        If the pixel and its four neighbors in the final image $f$ are not all inside of the mask, try to match the gradients for $f$ and $t$ with the gradients in $s$
-                        <ul>
-                            <li>
-                                $f[i, j] - t[i - 1, j] = s[i, j] - s[i - 1, j]$
-                            </li>
-                            <li>
-                                $f[i, j] - t[i + 1, j] = s[i, j] - s[i + 1, j]$
-                            </li>
-                            <li>
-                                $f[i, j] - t[i, j - 1] = s[i, j] - s[i, j - 1]$
-                            </li>
-                            <li>
-                                $f[i, j] - t[i, j + 1] = s[i, j] - s[i, j + 1]$
-                            </li>
-                        </ul>
-                    </li>
+                <li>
+                    If the pixel and its four neighbors in the final image $f$ are not all inside of the mask, try to
+                    match the gradients for $f$ and $t$ with the gradients in $s$.
+                    <ul>
+                        <li>
+                            $f[i, j] - t[i - 1, j] = s[i, j] - s[i - 1, j]$
+                        </li>
+                        <li>
+                            $f[i, j] - t[i + 1, j] = s[i, j] - s[i + 1, j]$
+                        </li>
+                        <li>
+                            $f[i, j] - t[i, j - 1] = s[i, j] - s[i, j - 1]$
+                        </li>
+                        <li>
+                            $f[i, j] - t[i, j + 1] = s[i, j] - s[i, j + 1]$
+                        </li>
+                    </ul>
+                </li>
 
-                </ul>
-        
+            </ul>
+            I had some optimization by using a sparse matrix to reduce the time needed to solve the problem. Finally, I
+            used the least squares optimization to solve for the final image. Here are the results:
             </p>
             <table>
                 <tr align="center">
                     <td>
-                        <img src="./Images/gradient-domain-fusion/toy-problem/toy-original.png" align="middle" />
-                        <figcaption>Toy Story (Original)</figcaption>
+                        <img src="./Images/gradient-domain-fusion/poisson-blending/hikers.png" align="middle" />
+                        <figcaption>Hikers (Background)</figcaption>
                     </td>
                     <td>
-                        <img src="./Images/gradient-domain-fusion/toy-problem/toy-reconstructed.png" align="middle" />
-                        <figcaption>Toy Story (Reconstructed)</figcaption>
+                        <img src="./Images/gradient-domain-fusion/poisson-blending/penguin.png" align="middle" />
+                        <figcaption>Penguin (Foreground)</figcaption>
+                    </td>
+                    <td>
+                        <img src="./Images/gradient-domain-fusion/poisson-blending/penguin-mask.png" align="middle" />
+                        <figcaption>Penguin (Mask)</figcaption>
+                    </td>
+                    <td>
+                        <img src="./Images/gradient-domain-fusion/poisson-blending/hikers-with-penguin.png"
+                            align="middle" />
+                        <figcaption>Hikers with Penguin</figcaption>
                     </td>
                 </tr>
             </table>
